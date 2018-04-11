@@ -1,59 +1,132 @@
-# Rational Numbers
+from __future__ import division
 
-A rational number is defined as the quotient of two integers `a` and `b`, called the numerator and denominator, respectively, where `b != 0`.
+import unittest
 
-The absolute value `|r|` of the rational number `r = a/b` is equal to `|a|/|b|`.
+from rational_numbers import Rational
 
-The sum of two rational numbers `r1 = a1/b1` and `r2 = a2/b2` is `r1 + r2 = a1/b1 + a2/b2 = (a1 * b2 + a2 * b1) / (b1 * b2)`.
 
-The difference of two rational numbers `r1 = a1/b1` and `r2 = a2/b2` is `r1 - r2 = a1/b1 - a2/b2 = (a1 * b2 - a2 * b1) / (b1 * b2)`.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-The product (multiplication) of two rational numbers `r1 = a1/b1` and `r2 = a2/b2` is `r1 * r2 = (a1 * a2) / (b1 * b2)`.
+class RationalTests(unittest.TestCase):
 
-Dividing a rational number `r1 = a1/b1` by another `r2 = a2/b2` is `r1 / r2 = (a1 * b2) / (a2 * b1)` if `a2 * b1` is not zero.
+    # Test addition
+    def test_add_two_positive(self):
+        self.assertEqual(Rational(1, 2) + Rational(2, 3), Rational(7, 6))
 
-Exponentiation of a rational number `r = a/b` to a non-negative integer power `n` is `r^n = (a^n)/(b^n)`.
+    def test_add_positive_and_negative(self):
+        self.assertEqual(Rational(1, 2) + Rational(-2, 3), Rational(-1, 6))
 
-Exponentiation of a rational number `r = a/b` to a negative integer power `n` is `r^n = (b^m)/(a^m)`, where `m = |n|`.
+    def test_add_two_negative(self):
+        self.assertEqual(Rational(-1, 2) + Rational(-2, 3), Rational(-7, 6))
 
-Exponentiation of a rational number `r = a/b` to a real (floating-point) number `x` is the quotient `(a^x)/(b^x)`, which is a real number.
+    def test_add_opposite(self):
+        self.assertEqual(Rational(1, 2) + Rational(-1, 2), Rational(0, 1))
 
-Exponentiation of a real number `x` to a rational number `r = a/b` is `x^(a/b) = root(x^a, b)`, where `root(p, q)` is the `q`th root of `p`.
+    # Test subtraction
+    def test_subtract_two_positive(self):
+        self.assertEqual(Rational(1, 2) - Rational(2, 3), Rational(-1, 6))
 
-Implement the following operations:
- - addition, subtraction, multiplication and division of two rational numbers,
- - absolute value, exponentiation of a given rational number to an integer power, exponentiation of a given rational number to a real (floating-point) power, exponentiation of a real number to a rational number.
+    def test_subtract_positive_and_negative(self):
+        self.assertEqual(Rational(1, 2) - Rational(-2, 3), Rational(7, 6))
 
-Your implementation of rational numbers should always be reduced to lowest terms. For example, `4/4` should reduce to `1/1`, `30/60` should reduce to `1/2`, `12/8` should reduce to `3/2`, etc. To reduce a rational number `r = a/b`, divide `a` and `b` by the greatest common divisor (gcd) of `a` and `b`. So, for example, `gcd(12, 8) = 4`, so `r = 12/8` can be reduced to `(12/4)/(8/4) = 3/2`.
+    def test_subtract_two_negative(self):
+        self.assertEqual(Rational(-1, 2) - Rational(-2, 3), Rational(1, 6))
 
-Assume that the programming language you are using does not have an implementation of rational numbers.
+    def test_subtract_from_self(self):
+        self.assertEqual(Rational(1, 2) - Rational(1, 2), Rational(0, 1))
 
-## Exception messages
+    # Test multiplication
+    def test_multiply_two_positive(self):
+        self.assertEqual(Rational(1, 2) * Rational(2, 3), Rational(1, 3))
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def test_multiply_negative_by_positive(self):
+        self.assertEqual(Rational(-1, 2) * Rational(2, 3), Rational(-1, 3))
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you shold write:
+    def test_multiply_two_negative(self):
+        self.assertEqual(Rational(-1, 2) * Rational(-2, 3), Rational(1, 3))
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_multiply_reciprocal(self):
+        self.assertEqual(Rational(1, 2) * Rational(2, 1), Rational(1, 1))
 
-## Submitting Exercises
+    def test_multiply_by_one(self):
+        self.assertEqual(Rational(1, 2) * Rational(1, 1), Rational(1, 2))
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/rational-numbers` directory.
+    def test_multiply_by_zero(self):
+        self.assertEqual(Rational(1, 2) * Rational(0, 1), Rational(0, 1))
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+    # Test division
+    def test_divide_two_positive(self):
+        self.assertEqual(Rational(1, 2) / Rational(2, 3), Rational(3, 4))
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+    def test_divide_positive_by_negative(self):
+        self.assertEqual(Rational(1, 2) / Rational(-2, 3), Rational(-3, 4))
 
-## Source
+    def test_divide_two_negative(self):
+        self.assertEqual(Rational(-1, 2) / Rational(-2, 3), Rational(3, 4))
 
-Wikipedia [https://en.wikipedia.org/wiki/Rational_number](https://en.wikipedia.org/wiki/Rational_number)
+    def test_divide_by_one(self):
+        self.assertEqual(Rational(1, 2) / Rational(1, 1), Rational(1, 2))
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    # Test absolute value
+    def test_absolute_value_of_positive(self):
+        self.assertEqual(abs(Rational(1, 2)), Rational(1, 2))
+
+    def test_absolute_value_of_negative(self):
+        self.assertEqual(abs(Rational(-1, 2)), Rational(1, 2))
+
+    def test_absolute_value_of_zero(self):
+        self.assertEqual(abs(Rational(0, 1)), Rational(0, 1))
+
+    # Test exponentiation of a rational number
+    def test_raise_a_positive_rational_to_a_positive_integer_power(self):
+        self.assertEqual(Rational(1, 2) ** 3, Rational(1, 8))
+
+    def test_raise_a_negative_rational_to_a_positive_integer_power(self):
+        self.assertEqual(Rational(-1, 2) ** 3, Rational(-1, 8))
+
+    def test_raise_zero_to_an_integer_power(self):
+        self.assertEqual(Rational(0, 1) ** 5, Rational(0, 1))
+
+    def test_raise_one_to_an_integer_power(self):
+        self.assertEqual(Rational(1, 1) ** 4, Rational(1, 1))
+
+    def test_raise_a_positive_rational_to_the_power_of_zero(self):
+        self.assertEqual(Rational(1, 2) ** 0, Rational(1, 1))
+
+    def test_raise_a_negative_rational_to_the_power_of_zero(self):
+        self.assertEqual(Rational(-1, 2) ** 0, Rational(1, 1))
+
+    # Test exponentiation of a real number to a rational number
+    def test_raise_a_real_number_to_a_positive_rational(self):
+        self.assertAlmostEqual(8 ** Rational(4, 3), 16.0, places=8)
+
+    def test_raise_a_real_number_to_a_negative_rational(self):
+        self.assertAlmostEqual(
+            9 ** Rational(-1, 2), 0.3333333333333333, places=8
+        )
+
+    def test_raise_a_real_number_to_a_zero_rational(self):
+        self.assertAlmostEqual(2 ** Rational(0, 1), 1.0, places=8)
+
+    # Test reduction to lowest terms
+    def test_reduce_positive(self):
+        self.assertEqual(Rational(2, 4), Rational(1, 2))
+
+    def test_reduce_negative(self):
+        self.assertEqual(Rational(-4, 6), Rational(-2, 3))
+
+    def test_reduce_rational_with_negative_denominator(self):
+        self.assertEqual(Rational(3, -9), Rational(-1, 3))
+
+    def test_reduce_zero(self):
+        self.assertEqual(Rational(0, 6), Rational(0, 1))
+
+    def test_reduce_integer(self):
+        self.assertEqual(Rational(-14, 7), Rational(-2, 1))
+
+    def test_reduce_one(self):
+        self.assertEqual(Rational(13, 13), Rational(1, 1))
+
+
+if __name__ == '__main__':
+    unittest.main()

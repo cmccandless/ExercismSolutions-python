@@ -1,56 +1,44 @@
-# Scrabble Score
+import unittest
 
-Write a program that, given a word, computes the scrabble score for that word.
-
-## Letter Values
-
-You'll need these:
-
-```plain
-Letter                           Value
-A, E, I, O, U, L, N, R, S, T       1
-D, G                               2
-B, C, M, P                         3
-F, H, V, W, Y                      4
-K                                  5
-J, X                               8
-Q, Z                               10
-```
-
-## Examples
-"cabbage" should be scored as worth 14 points:
-
-- 3 points for C
-- 1 point for A, twice
-- 3 points for B, twice
-- 2 points for G
-- 1 point for E
-
-And to total:
-
-- `3 + 2*1 + 2*3 + 2 + 1`
-- = `3 + 2 + 6 + 3`
-- = `5 + 9`
-- = 14
-
-## Extensions
-- You can play a `:double` or a `:triple` letter.
-- You can play a `:double` or a `:triple` word.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from scrabble_score import score
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class WordTest(unittest.TestCase):
+    def test_lowercase_letter(self):
+        self.assertEqual(score("a"), 1)
 
-Inspired by the Extreme Startup game [https://github.com/rchatley/extreme_startup](https://github.com/rchatley/extreme_startup)
+    def test_uppercase_letter(self):
+        self.assertEqual(score("A"), 1)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_valuable_letter(self):
+        self.assertEqual(score("f"), 4)
 
+    def test_short_word(self):
+        self.assertEqual(score("at"), 2)
+
+    def test_short_valuable_word(self):
+        self.assertEqual(score("zoo"), 12)
+
+    def test_medium_word(self):
+        self.assertEqual(score("street"), 6)
+
+    def test_medium_valuable_word(self):
+        self.assertEqual(score("quirky"), 22)
+
+    def test_long_mixed_case_word(self):
+        self.assertEqual(score("OxyphenButazone"), 41)
+
+    def test_english_like_word(self):
+        self.assertEqual(score("pinata"), 8)
+
+    def test_empty_input(self):
+        self.assertEqual(score(""), 0)
+
+    def test_entire_alphabet_available(self):
+        self.assertEqual(score("abcdefghijklmnopqrstuvwxyz"), 87)
+
+
+if __name__ == '__main__':
+    unittest.main()

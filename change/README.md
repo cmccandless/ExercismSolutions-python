@@ -1,35 +1,63 @@
-# Change
+import unittest
 
-Correctly determine the fewest number of coins to be given to a customer such
-that the sum of the coins' value would equal the correct amount of change.
-
-## For example
-
-- An input of 15 with [1, 5, 10, 25, 100] should return one nickel (5)
-  and one dime (10) or [0, 1, 1, 0, 0]
-- An input of 40 with [1, 5, 10, 25, 100] should return one nickel (5)
-  and one dime (10) and one quarter (25) or [0, 1, 1, 1, 0]
-
-## Edge cases
-
-- Does your algorithm work for any given set of coins?
-- Can you ask for negative change?
-- Can you ask for a change value smaller than the smallest coin value?
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from change import find_minimum_coins
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-## Source
+class ChangeTest(unittest.TestCase):
+    def test_single_coin_change(self):
+        self.assertEqual(find_minimum_coins(25, [1, 5, 10, 25, 100]), [25])
 
-Software Craftsmanship - Kata-logue [http://craftsmanship.sv.cmu.edu/exercises/coin-change-kata](http://craftsmanship.sv.cmu.edu/exercises/coin-change-kata)
+    def test_multiple_coin_change(self):
+        self.assertEqual(find_minimum_coins(15, [1, 5, 10, 25, 100]), [5, 10])
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_change_with_Lilliputian_Coins(self):
+        self.assertEqual(find_minimum_coins(23, [1, 4, 15, 20, 50]),
+                         [4, 4, 15])
 
+    def test_change_with_Lower_Elbonia_Coins(self):
+        self.assertEqual(find_minimum_coins(63, [1, 5, 10, 21, 25]),
+                         [21, 21, 21])
+
+    def test_large_target_values(self):
+        self.assertEqual(find_minimum_coins(999, [1, 2, 5, 10, 20, 50, 100]),
+                         [2, 2, 5, 20, 20, 50, 100, 100, 100,
+                          100, 100, 100, 100, 100, 100])
+
+    def test_possible_change_without_unit_coins_available(self):
+        self.assertEqual(find_minimum_coins(21, [2, 5, 10, 20, 50]),
+                         [2, 2, 2, 5, 10])
+
+    def test_another_possible_change_without_unit_coins_available(self):
+        self.assertEqual(find_minimum_coins(27, [4, 5]),
+                         [4, 4, 4, 5, 5, 5])
+
+    def test_no_coins_make_0_change(self):
+        self.assertEqual(find_minimum_coins(0, [1, 5, 10, 21, 25]), [])
+
+    def test_error_testing_for_change_smaller_than_smallest_coin(self):
+        with self.assertRaisesWithMessage(ValueError):
+            find_minimum_coins(3, [5, 10])
+
+    def test_error_if_no_combination_can_add_up_to_target(self):
+        with self.assertRaisesWithMessage(ValueError):
+            find_minimum_coins(94, [5, 10])
+
+    def test_cannot_find_negative_change_values(self):
+        with self.assertRaisesWithMessage(ValueError):
+            find_minimum_coins(-5, [1, 2, 5])
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == "__main__":
+    unittest.main()

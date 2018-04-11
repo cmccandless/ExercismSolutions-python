@@ -1,27 +1,43 @@
-# Nth Prime
+import unittest
 
-Write a program that can tell you what the nth prime is.
-
-By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that
-the 6th prime is 13.
-
-If your language provides methods in the standard library to deal with prime
-numbers, pretend they don't exist and implement them yourself.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from nth_prime import nth_prime
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v2.1.0
 
-## Source
+class NthPrimeTests(unittest.TestCase):
+    def test_first_prime(self):
+        self.assertEqual(nth_prime(1), 2)
 
-A variation on Problem 7 at Project Euler [http://projecteuler.net/problem=7](http://projecteuler.net/problem=7)
+    def test_second_prime(self):
+        self.assertEqual(nth_prime(2), 3)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_sixth_prime(self):
+        self.assertEqual(nth_prime(6), 13)
 
+    def test_big_prime(self):
+        self.assertEqual(nth_prime(10001), 104743)
+
+    def test_there_is_no_zeroth_prime(self):
+        with self.assertRaisesWithMessage(ValueError):
+            nth_prime(0)
+
+    # additional track specific test
+    def test_first_twenty_primes(self):
+        self.assertEqual([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31,
+                          37, 41, 43, 47, 53, 59, 61, 67, 71],
+                         [nth_prime(n) for n in range(1, 21)])
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

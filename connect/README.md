@@ -1,44 +1,118 @@
-# Connect
+import unittest
 
-Compute the result for a game of Hex / Polygon.
-
-The abstract boardgame known as
-[Hex](https://en.wikipedia.org/wiki/Hex_%28board_game%29) / Polygon /
-CON-TAC-TIX is quite simple in rules, though complex in practice. Two players
-place stones on a rhombus with hexagonal fields. The player to connect his/her
-stones to the opposite side first wins. The four sides of the rhombus are
-divided between the two players (i.e. one player gets assigned a side and the
-side directly opposite it and the other player gets assigned the two other
-sides).
-
-Your goal is to build a program that given a simple representation of a board
-computes the winner (or lack thereof). Note that all games need not be "fair".
-(For example, players may have mismatched piece counts.)
-
-The boards look like this (with spaces added for readability, which won't be in
-the representation passed to your code):
-
-```
-. O . X .
- . X X O .
-  O O O X .
-   . X O X O
-    X O O O X
-```
-
-"Player `O`" plays from top to bottom, "Player `X`" plays from left to right. In
-the above example `O` has made a connection from left to right but nobody has
-won since `O` didn't connect top and bottom.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+import connect
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+testcases = [
+    {
+        "description": "an empty board has no winner",
+        "board":
+        """ . . . . .
+             . . . . .
+              . . . . .
+               . . . . .
+                . . . . .""",
+        "winner": ""
+    },
+    {
+        "description": "O can win on a 1x1 board",
+        "board": "O",
+        "winner": "O"
+    },
+    {
+        "description": "X can win on a 1x1 board",
+        "board": "X",
+        "winner": "X"
+    },
+    {
+        "description": "only edges does not make a winner",
+        "board":
+            """ O O O X
+                 X . . X
+                  X . . X
+                   X O O O""",
+        "winner": ""
+    },
+    {
+        "description": "illegal diagonal does not make a winner",
+        "board":
+            """ X O . .
+                 O X X X
+                  O X O .
+                   . O X .
+                    X X O O""",
+        "winner": ""
+    },
+    {
+        "description": "nobody wins crossing adjacent angles",
+        "board":
+            """ X . . .
+                 . X O .
+                  O . X O
+                   . O . X
+                    . . O .""",
+        "winner": ""
+    },
+    {
+        "description": "X wins crossing from left to right",
+        "board":
+            """ . O . .
+                 O X X X
+                  O X O .
+                   X X O X
+                    . O X .""",
+        "winner": "X"
+    },
+    {
+        "description": "X wins using a convoluted path",
+        "board":
+            """ . X X . .
+                 X . X . X
+                  . X . X .
+                   . X X . .
+                    O O O O O""",
+        "winner": "X"
+    },
+    {
+        "description": "O wins crossing from top to bottom",
+        "board":
+            """ . O . .
+                 O X X X
+                  O O O .
+                   X X O X
+                    . O X .""",
+        "winner": "O"
+    },
+    {
+        "description": "X wins using a spiral path",
+        "board":
+            """ O X X X X X X X X
+                 O X O O O O O O O
+                  O X O X X X X X O
+                   O X O X O O O X O
+                    O X O X X X O X O
+                     O X O O O X O X O
+                      O X X X X X O X O
+                       O O O O O O O X O
+                        X X X X X X X X O """,
+        "winner": "X"
+    },
+]
+
+
+class ConnectTest(unittest.TestCase):
+    def test_game(self):
+        for testcase in testcases:
+            game = connect.ConnectGame(testcase["board"])
+            winner = game.get_winner()
+            expected = testcase["winner"] if testcase["winner"] else "None"
+            got = winner if winner else "None"
+            self.assertEqual(winner, testcase["winner"],
+                             "Test failed: %s, expected winner: %s, got: %s"
+                             % (testcase["description"], expected, got))
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,38 +1,90 @@
-# Phone Number
+import unittest
 
-Write a program that cleans up user-entered phone numbers so that they can be sent SMS messages.
-
-The rules are as follows:
-
-- If the phone number is less than 10 digits assume that it is bad
-  number
-- If the phone number is 10 digits assume that it is good
-- If the phone number is 11 digits and the first number is 1, trim the 1
-  and use the last 10 digits
-- If the phone number is 11 digits and the first number is not 1, then
-  it is a bad number
-- If the phone number is more than 11 digits assume that it is a bad
-  number
-
-We've provided tests, now make them pass.
-
-Hint: Only make one test pass at a time. Disable the others, then flip
-each on in turn after you get the current failing one to pass.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from phone_number import Phone
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.4.0
 
-## Source
+class PhoneTest(unittest.TestCase):
+    def test_cleans_number(self):
+        number = Phone("(223) 456-7890").number
+        self.assertEqual(number, "2234567890")
 
-Event Manager by JumpstartLab [http://tutorials.jumpstartlab.com/projects/eventmanager.html](http://tutorials.jumpstartlab.com/projects/eventmanager.html)
+    def test_cleans_number_with_dots(self):
+        number = Phone("223.456.7890").number
+        self.assertEqual(number, "2234567890")
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_cleans_number_with_multiple_spaces(self):
+        number = Phone("223 456   7890   ").number
+        self.assertEqual(number, "2234567890")
 
+    def test_invalid_when_9_digits(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("123456789")
+
+    def test_invalid_when_11_digits_and_first_not_1(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("22234567890")
+
+    def test_valid_when_11_digits_and_first_is_1(self):
+        number = Phone("12234567890").number
+        self.assertEqual(number, "2234567890")
+
+    def test_valid_when_11_digits_and_first_is_1_with_punctuation(self):
+        number = Phone("+1 (223) 456-7890").number
+        self.assertEqual(number, "2234567890")
+
+    def test_invalid_when_more_than_11_digits(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("321234567890")
+
+    def test_invalid_with_letters(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("123-abc-7890")
+
+    def test_invalid_with_punctuation(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("123-@:!-7890")
+
+    def test_invalid_if_area_code_starts_with_0(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("(023) 456-7890")
+
+    def test_invalid_if_area_code_starts_with_1(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("(123) 456-7890")
+
+    def test_invalid_if_exchange_code_starts_with_0(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("(223) 056-7890")
+
+    def test_invalid_if_exchange_code_starts_with_1(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Phone("(223) 156-7890")
+
+    # Track specific tests
+    def test_area_code(self):
+        number = Phone("2234567890")
+        self.assertEqual(number.area_code, "223")
+
+    def test_pretty_print(self):
+        number = Phone("2234567890")
+        self.assertEqual(number.pretty(), "(223) 456-7890")
+
+    def test_pretty_print_with_full_us_phone_number(self):
+        number = Phone("12234567890")
+        self.assertEqual(number.pretty(), "(223) 456-7890")
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,77 +1,54 @@
-# Kindergarten Garden
+import unittest
 
-Write a program that, given a diagram, can tell you which plants each child in the kindergarten class is responsible for.
-
-The kindergarten class is learning about growing plants. The teachers
-thought it would be a good idea to give them actual seeds, plant them in
-actual dirt, and grow actual plants.
-
-They've chosen to grow grass, clover, radishes, and violets.
-
-To this end, they've put little styrofoam cups along the window sills,
-and planted one type of plant in each cup, choosing randomly from the
-available types of seeds.
-
-```plain
-[window][window][window]
-........................ # each dot represents a styrofoam cup
-........................
-```
-
-There are 12 children in the class:
-
-- Alice, Bob, Charlie, David,
-- Eve, Fred, Ginny, Harriet,
-- Ileana, Joseph, Kincaid, and Larry.
-
-Each child gets 4 cups, two on each row. The children are assigned to
-cups in alphabetical order.
-
-The following diagram represents Alice's plants:
-
-```plain
-[window][window][window]
-VR......................
-RG......................
-```
-
-So in the row nearest the window, she has a violet and a radish; in the
-row behind that, she has a radish and some grass.
-
-Your program will be given the plants from left-to-right starting with
-the row nearest the windows. From this, it should be able to determine
-which plants belong to which students.
-
-For example, if it's told that the garden looks like so:
-
-```plain
-[window][window][window]
-VRCGVVRVCGGCCGVRGCVCGCGV
-VRCCCGCRRGVCGCRVVCVGCGCV
-```
-
-Then if asked for Alice's plants, it should provide:
-
-- Violets, radishes, violets, radishes
-
-While asking for Bob's plants would yield:
-
-- Clover, grass, clover, clover
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from kindergarten_garden import Garden
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class KindergartenGardenTests(unittest.TestCase):
+    def test_garden_with_single_student(self):
+        self.assertEqual(
+            Garden("RC\nGG").plants("Alice"),
+            "Radishes Clover Grass Grass".split())
 
-Random musings during airplane trip. [http://jumpstartlab.com](http://jumpstartlab.com)
+    def test_different_garden_with_single_student(self):
+        self.assertEqual(
+            Garden("VC\nRC").plants("Alice"),
+            "Violets Clover Radishes Clover".split())
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_garden_with_two_students(self):
+        garden = Garden("VVCG\nVVRC")
+        self.assertEqual(
+            garden.plants("Bob"), "Clover Grass Radishes Clover".split())
 
+    def test_multiple_students_for_the_same_garden_with_three_students(self):
+        garden = Garden("VVCCGG\nVVCCGG")
+        self.assertEqual(garden.plants("Bob"), ["Clover"] * 4)
+        self.assertEqual(garden.plants("Charlie"), ["Grass"] * 4)
+
+    def test_full_garden(self):
+        garden = Garden("VRCGVVRVCGGCCGVRGCVCGCGV\nVRCCCGCRRGVCGCRVVCVGCGCV")
+        self.assertEqual(
+            garden.plants("Alice"),
+            "Violets Radishes Violets Radishes".split())
+        self.assertEqual(
+            garden.plants("Bob"), "Clover Grass Clover Clover".split())
+        self.assertEqual(
+            garden.plants("Kincaid"), "Grass Clover Clover Grass".split())
+        self.assertEqual(
+            garden.plants("Larry"), "Grass Violets Clover Violets".split())
+
+    # Additional tests for this track
+    def test_disordered_test(self):
+        garden = Garden(
+            "VCRRGVRG\nRVGCCGCV",
+            students="Samantha Patricia Xander Roger".split())
+        self.assertEqual(
+            garden.plants("Patricia"),
+            "Violets Clover Radishes Violets".split())
+        self.assertEqual(
+            garden.plants("Xander"), "Radishes Grass Clover Violets".split())
+
+
+if __name__ == '__main__':
+    unittest.main()

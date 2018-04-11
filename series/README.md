@@ -1,38 +1,59 @@
-# Series
+"""Tests for the series exercise
 
-Write a program that will take a string of digits and give you all the contiguous substrings of length `n` in that string.
+Implementation note:
+The slices function should raise a ValueError with a meaningful error
+message if its length argument doesn't fit the series.
+"""
+import unittest
 
-For example, the string "49142" has the following 3-digit series:
-
-- 491
-- 914
-- 142
-
-And the following 4-digit series:
-
-- 4914
-- 9142
-
-And if you ask for a 6-digit series from a 5-digit string, you deserve
-whatever you get.
-
-Note that these series are only required to occupy *adjacent positions*
-in the input; the digits need not be *numerically consecutive*.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from series import slices
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+class SeriesTest(unittest.TestCase):
+    def test_slices_of_one(self):
+        self.assertEqual(
+            slices("01234", 1),
+            [[0], [1], [2], [3], [4]], )
 
-## Source
+    def test_slices_of_two(self):
+        self.assertEqual(
+            slices("97867564", 2),
+            [[9, 7], [7, 8], [8, 6], [6, 7], [7, 5], [5, 6], [6, 4]], )
 
-A subset of the Problem 8 at Project Euler [http://projecteuler.net/problem=8](http://projecteuler.net/problem=8)
+    def test_slices_of_three(self):
+        self.assertEqual(
+            slices("97867564", 3),
+            [[9, 7, 8], [7, 8, 6], [8, 6, 7], [6, 7, 5], [7, 5, 6], [5, 6, 4]],
+        )
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_slices_of_four(self):
+        self.assertEqual(
+            slices("01234", 4),
+            [[0, 1, 2, 3], [1, 2, 3, 4]], )
 
+    def test_slices_of_five(self):
+        self.assertEqual(
+            slices("01234", 5),
+            [[0, 1, 2, 3, 4]], )
+
+    def test_overly_long_slice(self):
+        with self.assertRaisesWithMessage(ValueError):
+            slices("012", 4)
+
+    def test_overly_short_slice(self):
+        with self.assertRaisesWithMessage(ValueError):
+            slices("01234", 0)
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

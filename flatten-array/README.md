@@ -1,30 +1,47 @@
-# Flatten Array
+import unittest
 
-Write a program that will take a nested list and returns a single list with all values except nil/null
-
-The challenge is to write a function that accepts an arbitrarily-deep nested list-like structure and returns a flattened structure without any nil/null values.
- 
-For Example
-
-input: [1,[2,3,null,4],[null],5]
-
-output: [1,2,3,4,5]
+from flatten_array import flatten
 
 
-### Submitting Exercises
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+class FlattenArrayTests(unittest.TestCase):
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_no_nesting(self):
+        self.assertEqual(flatten([0, 1, 2]), [0, 1, 2])
+
+    def test_flatten_integers(self):
+        inputs = [1, [2, 3, 4, 5, 6, 7], 8]
+        expected = [1, 2, 3, 4, 5, 6, 7, 8]
+        self.assertEqual(flatten(inputs), expected)
+
+    def test_five_level_nesting(self):
+        inputs = [0, 2, [[2, 3], 8, 100, 4, [[[50]]]], -2]
+        expected = [0, 2, 2, 3, 8, 100, 4, 50, -2]
+        self.assertEqual(flatten(inputs), expected)
+
+    def test_six_level_nesting(self):
+        inputs = [1, [2, [[3]], [4, [[5]]], 6, 7], 8]
+        expected = [1, 2, 3, 4, 5, 6, 7, 8]
+        self.assertEqual(flatten(inputs), expected)
+
+    def test_with_none_values(self):
+        inputs = [0, 2, [[2, 3], 8, [[100]], None, [[None]]], -2]
+        expected = [0, 2, 2, 3, 8, 100, -2]
+        self.assertEqual(flatten(inputs), expected)
+
+    def test_all_values_are_none(self):
+        inputs = [None, [[[None]]], None, None, [[None, None], None], None]
+        expected = []
+        self.assertEqual(flatten(inputs), expected)
+
+    # Additional tests for this track
+    def test_empty_nested_lists(self):
+        self.assertEqual(flatten([[()]]), [])
+
+    def test_strings(self):
+        self.assertEqual(flatten(['0', ['1', '2']]), ['0', '1', '2'])
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-Interview Question [https://reference.wolfram.com/language/ref/Flatten.html](https://reference.wolfram.com/language/ref/Flatten.html)
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

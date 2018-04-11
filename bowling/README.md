@@ -1,92 +1,229 @@
-# Bowling
+import unittest
 
-Score a bowling game.
-
-Bowling is a game where players roll a heavy ball to knock down pins
-arranged in a triangle. Write code to keep track of the score
-of a game of bowling.
-
-## Scoring Bowling
-
-The game consists of 10 frames. A frame is composed of one or two ball
-throws with 10 pins standing at frame initialization. There are three
-cases for the tabulation of a frame.
-
-* An open frame is where a score of less than 10 is recorded for the
-  frame. In this case the score for the frame is the number of pins
-  knocked down.
-
-* A spare is where all ten pins are knocked down by the second
-  throw. The total value of a spare is 10 plus the number of pins
-  knocked down in their next throw.
-
-* A strike is where all ten pins are knocked down by the first
-  throw. The total value of a strike is 10 plus the number of pins
-  knocked down in the next two throws. If a strike is immediately
-  followed by a second strike, then the value of the first strike
-  cannot be determined until the ball is thrown one more time.
-
-Here is a three frame example:
-
-| Frame 1         | Frame 2       | Frame 3                |
-| :-------------: |:-------------:| :---------------------:|
-| X (strike)      | 5/ (spare)    | 9 0 (open frame)       |
-
-Frame 1 is (10 + 5 + 5) = 20
-
-Frame 2 is (5 + 5 + 9) = 19
-
-Frame 3 is (9 + 0) = 9
-
-This means the current running total is 48.
-
-The tenth frame in the game is a special case. If someone throws a
-strike or a spare then they get a fill ball. Fill balls exist to
-calculate the total of the 10th frame. Scoring a strike or spare on
-the fill ball does not give the player more fill balls. The total
-value of the 10th frame is the total number of pins knocked down.
-
-For a tenth frame of X1/ (strike and a spare), the total value is 20.
-
-For a tenth frame of XXX (three strikes), the total value is 30.
-
-## Requirements
-
-Write code to keep track of the score of a game of bowling. It should
-support two operations:
-
-* `roll(pins : int)` is called each time the player rolls a ball.  The
-  argument is the number of pins knocked down.
-* `score() : int` is called only at the very end of the game.  It
-  returns the total score for that game.
-
-## Exception messages
-
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
-
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you shold write:
-
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+from bowling import BowlingGame
 
 
-## Submitting Exercises
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+class BowlingTests(unittest.TestCase):
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def roll(self, rolls):
+        [self.game.roll(roll) for roll in rolls]
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+    def roll_and_score(self, rolls):
+        self.roll(rolls)
+        return self.game.score()
 
-## Source
+    def test_should_be_able_to_score_a_game_with_all_zeros(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-The Bowling Game Kata at but UncleBob [http://butunclebob.com/ArticleS.UncleBob.TheBowlingGameKata](http://butunclebob.com/ArticleS.UncleBob.TheBowlingGameKata)
+        score = self.roll_and_score(rolls)
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+        self.assertEqual(score, 0)
+
+    def test_should_be_able_to_score_a_game_with_no_strikes_or_spares(self):
+        rolls = [3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 90)
+
+    def test_a_spare_follow_by_zeros_is_worth_ten_points(self):
+        rolls = [6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 10)
+
+    def test_points_scored_in_the_roll_after_a_spare_are_counted_twice(self):
+        rolls = [6, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 16)
+
+    def test_consecutive_spares_each_get_a_one_roll_bonus(self):
+        rolls = [5, 5, 3, 7, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 31)
+
+    def test_last_frame_spare_gets_bonus_roll_that_is_counted_twice(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 3, 7]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 17)
+
+    def test_a_strike_earns_ten_points_in_a_frame_with_a_single_roll(self):
+        rolls = [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 10)
+
+    def test_two_rolls_points_after_strike_are_counted_twice(self):
+        rolls = [10, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 26)
+
+    def test_consecutive_stikes_each_get_the_two_roll_bonus(self):
+        rolls = [10, 10, 10, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 81)
+
+    def test_strike_in_last_frame_gets_two_roll_bonus_counted_once(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 10, 7, 1]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 18)
+
+    def test_rolling_spare_with_bonus_roll_does_not_get_bonus(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 0, 10, 7, 3]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 20)
+
+    def test_strikes_with_the_two_bonus_rolls_do_not_get_bonus_rolls(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10,
+                 10, 10]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 30)
+
+    def test_strike_with_bonus_after_spare_in_last_frame_gets_no_bonus(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+                 3, 10]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 20)
+
+    def test_all_strikes_is_a_perfect_game(self):
+        rolls = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 300)
+
+    def test_rolls_cannot_score_negative_points(self):
+
+        with self.assertRaisesWithMessage(ValueError):
+            self.game.roll(-1)
+
+    def test_a_roll_cannot_score_more_than_10_points(self):
+
+        with self.assertRaisesWithMessage(ValueError):
+            self.game.roll(11)
+
+    def test_two_rolls_in_a_frame_cannot_score_more_than_10_points(self):
+        self.game.roll(5)
+
+        with self.assertRaisesWithMessage(ValueError):
+            self.game.roll(6)
+
+    def test_bonus_after_strike_in_last_frame_cannot_score_more_than_10(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(ValueError):
+            self.game.roll(11)
+
+    def test_bonus_aft_last_frame_strk_can_be_more_than_10_if_1_is_strk(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10,
+                 10, 6]
+
+        score = self.roll_and_score(rolls)
+
+        self.assertEqual(score, 26)
+
+    def test_bonus_aft_last_frame_strk_cnt_be_strk_if_first_is_not_strk(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 6]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(ValueError):
+            self.game.roll(10)
+
+    def test_an_incomplete_game_cannot_be_scored(self):
+        rolls = [0, 0]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(IndexError):
+            self.game.score()
+
+    def test_cannot_roll_if_there_are_already_ten_frames(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(IndexError):
+            self.game.roll(0)
+
+    def test_bonus_rolls_for_strike_must_be_rolled_before_score_is_calc(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(IndexError):
+            self.game.score()
+
+    def test_both_bonuses_for_strike_must_be_rolled_before_score(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(IndexError):
+            self.game.score()
+
+    def test_bonus_rolls_for_spare_must_be_rolled_before_score_is_calc(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 3]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(IndexError):
+            self.game.score()
+
+    def test_cannot_roll_after_bonus_roll_for_spare(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 3, 2]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(IndexError):
+            self.game.roll(2)
+
+    def test_cannot_roll_after_bonus_rolls_for_strike(self):
+        rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10,
+                 3, 2]
+
+        self.roll(rolls)
+
+        with self.assertRaisesWithMessage(IndexError):
+            self.game.roll(2)
+
+    # Utility functions
+    def setUp(self):
+        self.game = BowlingGame()
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

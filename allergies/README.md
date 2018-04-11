@@ -1,49 +1,70 @@
-# Allergies
+import unittest
 
-Write a program that, given a person's allergy score, can tell them whether or not they're allergic to a given item, and their full list of allergies.
+from allergies import Allergies
 
-An allergy test produces a single numeric score which contains the
-information about all the allergies the person has (that they were
-tested for).
-
-The list of items (and their value) that were tested are:
-
-* eggs (1)
-* peanuts (2)
-* shellfish (4)
-* strawberries (8)
-* tomatoes (16)
-* chocolate (32)
-* pollen (64)
-* cats (128)
-
-So if Tom is allergic to peanuts and chocolate, he gets a score of 34.
-
-Now, given just that score of 34, your program should be able to say:
-
-- Whether Tom is allergic to any one of those allergens listed above.
-- All the allergens Tom is allergic to.
-
-Note: a given score may include allergens **not** listed above (i.e.
-allergens that score 256, 512, 1024, etc.).  Your program should
-ignore those components of the score.  For example, if the allergy
-score is 257, your program should only report the eggs (1) allergy.
+# Python 2/3 compatibility
+if not hasattr(unittest.TestCase, 'assertCountEqual'):
+    unittest.TestCase.assertCountEqual = unittest.TestCase.assertItemsEqual
 
 
-### Submitting Exercises
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+class AllergiesTests(unittest.TestCase):
+    def test_no_allergies_means_not_allergic(self):
+        allergies = Allergies(0)
+        self.assertIs(allergies.is_allergic_to('peanuts'), False)
+        self.assertIs(allergies.is_allergic_to('cats'), False)
+        self.assertIs(allergies.is_allergic_to('strawberries'), False)
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_is_allergic_to_eggs(self):
+        self.assertIs(Allergies(1).is_allergic_to('eggs'), True)
+
+    def test_allergic_to_eggs_in_addition_to_other_stuff(self):
+        allergies = Allergies(5)
+        self.assertIs(allergies.is_allergic_to('eggs'), True)
+        self.assertIs(allergies.is_allergic_to('shellfish'), True)
+        self.assertIs(allergies.is_allergic_to('strawberries'), False)
+
+    def test_no_allergies_at_all(self):
+        self.assertEqual(Allergies(0).lst, [])
+
+    def test_allergic_to_just_eggs(self):
+        self.assertEqual(Allergies(1).lst, ['eggs'])
+
+    def test_allergic_to_just_peanuts(self):
+        self.assertEqual(Allergies(2).lst, ['peanuts'])
+
+    def test_allergic_to_just_strawberries(self):
+        self.assertEqual(Allergies(8).lst, ['strawberries'])
+
+    def test_allergic_to_eggs_and_peanuts(self):
+        self.assertCountEqual(Allergies(3).lst, ['eggs', 'peanuts'])
+
+    def test_allergic_to_more_than_eggs_but_not_peanuts(self):
+        self.assertCountEqual(Allergies(5).lst, ['eggs', 'shellfish'])
+
+    def test_allergic_to_lots_of_stuff(self):
+        self.assertCountEqual(
+            Allergies(248).lst,
+            ['strawberries', 'tomatoes', 'chocolate', 'pollen', 'cats'])
+
+    def test_allergic_to_everything(self):
+        self.assertCountEqual(
+            Allergies(255).lst, [
+                'eggs', 'peanuts', 'shellfish', 'strawberries', 'tomatoes',
+                'chocolate', 'pollen', 'cats'
+            ])
+
+    def test_ignore_non_allergen_score_parts_only_eggs(self):
+        self.assertEqual(Allergies(257).lst, ['eggs'])
+
+    def test_ignore_non_allergen_score_parts(self):
+        self.assertCountEqual(
+            Allergies(509).lst, [
+                'eggs', 'shellfish', 'strawberries', 'tomatoes', 'chocolate',
+                'pollen', 'cats'
+            ])
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-Jumpstart Lab Warm-up [http://jumpstartlab.com](http://jumpstartlab.com)
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

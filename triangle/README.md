@@ -1,50 +1,66 @@
-# Triangle
+import unittest
 
-Write a program that can tell you if a triangle is equilateral, isosceles, or scalene.
-
-The program should raise an error if the triangle cannot exist.
-
-## Hint
-
-The triangle inequality theorem states:
-z ≤ x + y
-where x,y, and z are the lengths of the sides of a triangle. In other words, the
-sum of the lengths of any two sides of a triangle always exceeds or is equal to
-the length of the third side.
-
-A corollary to the triangle inequality theorem is there are two classes of
-triangles--degenerate and non-degenerate. If the sum of the lengths of any two
-sides of a triangle is greater than the length of the third side, that triangle
-is two dimensional, has area, and belongs to the non-degenerate class. In
-mathematics, a degenerate case is a limiting case in which an element of a class
-of objects is qualitatively different from the rest of the class and hence
-belongs to another, usually simpler, class. The degenerate case of the triangle
-inequality theorem is when the sum of the lengths of any two sides of a triangle
-is equal to the length of the third side. A triangle with such qualities is
-qualitatively different from all the triangles in the non-degenerate class since
-it is one dimensional, looks like a straight line, and has no area. Such
-triangles are called degenerate triangles and they belong to the degenerate
-class.
-
-## Dig Deeper
-
-This exercise does not test for degenerate triangles. Feel free to add your own
-tests to check for degenerate triangles.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from triangle import is_equilateral, is_isosceles, is_scalene
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class is_equilateralTests(unittest.TestCase):
+    def test_true_if_all_sides_are_equal(self):
+        self.assertIs(is_equilateral([2, 2, 2]), True)
 
-The Ruby Koans triangle project, parts 1 & 2 [http://rubykoans.com](http://rubykoans.com)
+    def test_false_if_any_side_is_unequal(self):
+        self.assertIs(is_equilateral([2, 3, 2]), False)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_false_if_no_sides_are_equal(self):
+        self.assertIs(is_equilateral([5, 4, 6]), False)
 
+    def test_false_if_all_sides_are_zero(self):
+        self.assertIs(is_equilateral([0, 0, 0]), False)
+
+    def test_sides_may_be_floats(self):
+        self.assertIs(is_equilateral([0.5, 0.5, 0.5]), True)
+
+
+class is_isoscelesTests(unittest.TestCase):
+    def test_true_if_last_two_sides_are_equal(self):
+        self.assertIs(is_isosceles([3, 4, 4]), True)
+
+    def test_true_if_first_two_sides_are_equal(self):
+        self.assertIs(is_isosceles([4, 4, 3]), True)
+
+    def test_true_if_first_and_last_sides_are_equal(self):
+        self.assertIs(is_isosceles([4, 3, 4]), True)
+
+    def test_is_equilateral_triangles_are_also_is_isosceles(self):
+        self.assertIs(is_isosceles([4, 4, 4]), True)
+
+    def test_false_if_no_sides_are_equal(self):
+        self.assertIs(is_isosceles([2, 3, 4]), False)
+
+    def test_violation_of_triangle_inequality_not_is_isosceles(self):
+        self.assertIs(is_isosceles([1, 1, 3]), False)
+
+    def test_sides_may_be_floats(self):
+        self.assertIs(is_isosceles([0.5, 0.4, 0.5]), True)
+
+
+class is_scaleneTests(unittest.TestCase):
+    def test_true_if_no_sides_are_equal(self):
+        self.assertIs(is_scalene([5, 4, 6]), True)
+
+    def test_false_if_all_sides_are_equal(self):
+        self.assertIs(is_scalene([4, 4, 4]), False)
+
+    def test_false_if_two_sides_are_equal(self):
+        self.assertIs(is_scalene([4, 4, 3]), False)
+
+    def test_violation_of_triangle_inequality_not_is_scalene(self):
+        self.assertIs(is_scalene([7, 3, 2]), False)
+
+    def test_sides_may_be_floats(self):
+        self.assertIs(is_scalene([0.5, 0.4, 0.6]), True)
+
+
+if __name__ == '__main__':
+    unittest.main()

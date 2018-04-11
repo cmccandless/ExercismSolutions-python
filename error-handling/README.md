@@ -1,31 +1,88 @@
-# Error Handling
+import unittest
 
-Implement various kinds of error handling and resource management.
+import error_handling as er
 
-An important point of programming is how to handle errors and close
-resources even if errors occur.
 
-This exercise requires you to handle various errors. Because error handling
-is rather programming language specific you'll have to refer to the tests
-for your track to see what's exactly required.
+class FileLike(object):
+    def __init__(self, fail_something=True):
+        self.is_open = False
+        self.was_open = False
+        self.did_something = False
+        self.fail_something = fail_something
 
-## Hints
+    def open(self):
+        self.was_open = False
+        self.is_open = True
 
-For the `filelike_objects_are_closed_on_exception` function, the `filelike_object`
-will be an instance of a custom `FileLike` class defined in the test suite. This
-class implements the following methods:
-- `open` and `close`, for explicit opening and closing.
-- `__enter__` and `__exit__`, for implicit opening and closing.
-- `do_something`, which may or may not throw an `Exception`.
+    def close(self):
+        self.is_open = False
+        self.was_open = True
 
-## Submitting Exercises
+    def __enter__(self):
+        self.open()
+        return self
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def __exit__(self, *args):
+        self.close()
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def do_something(self):
+        self.did_something = True
+        if self.fail_something:
+            raise Exception("Failed while doing something")
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+class ErrorHandlingTest(unittest.TestCase):
+    def test_throw_exception(self):
+        with self.assertRaisesWithMessage(Exception):
+            er.handle_error_by_throwing_exception()
+
+    def test_return_none(self):
+        self.assertEqual(er.handle_error_by_returning_none('1'), 1,
+                         'Result of valid input should not be None')
+        self.assertIsNone(er.handle_error_by_returning_none('a'),
+                          'Result of invalid input should be None')
+
+    def test_return_tuple(self):
+        successful_result, result = er.handle_error_by_returning_tuple('1')
+        self.assertIs(successful_result, True,
+                      'Valid input should be successful')
+        self.assertEqual(result, 1, 'Result of valid input should not be None')
+
+        failure_result, result = er.handle_error_by_returning_tuple('a')
+        self.assertIs(failure_result, False,
+                      'Invalid input should not be successful')
+
+    def test_filelike_objects_are_closed_on_exception(self):
+        filelike_object = FileLike(fail_something=True)
+        with self.assertRaisesWithMessage(Exception):
+            er.filelike_objects_are_closed_on_exception(filelike_object)
+        self.assertIs(filelike_object.is_open, False,
+                      'filelike_object should be closed')
+        self.assertIs(filelike_object.was_open, True,
+                      'filelike_object should have been opened')
+        self.assertIs(filelike_object.did_something, True,
+                      'filelike_object should call do_something()')
+
+    def test_filelike_objects_are_closed_without_exception(self):
+        filelike_object = FileLike(fail_something=False)
+        er.filelike_objects_are_closed_on_exception(filelike_object)
+        self.assertIs(filelike_object.is_open, False,
+                      'filelike_object should be closed')
+        self.assertIs(filelike_object.was_open, True,
+                      'filelike_object should have been opened')
+        self.assertIs(filelike_object.did_something, True,
+                      'filelike_object should call do_something()')
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

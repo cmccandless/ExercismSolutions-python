@@ -1,53 +1,211 @@
-# POV
+import unittest
 
-Reparent a graph on a selected node.
-
-### Tree Reparenting
-
-This exercise is all about re-orientating a graph to see things from a different
-point of view. For example family trees are usually presented from the
-ancestor's perspective:
-
-```text
-    +------0------+
-    |      |      |
-  +-1-+  +-2-+  +-3-+
-  |   |  |   |  |   |
-  4   5  6   7  8   9
-```
-
-But the same information can be presented from the perspective of any other node
-in the graph, by pulling it up to the root and dragging its relationships along
-with it. So the same graph from 6's perspective would look like:
-
-```text
-        6
-        |
-  +-----2-----+
-  |           |
-  7     +-----0-----+
-        |           |
-      +-1-+       +-3-+
-      |   |       |   |
-      4   5       8   9
-```
-
-This lets us more simply describe the paths between two nodes. So for example
-the path from 6-9 (which in the first graph goes up to the root and then down to
-a different leaf node) can be seen to follow the path 6-2-0-3-9
-
-This exercise involves taking an input graph and re-orientating it from the point
-of view of one of the nodes.
-
-## Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from pov import Tree
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+class PovTest(unittest.TestCase):
+
+    def test_singleton_returns_same_tree(self):
+        tree = Tree('x')
+        self.assertTreeEquals(tree.from_pov('x'), tree)
+
+    def test_can_reroot_tree_with_parent_and_one_sibling(self):
+        tree = Tree('parent', [
+            Tree('x'),
+            Tree('sibling')
+        ])
+        expected = Tree('x', [
+            Tree('parent', [
+                Tree('sibling')
+            ])
+        ])
+        self.assertTreeEquals(tree.from_pov('x'), expected)
+
+    def test_can_reroot_tree_with_parent_and_many_siblings(self):
+        tree = Tree('parent', [
+            Tree('a'),
+            Tree('x'),
+            Tree('b'),
+            Tree('c')
+        ])
+        expected = Tree('x', [
+            Tree('parent', [
+                Tree('a'),
+                Tree('b'),
+                Tree('c')
+            ])
+        ])
+        self.assertTreeEquals(tree.from_pov('x'), expected)
+
+    def test_can_reroot_a_tree_with_new_root_deeply_nested(self):
+        tree = Tree('level-0', [
+            Tree('level-1', [
+                Tree('level-2', [
+                    Tree('level-3', [
+                        Tree('x')
+                    ])
+                ])
+            ])
+        ])
+        expected = Tree('x', [
+            Tree('level-3', [
+                Tree('level-2', [
+                    Tree('level-1', [
+                        Tree('level-0')
+                    ])
+                ])
+            ])
+        ])
+        self.assertTreeEquals(tree.from_pov('x'), expected)
+
+    def test_moves_children_of_new_root_to_same_level_as_former_parent(self):
+        tree = Tree('parent', [
+            Tree('x', [
+                Tree('kid-0'),
+                Tree('kid-1')
+            ])
+        ])
+        expected = Tree('x', [
+            Tree('parent'),
+            Tree('kid-0'),
+            Tree('kid-1')
+        ])
+        self.assertTreeEquals(tree.from_pov('x'), expected)
+
+    def test_can_reroot_complex_tree_with_cousins(self):
+        tree = Tree('grandparent', [
+            Tree('parent', [
+                Tree('x', [
+                    Tree('kid-0'),
+                    Tree('kid-1')
+                ]),
+                Tree('sibling-0'),
+                Tree('sibling-1')
+            ]),
+            Tree('uncle', [
+                Tree('cousin-0'),
+                Tree('cousin-1')
+            ])
+        ])
+        expected = Tree('x', [
+            Tree('kid-0'),
+            Tree('kid-1'),
+            Tree('parent', [
+                Tree('sibling-0'),
+                Tree('sibling-1'),
+                Tree('grandparent', [
+                    Tree('uncle', [
+                        Tree('cousin-0'),
+                        Tree('cousin-1')
+                    ])
+                ])
+            ])
+        ])
+        self.assertTreeEquals(tree.from_pov('x'), expected)
+
+    def test_errors_if_target_does_not_exist_in_singleton_tree(self):
+        tree = Tree('x')
+        with self.assertRaisesWithMessage(ValueError):
+            tree.from_pov('nonexistent')
+
+    def test_errors_if_target_does_not_exist_in_large_tree(self):
+        tree = Tree('parent', [
+            Tree('x', [
+                Tree('kid-0'),
+                Tree('kid-1')
+            ]),
+            Tree('sibling-0'),
+            Tree('sibling-1')
+        ])
+        with self.assertRaisesWithMessage(ValueError):
+            tree.from_pov('nonexistent')
+
+    def test_find_path_between_two_nodes(self):
+        tree = Tree('parent', [
+            Tree('x'),
+            Tree('sibling')
+        ])
+        expected = ['x', 'parent']
+        self.assertEqual(tree.path_to('x', 'parent'), expected)
+
+    def test_can_find_path_to_sibling(self):
+        tree = Tree('parent', [
+            Tree('a'),
+            Tree('x'),
+            Tree('b'),
+            Tree('c')
+        ])
+        expected = ['x', 'parent', 'b']
+        self.assertEqual(tree.path_to('x', 'b'), expected)
+
+    def test_can_find_path_to_cousin(self):
+        tree = Tree('grandparent', [
+            Tree('parent', [
+                Tree('x', [
+                    Tree('kid-0'),
+                    Tree('kid-1')
+                ]),
+                Tree('sibling-0'),
+                Tree('sibling-1')
+            ]),
+            Tree('uncle', [
+                Tree('cousin-0'),
+                Tree('cousin-1')
+            ])
+        ])
+        expected = ['x', 'parent', 'grandparent', 'uncle', 'cousin-1']
+        self.assertEqual(tree.path_to('x', 'cousin-1'), expected)
+
+    def test_can_find_path_from_nodes_other_than_x(self):
+        tree = Tree('parent', [
+            Tree('a'),
+            Tree('x'),
+            Tree('b'),
+            Tree('c')
+        ])
+        expected = ['a', 'parent', 'c']
+        self.assertEqual(tree.path_to('a', 'c'), expected)
+
+    def test_errors_if_destination_does_not_exist(self):
+        tree = Tree('parent', [
+            Tree('x', [
+                Tree('kid-0'),
+                Tree('kid-1')
+            ]),
+            Tree('sibling-0'),
+            Tree('sibling-1')
+        ])
+        with self.assertRaisesWithMessage(ValueError):
+            tree.path_to('x', 'nonexistent')
+
+    def test_errors_if_source_does_not_exist(self):
+        tree = Tree('parent', [
+            Tree('x', [
+                Tree('kid-0'),
+                Tree('kid-1')
+            ]),
+            Tree('sibling-0'),
+            Tree('sibling-1')
+        ])
+        with self.assertRaisesWithMessage(ValueError):
+            tree.path_to('nonexistent', 'x')
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+    def assertTreeEquals(self, result, expected):
+        self.assertEqual(result, expected,
+                         '{} != {}'.format(result, expected))
+
+
+if __name__ == '__main__':
+    unittest.main()

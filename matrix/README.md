@@ -1,56 +1,43 @@
-# Matrix
+import unittest
 
-Write a program that, given a string representing a matrix of numbers, can return the rows and columns of that matrix.
-
-So given a string with embedded newlines like:
-
-> 9 8 7
-> 5 3 2
-> 6 6 7
-
-representing this matrix:
-
-```plain
-    0  1  2
-  |---------
-0 | 9  8  7
-1 | 5  3  2
-2 | 6  6  7
-```
-
-your code should be able to spit out:
-
-- A list of the rows, reading each row left-to-right while moving
-  top-to-bottom across the rows,
-- A list of the columns, reading each column top-to-bottom while moving
-  from left-to-right.
-
-The rows for our example matrix:
-
-- 9, 8, 7
-- 5, 3, 2
-- 6, 6, 7
-
-And its columns:
-
-- 9, 5, 6
-- 8, 3, 6
-- 7, 2, 7
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from matrix import Matrix
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-## Source
+class MatrixTest(unittest.TestCase):
+    def test_extract_row_from_one_number_matrix(self):
+        matrix = Matrix("1")
+        self.assertEqual(matrix.row(0), [1])
 
-Warmup to the `saddle-points` warmup. [http://jumpstartlab.com](http://jumpstartlab.com)
+    def test_can_extract_row(self):
+        matrix = Matrix("1 2\n3 4")
+        self.assertEqual(matrix.row(1), [3, 4])
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_extract_row_where_numbers_have_different_widths(self):
+        matrix = Matrix("1 2\n10 20")
+        self.assertEqual(matrix.row(1), [10, 20])
 
+    def test_can_extract_row_from_non_square_matrix(self):
+        matrix = Matrix("1 2 3\n4 5 6\n7 8 9\n8 7 6")
+        self.assertEqual(matrix.row(2), [7, 8, 9])
+
+    def test_extract_column_from_one_number_matrix(self):
+        matrix = Matrix("1")
+        self.assertEqual(matrix.column(0), [1])
+
+    def test_can_extract_column(self):
+        matrix = Matrix("1 2 3\n4 5 6\n7 8 9")
+        self.assertEqual(matrix.column(2), [3, 6, 9])
+
+    def test_can_extract_column_from_non_square_matrix(self):
+        matrix = Matrix("1 2 3\n4 5 6\n7 8 9\n8 7 6")
+        self.assertEqual(matrix.column(2), [3, 6, 9, 6])
+
+    def test_extract_column_where_numbers_have_different_widths(self):
+        matrix = Matrix("89 1903 3\n18 3 1\n9 4 800")
+        self.assertEqual(matrix.column(1), [1903, 3, 4])
+
+
+if __name__ == '__main__':
+    unittest.main()

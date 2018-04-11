@@ -1,31 +1,44 @@
-# Isogram
+import unittest
 
-Determine if a word or phrase is an isogram.
-
-An isogram (also known as a "nonpattern word") is a word or phrase without a repeating letter.
-
-Examples of isograms:
-
-- lumberjacks
-- background
-- downstream
-
-The word *isograms*, however, is not an isogram, because the s repeats.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from isogram import is_isogram
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-## Source
+class TestIsogram(unittest.TestCase):
 
-Wikipedia [https://en.wikipedia.org/wiki/Isogram](https://en.wikipedia.org/wiki/Isogram)
+    def test_empty_string(self):
+        self.assertIs(is_isogram(""), True)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_isogram_with_only_lower_case_characters(self):
+        self.assertIs(is_isogram("isogram"), True)
 
+    def test_word_with_one_duplicated_character(self):
+        self.assertIs(is_isogram("eleven"), False)
+
+    def test_longest_reported_english_isogram(self):
+        self.assertIs(is_isogram("subdermatoglyphic"), True)
+
+    def test_word_with_duplicated_character_in_mixed_case(self):
+        self.assertIs(is_isogram("Alphabet"), False)
+
+    def test_hypothetical_isogrammic_word_with_hyphen(self):
+        self.assertIs(is_isogram("thumbscrew-japingly"), True)
+
+    def test_isogram_with_duplicated_hyphen(self):
+        self.assertIs(is_isogram("six-year-old"), True)
+
+    def test_made_up_name_that_is_an_isogram(self):
+        self.assertIs(is_isogram("Emily Jung Schwartzkopf"), True)
+
+    def test_duplicated_character_in_the_middle(self):
+        self.assertIs(is_isogram("accentor"), False)
+
+    # Additional tests for this track
+
+    def test_isogram_with_duplicated_letter_and_nonletter_character(self):
+        self.assertIs(is_isogram("Aleph Bot Chap"), False)
+
+
+if __name__ == '__main__':
+    unittest.main()

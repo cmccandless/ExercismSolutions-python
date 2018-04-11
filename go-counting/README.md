@@ -1,44 +1,99 @@
-# Go Counting
+import unittest
+import go_counting
 
-Count the scored points on a Go board.
 
-In the game of go (also known as baduk, igo, cờ vây and wéiqí) points
-are gained by completely encircling empty intersections with your
-stones. The encircled intersections of a player are known as its
-territory.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-Write a function that determines the territory of each player. You may
-assume that any stones that have been stranded in enemy territory have
-already been taken off the board.
+board5x5 = [
+    "  B  ",
+    " B B ",
+    "B W B",
+    " W W ",
+    "  W  "
+]
 
-Multiple empty intersections may be encircled at once and for encircling
-only horizontal and vertical neighbours count. In the following diagram
-the stones which matter are marked "O" and the stones that don't are
-marked "I" (ignored).  Empty spaces represent empty intersections.
 
-```
-+----+
-|IOOI|
-|O  O|
-|O OI|
-|IOI |
-+----+
-```
+class GoCountingTest(unittest.TestCase):
+    def test_black_corner_territory_on_5x5_board(self):
+        board = go_counting.Board(board5x5)
+        stone, territory = board.territory(x=0, y=1)
+        self.assertEqual(stone, go_counting.BLACK)
+        self.assertSetEqual(territory, {(0, 0), (0, 1), (1, 0)})
 
-To be more precise an empty intersection is part of a player's territory
-if all of its neighbours are either stones of that player or empty
-intersections that are part of that player's territory.
+    def test_white_center_territory_on_5x5_board(self):
+        board = go_counting.Board(board5x5)
+        stone, territory = board.territory(x=2, y=3)
+        self.assertEqual(stone, go_counting.WHITE)
+        self.assertSetEqual(territory, {(2, 3)})
 
-For more information see
-[wikipedia](https://en.wikipedia.org/wiki/Go_%28game%29) or [Sensei's
-Library](http://senseis.xmp.net/).
+    def test_open_corner_territory_on_5x5_board(self):
+        board = go_counting.Board(board5x5)
+        stone, territory = board.territory(x=1, y=4)
+        self.assertEqual(stone, go_counting.NONE)
+        self.assertSetEqual(territory, {(0, 3), (0, 4), (1, 4)})
 
-## Submitting Exercises
+    def test_a_stone_and_not_a_territory_on_5x5_board(self):
+        board = go_counting.Board(board5x5)
+        stone, territory = board.territory(x=1, y=1)
+        self.assertEqual(stone, go_counting.NONE)
+        self.assertSetEqual(territory, set())
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_invalid_because_x_is_too_low(self):
+        board = go_counting.Board(board5x5)
+        with self.assertRaisesWithMessage(ValueError):
+            board.territory(x=-1, y=1)
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_invalid_because_x_is_too_high(self):
+        board = go_counting.Board(board5x5)
+        with self.assertRaisesWithMessage(ValueError):
+            board.territory(x=5, y=1)
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the
-exercise.
+    def test_invalid_because_y_is_too_low(self):
+        board = go_counting.Board(board5x5)
+        with self.assertRaisesWithMessage(ValueError):
+            board.territory(x=1, y=-1)
+
+    def test_invalid_because_y_is_too_high(self):
+        board = go_counting.Board(board5x5)
+        with self.assertRaisesWithMessage(ValueError):
+            board.territory(x=1, y=5)
+
+    def test_one_territory_is_the_whole_board(self):
+        board = go_counting.Board([" "])
+        territories = board.territories()
+        self.assertSetEqual(territories[go_counting.BLACK], set())
+        self.assertSetEqual(territories[go_counting.WHITE], set())
+        self.assertSetEqual(territories[go_counting.NONE], {(0, 0)})
+
+    def test_two_territories_rectangular_board(self):
+        input_board = [
+            " BW ",
+            " BW "
+        ]
+        board = go_counting.Board(input_board)
+        territories = board.territories()
+        self.assertSetEqual(territories[go_counting.BLACK], {(0, 0), (0, 1)})
+        self.assertSetEqual(territories[go_counting.WHITE], {(3, 0), (3, 1)})
+        self.assertSetEqual(territories[go_counting.NONE], set())
+
+    def test_two_region_rectangular_board(self):
+        input_board = [" B "]
+        board = go_counting.Board(input_board)
+        territories = board.territories()
+        self.assertSetEqual(territories[go_counting.BLACK], {(0, 0), (2, 0)})
+        self.assertSetEqual(territories[go_counting.WHITE], set())
+        self.assertSetEqual(territories[go_counting.NONE], set())
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

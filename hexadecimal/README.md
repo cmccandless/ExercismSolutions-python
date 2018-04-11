@@ -1,26 +1,53 @@
-# Hexadecimal
+# To avoid trivial solutions, try to solve this problem without the
+# function int(s, base=16)
 
-Write a program that will convert a hexadecimal number, represented as a string (e.g. "10af8c"), to its decimal equivalent using first principles (i.e. no, you may not use built-in or external libraries to accomplish the conversion).
+import unittest
 
-On the web we use hexadecimal to represent colors, e.g. green: 008000,
-teal: 008080, navy: 000080).
-
-The program should handle invalid hexadecimal strings.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from hexadecimal import hexa
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+class HexadecimalTest(unittest.TestCase):
+    def test_valid_hexa1(self):
+        self.assertEqual(hexa('1'), 1)
 
-## Source
+    def test_valid_hexa2(self):
+        self.assertEqual(hexa('c'), 12)
 
-All of Computer Science [http://www.wolframalpha.com/examples/NumberBases.html](http://www.wolframalpha.com/examples/NumberBases.html)
+    def test_valid_hexa3(self):
+        self.assertEqual(hexa('10'), 16)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_valid_hexa4(self):
+        self.assertEqual(hexa('af'), 175)
 
+    def test_valid_hexa5(self):
+        self.assertEqual(hexa('100'), 256)
+
+    def test_valid_hexa6(self):
+        self.assertEqual(hexa('19ACE'), 105166)
+
+    def test_valid_hexa7(self):
+        self.assertEqual(hexa('000000'), 0)
+
+    def test_valid_hexa8(self):
+        self.assertEqual(hexa('ffff00'), 16776960)
+
+    def test_valid_hexa9(self):
+        self.assertEqual(hexa('00fff0'), 65520)
+
+    def test_invalid_hexa(self):
+        with self.assertRaisesWithMessage(ValueError):
+            hexa('carrot')
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

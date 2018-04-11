@@ -1,45 +1,23 @@
-# Leap
+import unittest
 
-Write a program that will take a year and report if it is a leap year.
-
-The tricky thing here is that a leap year in the Gregorian calendar occurs:
-
-```plain
-on every year that is evenly divisible by 4
-  except every year that is evenly divisible by 100
-    unless the year is also evenly divisible by 400
-```
-
-For example, 1997 is not a leap year, but 1996 is.  1900 is not a leap
-year, but 2000 is.
-
-If your language provides a method in the standard library that does
-this look-up, pretend it doesn't exist and implement it yourself.
-
-## Notes
-
-Though our exercise adopts some very simple rules, there is more to
-learn!
-
-For a delightful, four minute explanation of the whole leap year
-phenomenon, go watch [this youtube video][video].
-
-[video]: http://www.youtube.com/watch?v=xX96xng7sAE
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from leap import is_leap_year
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
 
-## Source
+class YearTest(unittest.TestCase):
+    def test_year_not_divisible_by_4(self):
+        self.assertIs(is_leap_year(2015), False)
 
-JavaRanch Cattle Drive, exercise 3 [http://www.javaranch.com/leap.jsp](http://www.javaranch.com/leap.jsp)
+    def test_year_divisible_by_4_not_divisible_by_100(self):
+        self.assertIs(is_leap_year(1996), True)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_year_divisible_by_100_not_divisible_by_400(self):
+        self.assertIs(is_leap_year(2100), False)
 
+    def test_year_divisible_by_400(self):
+        self.assertIs(is_leap_year(2000), True)
+
+
+if __name__ == '__main__':
+    unittest.main()

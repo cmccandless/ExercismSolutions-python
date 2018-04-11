@@ -1,75 +1,61 @@
-# Luhn
+# -*- coding: utf-8 -*-
 
-Write a program that can take a number and determine whether or not it is valid per the Luhn formula.
+import unittest
 
-The Luhn formula is a simple checksum formula used to validate a variety
-of identification numbers, such as credit card numbers and Canadian
-Social Insurance Numbers.
-
-The formula verifies a number against its included check digit, which is
-usually appended to a partial number to generate the full number. This
-number must pass the following test:
-
-- Counting from rightmost digit (which is the check digit) and moving
-  left, double the value of every second digit.
-- For any digits that thus become 10 or more, subtract 9 from the
-  result.
-  - 1111 becomes 2121.
-  - 8763 becomes 7733 (from 2×6=12 → 12-9=3 and 2×8=16 → 16-9=7).
-- Add all these digits together.
-  - 1111 becomes 2121 sums as 2+1+2+1 to give a check digit of 6.
-  - 8763 becomes 7733, and 7+7+3+3 is 20.
-
-If the total ends in 0 (put another way, if the total modulus 10 is
-congruent to 0), then the number is valid according to the Luhn formula;
-else it is not valid. So, 1111 is not valid (as shown above, it comes
-out to 6), while 8763 is valid (as shown above, it comes out to 20).
-
-Write a program that, given a number
-
-- Can check if it is valid per the Luhn formula. This should treat, for
-  example, "2323 2005 7766 3554" as valid.
-- Can return the checksum, or the remainder from using the Luhn method.
-- Can add a check digit to make the number valid per the Luhn formula and
-  return the original number plus that digit. This should give "2323 2005 7766
-  3554" in response to "2323 2005 7766 355".
-
-## About Checksums
-
-A checksum has to do with error-detection. There are a number of different
-ways in which a checksum could be calculated.
-
-When transmitting data, you might also send along a checksum that says how
-many bytes of data are being sent. That means that when the data arrives on
-the other side, you can count the bytes and compare it to the checksum. If
-these are different, then the data has been garbled in transmission.
-
-In the Luhn problem the final digit acts as a sanity check for all the prior
-digits. Running those prior digits through a particular algorithm should give
-you that final digit.
-
-It doesn't actually tell you if it's a real credit card number, only that it's
-a plausible one. It's the same thing with the bytes that get transmitted --
-you could have the right number of bytes and still have a garbled message. So
-checksums are a simple sanity-check, not a real in-depth verification of the
-authenticity of some data. It's often a cheap first pass, and can be used to
-quickly discard obviously invalid things.
+from luhn import Luhn
 
 
-### Submitting Exercises
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+class LuhnTests(unittest.TestCase):
+    def test_single_digit_strings_can_not_be_valid(self):
+        self.assertIs(Luhn("1").is_valid(), False)
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_a_single_zero_is_invalid(self):
+        self.assertIs(Luhn("0").is_valid(), False)
+
+    def test_a_simple_valid_SIN_that_remains_valid_if_reversed(self):
+        self.assertIs(Luhn("059").is_valid(), True)
+
+    def test_a_simple_valid_SIN_that_becomes_invalid_if_reversed(self):
+        self.assertIs(Luhn("59").is_valid(), True)
+
+    def test_a_valid_Canadian_SIN(self):
+        self.assertIs(Luhn("055 444 285").is_valid(), True)
+
+    def test_invalid_Canadian_SIN(self):
+        self.assertIs(Luhn("055 444 286").is_valid(), False)
+
+    def test_invalid_credit_card(self):
+        self.assertIs(Luhn("8273 1232 7352 0569").is_valid(), False)
+
+    def test_valid_strings_with_a_non_digit_included_become_invalid(self):
+        self.assertIs(Luhn("055a 444 285").is_valid(), False)
+
+    def test_valid_strings_with_punctuation_included_become_invalid(self):
+        self.assertIs(Luhn("055-444-285").is_valid(), False)
+
+    def test_valid_strings_with_symbols_included_become_invalid(self):
+        self.assertIs(Luhn("055£ 444$ 285").is_valid(), False)
+
+    def test_single_zero_with_space_is_invalid(self):
+        self.assertIs(Luhn(" 0").is_valid(), False)
+
+    def test_more_than_a_single_zero_is_valid(self):
+        self.assertIs(Luhn("0000 0").is_valid(), True)
+
+    def test_input_digit_9_is_correctly_converted_to_output_digit_9(self):
+        self.assertIs(Luhn("091").is_valid(), True)
+
+    def test_is_valid_can_be_called_repeatedly(self):
+        # Additional track specific test case
+        # This test was added, because we saw many implementations
+        # in which the first call to is_valid() worked, but the
+        # second call failed().
+        number = Luhn("055 444 285")
+        self.assertIs(number.is_valid(), True)
+        self.assertIs(number.is_valid(), True)
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-The Luhn Algorithm on Wikipedia [http://en.wikipedia.org/wiki/Luhn_algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

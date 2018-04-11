@@ -1,75 +1,92 @@
-# Diamond
+import unittest
 
-Given a letter, print a diamond starting with 'A' with the supplied letter at the widest point.
-
-## Diamond kata
-
-The diamond kata takes as its input a letter, and outputs it in a diamond 
-shape. Given a letter, it prints a diamond starting with 'A', with the 
-supplied letter at the widest point.
-
-## Requirements
-
-* The first row contains one 'A'.
-* The last row contains one 'A'.
-* All rows, except the first and last, have exactly two identical letters.
-* All rows have as many trailing spaces as leading spaces. (This might be 0).
-* The diamond is horizontally symmetric.
-* The diamond is vertically symmetric.
-* The diamond has a square shape (width equals height).
-* The letters form a diamond shape.
-* The top half has the letters in ascending order.
-* The bottom half has the letters in descending order. 
-* The four corners (containing the spaces) are triangles.
-
-## Examples
-
-In the following examples, spaces are indicated by `·` characters.
-
-Diamond for letter 'A':
-
-```plain
-A
-```
-
-Diamond for letter 'C':
-
-```plain
-··A··
-·B·B·
-C···C
-·B·B·
-··A··
-```
-
-Diamond for letter 'E':
-
-```plain
-····A····
-···B·B···
-··C···C··
-·D·····D·
-E·······E
-·D·····D·
-··C···C··
-···B·B···
-····A····
-```
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from diamond import make_diamond
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class DiamondTests(unittest.TestCase):
+    def test_degenerate_case_with_a_single_row(self):
+        self.assertMultiLineEqual(make_diamond('A'), 'A\n')
 
-Seb Rose [http://claysnow.co.uk/recycling-tests-in-tdd/](http://claysnow.co.uk/recycling-tests-in-tdd/)
+    def test_degenerate_case_with_two_rows(self):
+        result = [' A ',
+                  'B B',
+                  ' A ']
+        self.assertMultiLineEqual(make_diamond('B'), '\n'.join(result) + '\n')
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_smallest_non_degenerate_case_with_odd_diamond_side_length(self):
+        result = ['  A  ',
+                  ' B B ',
+                  'C   C',
+                  ' B B ',
+                  '  A  ']
+        self.assertMultiLineEqual(make_diamond('C'), '\n'.join(result) + '\n')
 
+    def test_smallest_non_degenerate_case_with_even_diamond_side_length(self):
+        result = ['   A   ',
+                  '  B B  ',
+                  ' C   C ',
+                  'D     D',
+                  ' C   C ',
+                  '  B B  ',
+                  '   A   ']
+        self.assertMultiLineEqual(make_diamond('D'), '\n'.join(result) + '\n')
+
+    def test_largest_possible_diamond(self):
+        result = ['                         A                         ',
+                  '                        B B                        ',
+                  '                       C   C                       ',
+                  '                      D     D                      ',
+                  '                     E       E                     ',
+                  '                    F         F                    ',
+                  '                   G           G                   ',
+                  '                  H             H                  ',
+                  '                 I               I                 ',
+                  '                J                 J                ',
+                  '               K                   K               ',
+                  '              L                     L              ',
+                  '             M                       M             ',
+                  '            N                         N            ',
+                  '           O                           O           ',
+                  '          P                             P          ',
+                  '         Q                               Q         ',
+                  '        R                                 R        ',
+                  '       S                                   S       ',
+                  '      T                                     T      ',
+                  '     U                                       U     ',
+                  '    V                                         V    ',
+                  '   W                                           W   ',
+                  '  X                                             X  ',
+                  ' Y                                               Y ',
+                  'Z                                                 Z',
+                  ' Y                                               Y ',
+                  '  X                                             X  ',
+                  '   W                                           W   ',
+                  '    V                                         V    ',
+                  '     U                                       U     ',
+                  '      T                                     T      ',
+                  '       S                                   S       ',
+                  '        R                                 R        ',
+                  '         Q                               Q         ',
+                  '          P                             P          ',
+                  '           O                           O           ',
+                  '            N                         N            ',
+                  '             M                       M             ',
+                  '              L                     L              ',
+                  '               K                   K               ',
+                  '                J                 J                ',
+                  '                 I               I                 ',
+                  '                  H             H                  ',
+                  '                   G           G                   ',
+                  '                    F         F                    ',
+                  '                     E       E                     ',
+                  '                      D     D                      ',
+                  '                       C   C                       ',
+                  '                        B B                        ',
+                  '                         A                         ']
+        self.assertMultiLineEqual(make_diamond('Z'), '\n'.join(result) + '\n')
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,78 +1,227 @@
-# Transpose
-
-Take input text and output it transposed.
-
-Given an input text output it transposed.
-
-Roughly explained, the transpose of a matrix:
-
-```
-ABC
-DEF
-```
-
-is given by:
-
-```
-AD
-BE
-CF
-```
-
-Rows become columns and columns become rows. See <https://en.wikipedia.org/wiki/Transpose>.
-
-If the input has rows of different lengths, this is to be solved as follows:
-
-- Pad to the left with spaces.
-- Don't pad to the right.
-
-Therefore, transposing this matrix:
-
-```
-ABC
-DE
-```
-
-results in:
-
-```
-AD
-BE
-C
-```
-
-And transposing:
-
-```
-AB
-DEF
-```
-
-results in:
-
-```
-AD
-BE
- F
-```
-
-In general, all characters from the input should also be present in the transposed output.
-That means that if a column in the input text contains only spaces on its bottom-most row(s), 
-the corresponding output row should contain the spaces in its right-most column(s).
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+import unittest
+from transpose import transpose
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class TransposeTests(unittest.TestCase):
+    def test_empty_string(self):
+        input_line = ""
+        expected = ""
+        self.assertEqual(
+            transpose(input_line),
+            expected
+        )
 
-Reddit r/dailyprogrammer challenge #270 [Easy]. [https://www.reddit.com/r/dailyprogrammer/comments/4msu2x/challenge_270_easy_transpose_the_input_text](https://www.reddit.com/r/dailyprogrammer/comments/4msu2x/challenge_270_easy_transpose_the_input_text)
+    def test_two_characters_in_a_row(self):
+        input_line = "A1"
+        expected = [
+            "A",
+            "1"
+        ]
+        self.assertEqual(
+            transpose(input_line),
+            "\n".join(expected)
+        )
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_two_characters_in_a_column(self):
+        input_line = [
+            "A",
+            "1"
+        ]
+        expected = "A1"
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            expected
+        )
 
+    def test_simple(self):
+        input_line = [
+            "ABC",
+            "123"
+        ]
+        expected = [
+            "A1",
+            "B2",
+            "C3"
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+    def test_single_line(self):
+        input_line = ["Single line."]
+        expected = [
+            "S",
+            "i",
+            "n",
+            "g",
+            "l",
+            "e",
+            " ",
+            "l",
+            "i",
+            "n",
+            "e",
+            "."
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+    def test_first_line_longer_than_second_line(self):
+        input_line = [
+            "The fourth line.",
+            "The fifth line."
+        ]
+        expected = [
+            "TT",
+            "hh",
+            "ee",
+            "  ",
+            "ff",
+            "oi",
+            "uf",
+            "rt",
+            "th",
+            "h ",
+            " l",
+            "li",
+            "in",
+            "ne",
+            "e.",
+            "."
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+    def test_second_line_longer_than_first_line(self):
+        input_line = [
+            "The first line.",
+            "The second line."
+        ]
+        expected = [
+            "TT",
+            "hh",
+            "ee",
+            "  ",
+            "fs",
+            "ie",
+            "rc",
+            "so",
+            "tn",
+            " d",
+            "l ",
+            "il",
+            "ni",
+            "en",
+            ".e",
+            " ."
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+    def test_square(self):
+        input_line = [
+            "HEART",
+            "EMBER",
+            "ABUSE",
+            "RESIN",
+            "TREND"
+        ]
+        expected = [
+            "HEART",
+            "EMBER",
+            "ABUSE",
+            "RESIN",
+            "TREND"
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+    def test_rectangle(self):
+        input_line = [
+            "FRACTURE",
+            "OUTLINED",
+            "BLOOMING",
+            "SEPTETTE"
+        ]
+        expected = [
+            "FOBS",
+            "RULE",
+            "ATOP",
+            "CLOT",
+            "TIME",
+            "UNIT",
+            "RENT",
+            "EDGE"
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+    def test_triangle(self):
+        input_line = [
+            "T",
+            "EE",
+            "AAA",
+            "SSSS",
+            "EEEEE",
+            "RRRRRR"
+        ]
+        expected = [
+            "TEASER",
+            " EASER",
+            "  ASER",
+            "   SER",
+            "    ER",
+            "     R"
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+    def test_mixed_line_length(self):
+        input_line = [
+            "The longest line.",
+            "A long line.",
+            "A longer line.",
+            "A line."
+        ]
+        expected = [
+            "TAAA",
+            "h   ",
+            "elll",
+            " ooi",
+            "lnnn",
+            "ogge",
+            "n e.",
+            "glr",
+            "ei ",
+            "snl",
+            "tei",
+            " .n",
+            "l e",
+            "i .",
+            "n",
+            "e",
+            "."
+        ]
+        self.assertEqual(
+            transpose("\n".join(input_line)),
+            "\n".join(expected)
+        )
+
+
+if __name__ == '__main__':
+    unittest.main()

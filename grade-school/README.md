@@ -1,53 +1,67 @@
-# Grade School
+import unittest
+from collections import Sequence
+from types import GeneratorType
 
-Write a small archiving program that stores students' names along with the grade that they are in.
-
-In the end, you should be able to:
-
-- Add a student's name to the roster for a grade
-  - "Add Jim to grade 2."
-  - "OK."
-- Get a list of all students enrolled in a grade
-  - "Which students are in grade 2?"
-  - "We've only got Jim just now."
-- Get a sorted list of all students in all grades.  Grades should sort
-  as 1, 2, 3, etc., and students within a grade should be sorted
-  alphabetically by name.
-  - "Who all is enrolled in school right now?"
-  - "Grade 1: Anna, Barb, and Charlie. Grade 2: Alex, Peter, and Zoe.
-    Grade 3…"
-
-Note that all our students only have one name.  (It's a small town, what
-do you want?)
+from grade_school import School
 
 
-## For bonus points
+class SchoolTest(unittest.TestCase):
+    def setUp(self):
+        # assertCountEqual is py3, py2 only knowns assetItemsEqual
+        if not hasattr(self, 'assertCountEqual'):
+            self.assertCountEqual = self.assertItemsEqual
+        self.school = School("Haleakala Hippy School")
 
-Did you get the tests passing and the code clean? If you want to, these
-are some additional things you could try:
+    def test_an_empty_school(self):
+        for n in range(1, 9):
+            self.assertCountEqual(self.school.grade(n), set())
 
-- If you're working in a language with mutable data structures and your
-  implementation allows outside code to mutate the school's internal DB
-  directly, see if you can prevent this. Feel free to introduce additional
-  tests.
+    def test_add_student(self):
+        self.school.add("Aimee", 2)
+        self.assertCountEqual(self.school.grade(2), ("Aimee", ))
 
-Then please share your thoughts in a comment on the submission. Did this
-experiment make the code better? Worse? Did you learn anything from it?
+    def test_add_more_students_in_same_class(self):
+        self.school.add("James", 2)
+        self.school.add("Blair", 2)
+        self.school.add("Paul", 2)
+        self.assertCountEqual(self.school.grade(2), ("James", "Blair", "Paul"))
 
-### Submitting Exercises
+    def test_add_students_to_different_grades(self):
+        self.school.add("Chelsea", 3)
+        self.school.add("Logan", 7)
+        self.assertCountEqual(self.school.grade(3), ("Chelsea", ))
+        self.assertCountEqual(self.school.grade(7), ("Logan", ))
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_get_students_in_a_grade(self):
+        self.school.add("Franklin", 5)
+        self.school.add("Bradley", 5)
+        self.school.add("Jeff", 1)
+        self.assertCountEqual(self.school.grade(5), ("Franklin", "Bradley"))
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_get_students_in_a_non_existant_grade(self):
+        self.assertCountEqual(self.school.grade(1), set())
+
+    def test_sort_school(self):
+        students = [(3, ("Kyle", )), (4, ("Christopher", "Jennifer", )),
+                    (6, ("Kareem", ))]
+
+        for grade, students_in_grade in students[::-1]:
+            for student in students_in_grade[::-1]:
+                self.school.add(student, grade)
+
+        result = self.school.sort()
+
+        # Attempts to catch false positives
+        self.assertTrue(
+            isinstance(result, Sequence) or
+            isinstance(result, GeneratorType) or
+            callable(getattr(result, '__reversed__', False)))
+
+        result_list = list(result.items()
+                           if hasattr(result, "items") else result)
+
+        self.assertEqual(students, result_list)
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-A pairing session with Phil Battos at gSchool [http://gschool.it](http://gschool.it)
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

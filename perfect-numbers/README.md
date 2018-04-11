@@ -1,42 +1,68 @@
-# Perfect Numbers
+import unittest
 
-The Greek mathematician Nicomachus devised a classification scheme for natural numbers.
-
-The Greek mathematican Nicomachus devised a classification scheme for
-natural numbers, identifying each as belonging uniquely to the
-categories of _abundant_, _perfect_, or _deficient_.  A perfect number
-equals the sum of its positive divisors — the pairs of numbers whose
-product yields the target number, excluding the number itself.
-
-- Perfect: Sum of factors = number
-- Abundant: Sum of factors > number
-- Deficient: Sum of factors < number
-
-The Aliquot sum is defined as the sum of the factors of a number not
-including the number itself.
-
-## Examples
-
-- 6 is a perfect number because its divisors are 1, 2, 3 and 6 = 1 + 2 +
-  3.
-- 28 is perfect number because 28 = 1 + 2 + 4 + 7 + 14.
-- Prime numbers 7, 13, etc are Deficient by the Nicomachus
-  classification.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from perfect_numbers import classify
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class PerfectNumbersTest(unittest.TestCase):
+    def test_smallest_perfect_number(self):
+        self.assertIs(classify(6), "perfect")
 
-Taken from Chapter 2 of Functional Thinking by Neal Ford. [http://shop.oreilly.com/product/0636920029687.do](http://shop.oreilly.com/product/0636920029687.do)
+    def test_medium_perfect_number(self):
+        self.assertIs(classify(28), "perfect")
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_large_perfect_number(self):
+        self.assertIs(classify(33550336), "perfect")
 
+
+class AbundantNumbersTest(unittest.TestCase):
+    def test_smallest_abundant_number(self):
+        self.assertIs(classify(12), "abundant")
+
+    def test_medium_abundant_number(self):
+        self.assertIs(classify(30), "abundant")
+
+    def test_large_abundant_number(self):
+        self.assertIs(classify(33550335), "abundant")
+
+
+class DeficientNumbersTest(unittest.TestCase):
+    def test_smallest_prime_deficient_number(self):
+        self.assertIs(classify(2), "deficient")
+
+    def test_smallest_nonprime_deficient_number(self):
+        self.assertIs(classify(4), "deficient")
+
+    def test_medium_deficient_number(self):
+        self.assertIs(classify(32), "deficient")
+
+    def test_large_deficient_number(self):
+        self.assertIs(classify(33550337), "deficient")
+
+    def test_edge_case(self):
+        self.assertIs(classify(1), "deficient")
+
+
+class InvalidInputsTest(unittest.TestCase):
+    def test_zero(self):
+        with self.assertRaisesWithMessage(ValueError):
+            classify(0)
+
+    def test_negative(self):
+        with self.assertRaisesWithMessage(ValueError):
+            classify(-1)
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

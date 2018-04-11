@@ -1,73 +1,99 @@
-# Scale Generator
+import unittest
 
-Given a tonic, or starting note, and a set of intervals, generate
-the musical scale starting with the tonic and following the
-specified interval pattern.
-
-Scales in Western music are based on the chromatic (12-note) scale.This
-scale can be expressed as the following group of pitches:
-
-A, A#, B, C, C#, D, D#, E, F, F#, G, G#
-
-A given sharp note (indicated by a #), can also be expressed as the flat
-of the note above it (indicated by a b), so the chromatic scale can also be
-written like this:
-
-A, Bb, B, C, Db, D, Eb, E, F, Gb, G, Ab
-
-The major and minor scale and modes are subsets of this twelve-pitch
-collection. They have seven pitches, and are called diatonic scales.
-The collection of notes in these scales is written with either sharps or
-flats, depending on the tonic. Here is a list of which are which:
-
-No Accidentals:
-C major
-A minor
-
-Use Sharps:
-G, D, A, E, B, F# major
-e, b, f#, c#, g#, d# minor
-
-Use Flats:
-F, Bb, Eb, Ab, Db, Gb major
-d, g, c, f, bb, eb minor
+from scale_generator import Scale
 
 
-The diatonic scales, and all other scales that derive from the
-chromatic scale, are built upon intervals. An interval is the space
-between two pitches.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-The simplest interval is between two adjacent notes, and is called a
-"half step", or "minor second" (sometimes written as a lower-case "m").
-The interval between two notes that have an interceding note is called
-a "whole step" or "major second" (written as an upper-case "M"). The
-diatonic scales are built using only these two intervals between
-adjacent notes.
+class ScaleGeneratorTest(unittest.TestCase):
 
-Non-diatonic scales can contain the same letter twice, and can contain other intervals.
-Sometimes they may be smaller than usual (diminished, written "D"), or larger
-(augmented, written "A").  Intervals larger than an augmented second have other names.
+    # Test chromatic scales
+    def test_chromatic_scale_with_sharps(self):
+        expected = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
+                    'G', 'G#', 'A', 'A#', 'B']
+        self.assertEqual(Scale('C').pitches, expected)
 
-Here is a table of pitches with the names of their interval distance from the tonic (A).
+    def test_chromatic_scale_with_flats(self):
+        expected = ['F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B',
+                    'C', 'Db', 'D', 'Eb', 'E']
+        self.assertEqual(Scale('F').pitches, expected)
 
-|   A    |    A#   |    B    |    C    |    C#   |    D    |    D#   |    E    |    F    |    F#   |    G    |    G#   |    A   |
-|:------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:------:|
-| Unison | Min 2nd | Maj 2nd | Min 3rd | Maj 3rd | Per 4th | Tritone | Per 5th | Min 6th | Maj 6th | Min 7th | Maj 7th | Octave |
-|        |         | Dim 3rd | Aug 2nd | Dim 4th |         | Aug 4th | Dim 5th | Aug 5th | Dim 7th | Aug 6th | Dim 8ve |        |
-|        |         |         |         |         |         | Dim 5th |         |         |         |         |         |        |
+    # Test scales with specified intervals
+    def test_simple_major_scale(self):
+        expected = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+        self.assertEqual(Scale('C', 'MMmMMMm').pitches, expected)
 
-### Submitting Exercises
+    def test_major_scale_with_sharps(self):
+        expected = ['G', 'A', 'B', 'C', 'D', 'E', 'F#']
+        self.assertEqual(Scale('G', 'MMmMMMm').pitches, expected)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_major_scale_with_flats(self):
+        expected = ['F', 'G', 'A', 'Bb', 'C', 'D', 'E']
+        self.assertEqual(Scale('F', 'MMmMMMm').pitches, expected)
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_minor_scale_with_sharps(self):
+        expected = ['F#', 'G#', 'A', 'B', 'C#', 'D', 'E']
+        self.assertEqual(Scale('f#', 'MmMMmMM').pitches, expected)
+
+    def test_minor_scale_with_flats(self):
+        expected = ['Bb', 'C', 'Db', 'Eb', 'F', 'Gb', 'Ab']
+        self.assertEqual(Scale('bb', 'MmMMmMM').pitches, expected)
+
+    def test_dorian_mode(self):
+        expected = ['D', 'E', 'F', 'G', 'A', 'B', 'C']
+        self.assertEqual(Scale('d', 'MmMMMmM').pitches, expected)
+
+    def test_mixolydian_mode(self):
+        expected = ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'Db']
+        self.assertEqual(Scale('Eb', 'MMmMMmM').pitches, expected)
+
+    def test_lydian_mode(self):
+        expected = ['A', 'B', 'C#', 'D#', 'E', 'F#', 'G#']
+        self.assertEqual(Scale('a', 'MMMmMMm').pitches, expected)
+
+    def test_phrygian_mode(self):
+        expected = ['E', 'F', 'G', 'A', 'B', 'C', 'D']
+        self.assertEqual(Scale('e', 'mMMMmMM').pitches, expected)
+
+    def test_locrian_mode(self):
+        expected = ['G', 'Ab', 'Bb', 'C', 'Db', 'Eb', 'F']
+        self.assertEqual(Scale('g', 'mMMmMMM').pitches, expected)
+
+    def test_harmonic_minor(self):
+        expected = ['D', 'E', 'F', 'G', 'A', 'Bb', 'Db']
+        self.assertEqual(Scale('d', 'MmMMmAm').pitches, expected)
+
+    def test_octatonic(self):
+        expected = ['C', 'D', 'D#', 'F', 'F#', 'G#', 'A', 'B']
+        self.assertEqual(Scale('C', 'MmMmMmMm').pitches, expected)
+
+    def test_hexatonic(self):
+        expected = ['Db', 'Eb', 'F', 'G', 'A', 'B']
+        self.assertEqual(Scale('Db', 'MMMMMM').pitches, expected)
+
+    def test_pentatonic(self):
+        expected = ['A', 'B', 'C#', 'E', 'F#']
+        self.assertEqual(Scale('A', 'MMAMA').pitches, expected)
+
+    def test_enigmatic(self):
+        expected = ['G', 'G#', 'B', 'C#', 'D#', 'F', 'F#']
+        self.assertEqual(Scale('G', 'mAMMMmm').pitches, expected)
+
+    # Track-specific tests
+    def test_brokeninterval(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Scale('G', 'mAMMMmM')
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-
-
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

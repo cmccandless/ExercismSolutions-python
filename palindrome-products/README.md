@@ -1,24 +1,96 @@
-# Palindrome Products
+"""
+Notes regarding the implementation of smallest_palindrome and
+largest_palindrome:
 
-Write a program that can detect palindrome products in a given range.
+Both functions must take two keyword arguments:
+    max_factor -- int
+    min_factor -- int, default 0
 
-A palindromic number reads the same both ways. The largest palindrome
-made from the product of two 2-digit numbers is 9009 = 91 x 99.
+Their return value must be a tuple (value, factors) where value is the
+palindrome itself, and factors is an iterable containing both factors of the
+palindrome in arbitrary order.
+"""
 
-### Submitting Exercises
+import unittest
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from palindrome_products import smallest_palindrome, largest_palindrome
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class PalindromesTests(unittest.TestCase):
+    def test_smallest_palindrome_from_single_digit_factors(self):
+        value, factors = smallest_palindrome(min_factor=1, max_factor=9)
+        self.assertEqual(value, 1)
+        self.assertFactorsEqual(factors, {(1, 1)})
 
-Problem 4 at Project Euler [http://projecteuler.net/problem=4](http://projecteuler.net/problem=4)
+    def test_largest_palindrome_from_single_digit_factors(self):
+        value, factors = largest_palindrome(min_factor=1, max_factor=9)
+        self.assertEqual(value, 9)
+        self.assertFactorsEqual(factors, {(1, 9), (3, 3)})
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_smallest_palindrome_from_double_digit_factors(self):
+        value, factors = smallest_palindrome(min_factor=10, max_factor=99)
+        self.assertEqual(value, 121)
+        self.assertFactorsEqual(factors, {(11, 11)})
 
+    def test_largest_palindrome_from_double_digit_factors(self):
+        value, factors = largest_palindrome(min_factor=10, max_factor=99)
+        self.assertEqual(value, 9009)
+        self.assertFactorsEqual(factors, {(91, 99)})
+
+    def test_smallest_palindrome_from_triple_digit_factors(self):
+        value, factors = smallest_palindrome(min_factor=100, max_factor=999)
+        self.assertEqual(value, 10201)
+        self.assertFactorsEqual(factors, {(101, 101)})
+
+    def test_largest_palindrome_from_triple_digit_factors(self):
+        value, factors = largest_palindrome(min_factor=100, max_factor=999)
+        self.assertEqual(value, 906609)
+        self.assertFactorsEqual(factors, {(913, 993)})
+
+    def test_smallest_palindrome_from_four_digit_factors(self):
+        value, factors = smallest_palindrome(min_factor=1000, max_factor=9999)
+        self.assertEqual(value, 1002001)
+        self.assertFactorsEqual(factors, {(1001, 1001)})
+
+    def test_largest_palindrome_from_four_digit_factors(self):
+        value, factors = largest_palindrome(min_factor=1000, max_factor=9999)
+        self.assertEqual(value, 99000099)
+        self.assertFactorsEqual(factors, {(9901, 9999)})
+
+    def test_empty_for_smallest_palindrome_if_none_in_range(self):
+        with self.assertRaisesWithMessage(ValueError):
+            value, factors = smallest_palindrome(min_factor=1002,
+                                                 max_factor=1003)
+
+    def test_empty_for_largest_palindrome_if_none_in_range(self):
+        with self.assertRaisesWithMessage(ValueError):
+            value, factors = largest_palindrome(min_factor=15, max_factor=15)
+
+    def test_error_for_smallest_if_min_is_more_than_max(self):
+        with self.assertRaisesWithMessage(ValueError):
+            value, factors = smallest_palindrome(min_factor=10000,
+                                                 max_factor=1)
+
+    def test_error_for_largest_if_min_is_more_than_max(self):
+        with self.assertRaisesWithMessage(ValueError):
+            value, factors = largest_palindrome(min_factor=2, max_factor=1)
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+    def assertFactorsEqual(self, actual, expected):
+        self.assertEqual(set(map(frozenset, actual)),
+                         set(map(frozenset, expected)))
+
+
+if __name__ == '__main__':
+    unittest.main()

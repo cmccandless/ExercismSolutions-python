@@ -1,54 +1,69 @@
-# Hamming
+import unittest
 
-Write a program that can calculate the Hamming difference between two DNA strands.
-
-A mutation is simply a mistake that occurs during the creation or
-copying of a nucleic acid, in particular DNA. Because nucleic acids are
-vital to cellular functions, mutations tend to cause a ripple effect
-throughout the cell. Although mutations are technically mistakes, a very
-rare mutation may equip the cell with a beneficial attribute. In fact,
-the macro effects of evolution are attributable by the accumulated
-result of beneficial microscopic mutations over many generations.
-
-The simplest and most common type of nucleic acid mutation is a point
-mutation, which replaces one base with another at a single nucleotide.
-
-By counting the number of differences between two homologous DNA strands
-taken from different genomes with a common ancestor, we get a measure of
-the minimum number of point mutations that could have occurred on the
-evolutionary path between the two strands.
-
-This is called the 'Hamming distance'.
-
-It is found by comparing two DNA strands and counting how many of the
-nucleotides are different from their equivalent in the other string.
-
-    GAGCCTACTAACGGGAT
-    CATCGTAATGACGGCCT
-    ^ ^ ^  ^ ^    ^^
-
-The Hamming distance between these two DNA strands is 7.
-
-# Implementation notes
-
-The Hamming distance is only defined for sequences of equal length. This means
-that based on the definition, each language could deal with getting sequences
-of equal length differently.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+import hamming
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v2.1.0
 
-## Source
+class HammingTest(unittest.TestCase):
 
-The Calculating Point Mutations problem at Rosalind [http://rosalind.info/problems/hamm/](http://rosalind.info/problems/hamm/)
+    def test_empty_strands(self):
+        self.assertEqual(hamming.distance("", ""), 0)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_identical_strands(self):
+        self.assertEqual(hamming.distance("A", "A"), 0)
 
+    def test_long_identical_strands(self):
+        self.assertEqual(hamming.distance("GGACTGA", "GGACTGA"), 0)
+
+    def test_complete_distance_in_single_nucleotide_strands(self):
+        self.assertEqual(hamming.distance("A", "G"), 1)
+
+    def test_complete_distance_in_small_strands(self):
+        self.assertEqual(hamming.distance("AG", "CT"), 2)
+
+    def test_small_distance_in_small_strands(self):
+        self.assertEqual(hamming.distance("AT", "CT"), 1)
+
+    def test_small_distance(self):
+        self.assertEqual(hamming.distance("GGACG", "GGTCG"), 1)
+
+    def test_small_distance_in_long_strands(self):
+        self.assertEqual(hamming.distance("ACCAGGG", "ACTATGG"), 2)
+
+    def test_non_unique_character_in_first_strand(self):
+        self.assertEqual(hamming.distance("AAG", "AAA"), 1)
+
+    def test_non_unique_character_in_second_strand(self):
+        self.assertEqual(hamming.distance("AAA", "AAG"), 1)
+
+    def test_same_nucleotides_in_different_positions(self):
+        self.assertEqual(hamming.distance("TAG", "GAT"), 2)
+
+    def test_large_distance(self):
+        self.assertEqual(hamming.distance("GATACA", "GCATAA"), 4)
+
+    def test_large_distance_in_off_by_one_strand(self):
+        self.assertEqual(hamming.distance("GGACGGATTCTG", "AGGACGGATTCT"), 9)
+
+    def test_disallow_first_strand_longer(self):
+        with self.assertRaisesWithMessage(ValueError):
+            hamming.distance("AATG", "AAA")
+
+    def test_disallow_second_strand_longer(self):
+        with self.assertRaisesWithMessage(ValueError):
+            hamming.distance("ATA", "AGTG")
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

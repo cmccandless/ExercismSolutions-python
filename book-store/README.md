@@ -1,89 +1,57 @@
-# Book Store
+import unittest
 
-To try and encourage more sales of different books from a popular 5 book series, a bookshop has decided to offer discounts of multiple-book purchases.
-
-To try and encourage more sales of the 5 different books
-they sell of a popular series, a bookshop has decided to
-offer discounts of multi-book purchases. 
-
-One copy of any of the five books costs $8. 
-
-If, however, you buy two different books, you get a 5%
-discount on those two books.
-
-If you buy 3 different books, you get a 10% discount. 
-
-If you buy 4 different books, you get a 20% discount.
-
-If you buy all 5, you get a 25% discount. 
-
-Note: that if you buy four books, of which 3 are
-different titles, you get a 10% discount on the 3 that
-form part of a set, but the fourth book still costs $8. 
-
-Your mission is to write a piece of code to calculate the
-price of any conceivable shopping basket (containing only
-books of the same series), giving as big a discount as
-possible.
-
-For example, how much does this basket of books cost?
-
-- 2 copies of the first book
-- 2 copies of the second book
-- 2 copies of the third book
-- 1 copy of the fourth book
-- 1 copy of the fifth book
- 
-One way of grouping these 8 books is:
-
-- 1 group of 5 --> 25% discount (1st,2nd,3rd,4th,5th)
-- +1 group of 3 --> 10% discount (1st,2nd,3rd)
-
-This would give a total of:
-
-- 5 books at a 25% discount
-- +3 books at a 10% discount
-
-Resulting in:
-
-- 5 x (8 - 2.00) == 5 x 6.00 == $30.00
-- +3 x (8 - 0.80) == 3 x 7.20 == $21.60
-
-For a total of $51.60
-
-However, a different way to group these 8 books is:
-
-- 1 group of 4 books --> 20% discount  (1st,2nd,3rd,4th)
-- +1 group of 4 books --> 20% discount  (1st,2nd,3rd,5th)
-
-This would give a total of:
-
-- 4 books at a 20% discount
-- +4 books at a 20% discount
-
-Resulting in:
-
-- 4 x (8 - 1.60) == 4 x 6.40 == $25.60
-- +4 x (8 - 1.60) == 4 x 6.40 == $25.60
-
-For a total of $51.20
-
-And $51.20 is the price with the biggest discount.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from book_store import calculate_total
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
 
-## Source
+class BookStoreTests(unittest.TestCase):
+    def test_only_a_single_book(self):
+        self.assertEqual(calculate_total([1]), 800)
 
-Inspired by the harry potter kata from Cyber-Dojo. [http://cyber-dojo.org](http://cyber-dojo.org)
+    def test_two_of_the_same_book(self):
+        self.assertEqual(calculate_total([2, 2]), 1600)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_empty_basket(self):
+        self.assertEqual(calculate_total([]), 0)
 
+    def test_two_different_books(self):
+        self.assertEqual(calculate_total([1, 2]), 1520)
+
+    def test_three_different_books(self):
+        self.assertEqual(calculate_total([1, 2, 3]), 2160)
+
+    def test_four_different_books(self):
+        self.assertEqual(calculate_total([1, 2, 3, 4]), 2560)
+
+    def test_five_different_books(self):
+        self.assertEqual(calculate_total([1, 2, 3, 4, 5]), 3000)
+
+    def test_two_groups_of_4_is_cheaper_than_group_of_5_plus_group_of_3(self):
+        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 3, 4, 5]), 5120)
+
+    def test_group_of_4_plus_group_of_2_is_cheaper_than_2_groups_of_3(self):
+        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 4]), 4080)
+
+    def test_two_each_of_first_4_books_and_1_copy_each_of_rest(self):
+        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5]), 5560)
+
+    def test_two_copies_of_each_book(self):
+        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]), 6000)
+
+    def test_three_copies_of_first_book_and_2_each_of_remaining(self):
+        self.assertEqual(
+            calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 1]), 6800)
+
+    def test_three_each_of_first_2_books_and_2_each_of_remaining_books(self):
+        self.assertEqual(
+            calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 1, 2]), 7520)
+
+    def test_four_groups_of_4_are_cheaper_than_2_groups_each_of_5_and_3(self):
+        self.assertEqual(
+            calculate_total([1, 1, 2, 2, 3, 3, 4, 5, 1, 1, 2, 2, 3, 3, 4, 5]),
+            10240)
+
+
+if __name__ == '__main__':
+    unittest.main()

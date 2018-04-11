@@ -1,38 +1,41 @@
-# Space Age
+import unittest
 
-Write a program that, given an age in seconds, calculates how old someone is in terms of a given planet's solar years.
-
-Given an age in seconds, calculate how old someone would be on:
-
-   - Earth: orbital period 365.25 Earth days, or 31557600 seconds
-   - Mercury: orbital period 0.2408467 Earth years
-   - Venus: orbital period 0.61519726 Earth years
-   - Mars: orbital period 1.8808158 Earth years
-   - Jupiter: orbital period 11.862615 Earth years
-   - Saturn: orbital period 29.447498 Earth years
-   - Uranus: orbital period 84.016846 Earth years
-   - Neptune: orbital period 164.79132 Earth years
-
-So if you were told someone were 1,000,000,000 seconds old, you should
-be able to say that they're 31 Earth-years old.
-
-If you're wondering why Pluto didn't make the cut, go watch [this
-youtube video](http://www.youtube.com/watch?v=Z_2gbGXzFbs).
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from space_age import SpaceAge
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class SpaceAgeTest(unittest.TestCase):
 
-Partially inspired by Chapter 1 in Chris Pine's online Learn to Program tutorial. [http://pine.fm/LearnToProgram/?Chapter=01](http://pine.fm/LearnToProgram/?Chapter=01)
+    def test_age_on_mercury(self):
+        self.assertEqual(SpaceAge(2134835688).on_mercury(), 280.88)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_age_on_venus(self):
+        self.assertEqual(SpaceAge(189839836).on_venus(), 9.78)
 
+    def test_age_on_earth(self):
+        self.assertEqual(SpaceAge(1000000000).on_earth(), 31.69)
+
+    def test_age_on_mars(self):
+        self.assertEqual(SpaceAge(2329871239).on_mars(), 39.25)
+
+    def test_age_on_jupiter(self):
+        self.assertEqual(SpaceAge(901876382).on_jupiter(), 2.41)
+
+    def test_age_on_saturn(self):
+        self.assertEqual(SpaceAge(3000000000).on_saturn(), 3.23)
+
+    def test_age_on_uranus(self):
+        self.assertEqual(SpaceAge(3210123456).on_uranus(), 1.21)
+
+    def test_age_on_neptune(self):
+        self.assertEqual(SpaceAge(8210123456).on_neptune(), 1.58)
+
+    # Additional tests for this track
+
+    def test_age_in_seconds(self):
+        self.assertEqual(SpaceAge(1e6).seconds, 1e6)
+
+
+if __name__ == '__main__':
+    unittest.main()

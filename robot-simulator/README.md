@@ -1,46 +1,75 @@
-# Robot Simulator
+import unittest
 
-Write a robot simulator.
-
-A robot factory's test facility needs a program to verify robot movements.
-
-The robots have three possible movements:
-
-- turn right
-- turn left
-- advance
-
-Robots are placed on a hypothetical infinite grid, facing a particular
-direction (north, east, south, or west) at a set of {x,y} coordinates,
-e.g., {3,8}, with coordinates increasing to the north and east.
-
-The robot then receives a number of instructions, at which point the
-testing facility verifies the robot's new position, and in which
-direction it is pointing.
-
-- The letter-string "RAALAL" means:
-  - Turn right
-  - Advance twice
-  - Turn left
-  - Advance once
-  - Turn left yet again
-- Say a robot starts at {7, 3} facing north. Then running this stream
-  of instructions should leave it at {9, 4} facing west.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from robot_simulator import Robot, NORTH, EAST, SOUTH, WEST
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v2.2.0
 
-## Source
+class RobotTests(unittest.TestCase):
+    def test_init(self):
+        robot = Robot()
+        self.assertEqual(robot.coordinates, (0, 0))
+        self.assertEqual(robot.bearing, NORTH)
 
-Inspired by an interview question at a famous company.
+    def test_setup(self):
+        robot = Robot(SOUTH, -1, 1)
+        self.assertEqual(robot.coordinates, (-1, 1))
+        self.assertEqual(robot.bearing, SOUTH)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_turn_right(self):
+        robot = Robot()
+        for direction in [EAST, SOUTH, WEST, NORTH]:
+            robot.turn_right()
+            self.assertEqual(robot.bearing, direction)
 
+    def test_turn_left(self):
+        robot = Robot()
+        for direction in [WEST, SOUTH, EAST, NORTH]:
+            robot.turn_left()
+            self.assertEqual(robot.bearing, direction)
+
+    def test_advance_positive_north(self):
+        robot = Robot(NORTH, 0, 0)
+        robot.advance()
+        self.assertEqual(robot.coordinates, (0, 1))
+        self.assertEqual(robot.bearing, NORTH)
+
+    def test_advance_negative_south(self):
+        robot = Robot(SOUTH, 0, 0)
+        robot.advance()
+        self.assertEqual(robot.coordinates, (0, -1))
+        self.assertEqual(robot.bearing, SOUTH)
+
+    def test_advance_positive_east(self):
+        robot = Robot(EAST, 0, 0)
+        robot.advance()
+        self.assertEqual(robot.coordinates, (1, 0))
+        self.assertEqual(robot.bearing, EAST)
+
+    def test_advance_negative_west(self):
+        robot = Robot(WEST, 0, 0)
+        robot.advance()
+        self.assertEqual(robot.coordinates, (-1, 0))
+        self.assertEqual(robot.bearing, WEST)
+
+    def test_simulate_prog1(self):
+        robot = Robot(NORTH, 0, 0)
+        robot.simulate("LAAARALA")
+        self.assertEqual(robot.coordinates, (-4, 1))
+        self.assertEqual(robot.bearing, WEST)
+
+    def test_simulate_prog2(self):
+        robot = Robot(EAST, 2, -7)
+        robot.simulate("RRAAAAALA")
+        self.assertEqual(robot.coordinates, (-3, -8))
+        self.assertEqual(robot.bearing, SOUTH)
+
+    def test_simulate_prog3(self):
+        robot = Robot(SOUTH, 8, 4)
+        robot.simulate("LAAARRRALLLL")
+        self.assertEqual(robot.coordinates, (11, 5))
+        self.assertEqual(robot.bearing, NORTH)
+
+
+if __name__ == '__main__':
+    unittest.main()

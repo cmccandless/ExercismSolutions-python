@@ -1,49 +1,81 @@
-# Secret Handshake
+import unittest
 
-Write a program that will take a decimal number, and convert it to the appropriate sequence of events for a secret handshake.
-
-> There are 10 types of people in the world: Those who understand
-> binary, and those who don't.
-
-You and your fellow cohort of those in the "know" when it comes to
-binary decide to come up with a secret "handshake".
-
-```
-1 = wink
-10 = double blink
-100 = close your eyes
-1000 = jump
+from secret_handshake import handshake, secret_code
 
 
-10000 = Reverse the order of the operations in the secret handshake.
-```
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-Here's a couple of examples:
+class HandshakeTest(unittest.TestCase):
+    def test_wink_for_1(self):
+        self.assertEqual(handshake(1), ['wink'])
 
-Given the input 9, the function would return the array
-["wink", "jump"]
+    def test_double_blink_for_10(self):
+        self.assertEqual(handshake(2), ['double blink'])
 
-Given the input "11001", the function would return the array
-["jump", "wink"]
+    def test_close_your_eyes_for_100(self):
+        self.assertEqual(handshake(4), ['close your eyes'])
+
+    def test_jump_for_1000(self):
+        self.assertEqual(handshake(8), ['jump'])
+
+    def test_combine_two_actions(self):
+        self.assertEqual(handshake(3), ['wink', 'double blink'])
+
+    def test_reverse_two_actions(self):
+        self.assertEqual(handshake(19), ['double blink', 'wink'])
+
+    def test_reversing_one_action_gives_the_same_action(self):
+        self.assertEqual(handshake(24), ['jump'])
+
+    def test_reversing_no_actions_still_gives_no_actions(self):
+        self.assertEqual(handshake(16), [])
+
+    def test_all_possible_actions(self):
+        self.assertEqual(handshake(15), ['wink',
+                                         'double blink',
+                                         'close your eyes',
+                                         'jump'])
+
+    def test_reverse_all_possible_actions(self):
+        self.assertEqual(handshake(31), ['jump',
+                                         'close your eyes',
+                                         'double blink',
+                                         'wink'])
+
+    def test_do_nothing_for_zero(self):
+        self.assertEqual(handshake(0), [])
+
+    # Track-specific tests
+
+    @unittest.skip('extra-credit')
+    def test_code1(self):
+        self.assertEqual(secret_code(['close your eyes', 'jump']), 12)
+
+    @unittest.skip('extra-credit')
+    def test_code2(self):
+        self.assertEqual(secret_code(['wink', 'double blink']), 3)
+
+    @unittest.skip('extra-credit')
+    def test_code3(self):
+        self.assertEqual(secret_code(['jump', 'double blink']), 26)
+
+    @unittest.skip('extra-credit')
+    def test_reversible1(self):
+        self.assertEqual(secret_code(handshake(27)), 27)
+
+    @unittest.skip('extra-credit')
+    def test_reversible2(self):
+        self.assertEqual(secret_code(handshake(1)), 1)
+
+    @unittest.skip('extra-credit')
+    def test_reversible3(self):
+        self.assertEqual(secret_code(handshake(7)), 7)
+
+    @unittest.skip('extra-credit')
+    def test_reversible4(self):
+        inp = ['wink', 'double blink', 'jump']
+        self.assertEqual(handshake(secret_code(inp)), inp)
 
 
-The program should consider strings specifying an invalid binary as the
-value 0.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
-
-
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-Bert, in Mary Poppins [http://www.imdb.com/character/ch0011238/quotes](http://www.imdb.com/character/ch0011238/quotes)
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

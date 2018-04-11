@@ -1,6 +1,9 @@
+PYTHON=python3.6
+
 .PHONY: lint test
+lint: FILES := .
 lint:
-	@flake8 $(FILES)
+	@$(PYTHON) -m flake8 $(FILES)
 
 test:
-	@python -m pytest $(OPTS) $(FILES)
+	@$(PYTHON) -m pytest $(OPTS) $(FILES)

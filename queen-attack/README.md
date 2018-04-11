@@ -1,44 +1,72 @@
-# Queen Attack
+import unittest
 
-Write a program that positions two queens on a chess board and indicates whether or not they are positioned so that they can attack each other.
-
-In the game of chess, a queen can attack pieces which are on the same
-row, column, or diagonal.
-
-A chessboard can be represented by an 8 by 8 array.
-
-So if you're told the white queen is at (2, 3) and the black queen at
-(5, 6), then you'd know you've got a set-up like so:
-
-```plain
-_ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _
-_ _ _ W _ _ _ _
-_ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _
-_ _ _ _ _ _ B _
-_ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _
-```
-
-You'd also be able to answer whether the queens can attack each other.
-In this case, that answer would be yes, they can, because both pieces
-share a diagonal.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from queen_attack import Queen
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v2.1.0
 
-## Source
+class QueenAttackTest(unittest.TestCase):
 
-J Dalbey's Programming Practice problems [http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html](http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html)
+    # Test creation of Queens with valid and invalid positions
+    def test_queen_valid_position(self):
+        try:
+            Queen(2, 2)
+        except ValueError:
+            self.fail("Unexpected Exception")
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_queen_negative_row(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Queen(-2, 2)
 
+    def test_queen_invalid_row(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Queen(8, 4)
+
+    def test_queen_negative_column(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Queen(2, -2)
+
+    def test_queen_invalid_column(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Queen(4, 8)
+
+    # Test the ability of one queen to attack another
+    def test_attack_false(self):
+        self.assertIs(Queen(2, 4).can_attack(Queen(6, 6)), False)
+
+    def test_attack_same_row(self):
+        self.assertIs(Queen(2, 4).can_attack(Queen(2, 6)), True)
+
+    def test_attack_same_column(self):
+        self.assertIs(Queen(4, 5).can_attack(Queen(2, 5)), True)
+
+    def test_attack_diagonal1(self):
+        self.assertIs(Queen(2, 2).can_attack(Queen(0, 4)), True)
+
+    def test_attack_diagonal2(self):
+        self.assertIs(Queen(2, 2).can_attack(Queen(3, 1)), True)
+
+    def test_attack_diagonal3(self):
+        self.assertIs(Queen(2, 2).can_attack(Queen(1, 1)), True)
+
+    def test_attack_diagonal4(self):
+        self.assertIs(Queen(2, 2).can_attack(Queen(5, 5)), True)
+
+    # Track-specific tests
+    def test_queens_same_position_can_attack(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Queen(2, 2).can_attack(Queen(2, 2))
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

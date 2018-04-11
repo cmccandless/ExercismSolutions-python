@@ -1,96 +1,152 @@
-# Ocr Numbers
+"""Tests for the ocr-numbers exercise
 
-Write a program that, given a 3 x 4 grid of pipes, underscores, and spaces, can determine which number is represented, or whether it is garbled.
+Implementation note:
+ocr.convert should validate its input and
+raise ValueErrors with meaningful error messages
+if necessary.
+"""
 
-# Step One
+import unittest
 
-To begin with, convert a simple binary font to a string containing 0 or 1.
-
-The binary font uses pipes and underscores, four rows high and three columns wide.
-
-```
-     _   #
-    | |  # zero.
-    |_|  #
-         # the fourth row is always blank
-```
-
-Is converted to "0"
-
-```
-         #
-      |  # one.
-      |  #
-         # (blank fourth row)
-```
-
-Is converted to "1"
-
-If the input is the correct size, but not recognizable, your program should return '?'
-
-If the input is the incorrect size, your program should return an error.
-
-# Step Two
-
-Update your program to recognize multi-character binary strings, replacing garbled numbers with ?
-
-# Step Three
-
-Update your program to recognize all numbers 0 through 9, both individually and as part of a larger string.
-
-```
- _ 
- _|
-|_ 
-   
-```
-
-Is converted to "2"
-
-```
-      _  _     _  _  _  _  _  _  #
-    | _| _||_||_ |_   ||_||_|| | # decimal numbers.
-    ||_  _|  | _||_|  ||_| _||_| #
-                                 # fourth line is always blank
-```
-
-Is converted to "1234567890"
-
-# Step Four
-
-Update your program to handle multiple numbers, one per line. When converting several lines, join the lines with commas.
-
-```
-    _  _ 
-  | _| _|
-  ||_  _|
-         
-    _  _ 
-|_||_ |_ 
-  | _||_|
-         
- _  _  _ 
-  ||_||_|
-  ||_| _|
-         
-```
-
-Is converted to "123,456,789"
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from ocr_numbers import convert
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class OcrTest(unittest.TestCase):
+    def test_recognizes_0(self):
+        self.assertEqual(convert([" _ ",
+                                  "| |",
+                                  "|_|",
+                                  "   "]), '0')
 
-Inspired by the Bank OCR kata [http://codingdojo.org/cgi-bin/wiki.pl?KataBankOCR](http://codingdojo.org/cgi-bin/wiki.pl?KataBankOCR)
+    def test_recognizes_1(self):
+        self.assertEqual(convert(["   ",
+                                  "  |",
+                                  "  |",
+                                  "   "]), '1')
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_unreadable(self):
+        self.assertEqual(convert(["   ",
+                                  "  _",
+                                  "  |",
+                                  "   "]), '?')
 
+    def test_line_number_not_multiple_of_four(self):
+        with self.assertRaisesWithMessage(ValueError):
+            convert([" _ ",
+                     "| |",
+                     "   "])
+
+    def test_col_number_not_multiple_of_three(self):
+        with self.assertRaisesWithMessage(ValueError):
+            convert(["    ",
+                     "   |",
+                     "   |",
+                     "    "])
+
+    def test_recognizes_110101100(self):
+        input_grid = [
+            "       _     _        _  _ ",
+            "  |  || |  || |  |  || || |",
+            "  |  ||_|  ||_|  |  ||_||_|",
+            "                           "
+        ]
+        self.assertEqual(convert(input_grid), "110101100")
+
+    def test_garbled_numbers_in_string(self):
+        input_grid = [
+            "       _     _           _ ",
+            "  |  || |  || |     || || |",
+            "  |  | _|  ||_|  |  ||_||_|",
+            "                           "
+        ]
+        self.assertEqual(convert(input_grid), "11?10?1?0")
+
+    def test_recognizes_2(self):
+        self.assertEqual(convert([" _ ",
+                                  " _|",
+                                  "|_ ",
+                                  "   "]), "2")
+
+    def test_recognizes_3(self):
+        self.assertEqual(convert([" _ ",
+                                  " _|",
+                                  " _|",
+                                  "   "]), "3")
+
+    def test_recognizes_4(self):
+        self.assertEqual(convert(["   ",
+                                  "|_|",
+                                  "  |",
+                                  "   "]), "4")
+
+    def test_recognizes_5(self):
+        self.assertEqual(convert([" _ ",
+                                  "|_ ",
+                                  " _|",
+                                  "   "]), "5")
+
+    def test_recognizes_6(self):
+        self.assertEqual(convert([" _ ",
+                                  "|_ ",
+                                  "|_|",
+                                  "   "]), "6")
+
+    def test_recognizes_7(self):
+        self.assertEqual(convert([" _ ",
+                                  "  |",
+                                  "  |",
+                                  "   "]), "7")
+
+    def test_recognizes_8(self):
+        self.assertEqual(convert([" _ ",
+                                  "|_|",
+                                  "|_|",
+                                  "   "]), "8")
+
+    def test_recognizes_9(self):
+        self.assertEqual(convert([" _ ",
+                                  "|_|",
+                                  " _|",
+                                  "   "]), "9")
+
+    def test_recognizes_string_of_decimal_numbers(self):
+        input_grid = [
+            "    _  _     _  _  _  _  _  _ ",
+            "  | _| _||_||_ |_   ||_||_|| |",
+            "  ||_  _|  | _||_|  ||_| _||_|",
+            "                              "
+        ]
+        self.assertEqual(convert(input_grid), "1234567890")
+
+    def test_recognizes_numbers_separated_by_empty_lines(self):
+        input_grid = [
+            "    _  _ ",
+            "  | _| _|",
+            "  ||_  _|",
+            "         ",
+            "    _  _ ",
+            "|_||_ |_ ",
+            "  | _||_|",
+            "         ",
+            " _  _  _ ",
+            "  ||_||_|",
+            "  ||_| _|",
+            "         "
+        ]
+        self.assertEqual(convert(input_grid), "123,456,789")
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

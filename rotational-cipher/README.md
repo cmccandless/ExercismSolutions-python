@@ -1,52 +1,48 @@
-# Rotational Cipher
+import unittest
 
-Create an implementation of the rotational cipher, also sometimes called the Caesar cipher.
-
-# Rotational Cipher
-
-Create an implementation of the rotational cipher, also sometimes called the Caesar cipher.
-
-The Caesar cipher is a simple shift cipher that relies on
-transposing all the letters in the alphabet using an integer key
-between `0` and `26`. Using a key of `0` or `26` will always yield
-the same output due to modular arithmetic. The letter is shifted
-for as many values as the value of the key.
-
-The general notation for rotational ciphers is `ROT + <key>`.
-The most commonly used rotational cipher is `ROT13`.
-
-A `ROT13` on the Latin alphabet would be as follows:
-
-```plain
-Plain:  abcdefghijklmnopqrstuvwxyz
-Cipher: nopqrstuvwxyzabcdefghijklm
-```
-
-It is stronger than the Atbash cipher because it has 27 possible keys, and 25 usable keys.
-
-Ciphertext is written out in the same formatting as the input including spaces and punctuation.
-
-## Examples
-- ROT5  `omg` gives `trl`
-- ROT0  `c` gives `c`
-- ROT26 `Cool` gives `Cool`
-- ROT13 `The quick brown fox jumps over the lazy dog.` gives `Gur dhvpx oebja sbk whzcf bire gur ynml qbt.`
-- ROT13 `Gur dhvpx oebja sbk whzcf bire gur ynml qbt.` gives `The quick brown fox jumps over the lazy dog.`
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+import rotational_cipher
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-## Source
+class RotationalCipher(unittest.TestCase):
+    def test_rotate_a_by_0(self):
+        self.assertEqual(rotational_cipher.rotate('a', 0), 'a')
 
-Wikipedia [https://en.wikipedia.org/wiki/Caesar_cipher](https://en.wikipedia.org/wiki/Caesar_cipher)
+    def test_rotate_a_by_1(self):
+        self.assertEqual(rotational_cipher.rotate('a', 1), 'b')
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_rotate_a_by_26(self):
+        self.assertEqual(rotational_cipher.rotate('a', 26), 'a')
 
+    def test_rotate_m_by_13(self):
+        self.assertEqual(rotational_cipher.rotate('m', 13), 'z')
+
+    def test_rotate_n_by_13_with_wrap_around_alphabet(self):
+        self.assertEqual(rotational_cipher.rotate('n', 13), 'a')
+
+    def test_rotate_capital_letters(self):
+        self.assertEqual(rotational_cipher.rotate('OMG', 5), 'TRL')
+
+    def test_rotate_spaces(self):
+        self.assertEqual(rotational_cipher.rotate('O M G', 5), 'T R L')
+
+    def test_rotate_numbers(self):
+        self.assertEqual(
+            rotational_cipher.rotate('Testing 1 2 3 testing', 4),
+            'Xiwxmrk 1 2 3 xiwxmrk')
+
+    def test_rotate_punctuation(self):
+        self.assertEqual(
+            rotational_cipher.rotate("Let's eat, Grandma!", 21),
+            "Gzo'n zvo, Bmviyhv!")
+
+    def test_rotate_all_letters(self):
+        self.assertEqual(
+            rotational_cipher.rotate("The quick brown fox jumps"
+                                     " over the lazy dog.", 13),
+            "Gur dhvpx oebja sbk whzcf bire gur ynml qbt.")
+
+
+if __name__ == '__main__':
+    unittest.main()

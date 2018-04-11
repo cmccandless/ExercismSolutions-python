@@ -1,25 +1,50 @@
-# Markdown
+import unittest
+from markdown import parse_markdown
 
-The markdown exercise is a refactoring exercise. There is code that parses a
-given string with [Markdown
-syntax](https://guides.github.com/features/mastering-markdown/) and returns the
-associated HTML for that string. Even though this code is confusingly written
-and hard to follow, somehow it works and all the tests are passing! Your
-challenge is to re-write this code to make it easier to read and maintain
-while still making sure that all the tests keep passing.
 
-It would be helpful if you made notes of what you did in your refactoring in
-comments so reviewers can see that, but it isn't strictly necessary. The most
-important thing is to make the code better!
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-## Submitting Exercises
+class TestMarkdown(unittest.TestCase):
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_paragraph(self):
+        self.assertEqual(parse_markdown('This will be a paragraph'),
+                         '<p>This will be a paragraph</p>')
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_italics(self):
+        self.assertEqual(parse_markdown('_This will be italic_'),
+                         '<p><em>This will be italic</em></p>')
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+    def test_bold(self):
+        self.assertEqual(parse_markdown('__This will be bold__'),
+                         '<p><strong>This will be bold</strong></p>')
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_mixed_normal_italics_and_bold(self):
+        self.assertEqual(parse_markdown('This will _be_ __mixed__'),
+                         '<p>This will <em>be</em> <strong>mixed</strong></p>')
+
+    def test_h1(self):
+        self.assertEqual(parse_markdown('# This will be an h1'),
+                         '<h1>This will be an h1</h1>')
+
+    def test_h2(self):
+        self.assertEqual(parse_markdown('## This will be an h2'),
+                         '<h2>This will be an h2</h2>')
+
+    def test_h6(self):
+        self.assertEqual(parse_markdown(
+            '###### This will be an h6'), '<h6>This will be an h6</h6>')
+
+    def test_unordered_lists(self):
+        self.assertEqual(parse_markdown('* Item 1\n* Item 2'),
+                         '<ul><li>Item 1</li>'
+                         '<li>Item 2</li></ul>')
+
+    def test_little_bit_of_everything(self):
+        self.assertEqual(parse_markdown(
+            '# Header!\n* __Bold Item__\n* _Italic Item_'),
+            '<h1>Header!</h1><ul><li><strong>Bold Item</strong></li>'
+            '<li><em>Italic Item</em></li></ul>')
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,24 +1,27 @@
-# Acronym
+import unittest
 
-Convert a phrase to its acronym.
+from acronym import abbreviate
 
-Techies love their TLA (Three Letter Acronyms)!
 
-Help generate some jargon by writing a program that converts a long name
-like Portable Network Graphics to its acronym (PNG).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
 
-## Submitting Exercises
+class AcronymTest(unittest.TestCase):
+    def test_basic(self):
+        self.assertEqual(abbreviate('Portable Network Graphics'), 'PNG')
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_lowercase_words(self):
+        self.assertEqual(abbreviate('Ruby on Rails'), 'ROR')
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_punctuation(self):
+        self.assertEqual(abbreviate('First In, First Out'), 'FIFO')
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+    def test_all_caps_words(self):
+        self.assertEqual(abbreviate('GNU Image Manipulation Program'), 'GIMP')
 
-## Source
+    def test_punctuation_without_whitespace(self):
+        self.assertEqual(
+            abbreviate('Complementary metal-oxide semiconductor'), 'CMOS')
 
-Julien Vanier [https://github.com/monkbroc](https://github.com/monkbroc)
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

@@ -1,25 +1,62 @@
-# Anagram
+import unittest
 
-Write a program that, given a word and a list of possible anagrams, selects the correct sublist.
-
-Given `"listen"` and a list of candidates like `"enlists" "google"
-"inlets" "banana"` the program should return a list containing
-`"inlets"`.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from anagram import detect_anagrams
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-## Source
+class AnagramTests(unittest.TestCase):
+    def test_no_matches(self):
+        candidates = ["hello", "world", "zombies", "pants"]
+        self.assertEqual(detect_anagrams("diaper", candidates), [])
 
-Inspired by the Extreme Startup game [https://github.com/rchatley/extreme_startup](https://github.com/rchatley/extreme_startup)
+    def test_detects_two_anagrams(self):
+        candidates = ["stream", "pigeon", "maters"]
+        self.assertEqual(
+            detect_anagrams("master", candidates), ["stream", "maters"])
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_does_not_detect_anagram_subsets(self):
+        self.assertEqual(detect_anagrams("good", ["dog", "goody"]), [])
 
+    def test_detects_anagram(self):
+        candidates = ["enlists", "google", "inlets", "banana"]
+        self.assertEqual(detect_anagrams("listen", candidates), ["inlets"])
+
+    def test_detects_three_anagrams(self):
+        candidates = [
+            "gallery", "ballerina", "regally", "clergy", "largely", "leading"
+        ]
+        self.assertEqual(
+            detect_anagrams("allergy", candidates),
+            ["gallery", "regally", "largely"])
+
+    def test_does_not_detect_non_anagrams_with_identical_checksum(self):
+        self.assertEqual(detect_anagrams("mass", ["last"]), [])
+
+    def test_detects_anagrams_case_insensitively(self):
+        candidates = ["cashregister", "Carthorse", "radishes"]
+        self.assertEqual(
+            detect_anagrams("Orchestra", candidates), ["Carthorse"])
+
+    def test_detects_anagrams_using_case_insensitive_subject(self):
+        candidates = ["cashregister", "carthorse", "radishes"]
+        self.assertEqual(
+            detect_anagrams("Orchestra", candidates), ["carthorse"])
+
+    def test_detects_anagrams_using_case_insensitive_possible_matches(self):
+        candidates = ["cashregister", "Carthorse", "radishes"]
+        self.assertEqual(
+            detect_anagrams("orchestra", candidates), ["Carthorse"])
+
+    def test_does_not_detect_a_anagram_if_the_original_word_is_repeated(self):
+        self.assertEqual(detect_anagrams("go", ["go Go GO"]), [])
+
+    def test_anagrams_must_use_all_letters_exactly_once(self):
+        self.assertEqual(detect_anagrams("tapper", ["patter"]), [])
+
+    def test_capital_word_is_not_own_anagram(self):
+        self.assertEqual(detect_anagrams("BANANA", ["Banana"]), [])
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,34 +1,38 @@
-# Difference Of Squares
+import unittest
 
-Find the difference between the sum of the squares and the square of the sums of the first N natural numbers.
-
-The square of the sum of the first ten natural numbers is,
-
-    (1 + 2 + ... + 10)**2 = 55**2 = 3025
-
-The sum of the squares of the first ten natural numbers is,
-
-    1**2 + 2**2 + ... + 10**2 = 385
-
-Hence the difference between the square of the sum of the first
-ten natural numbers and the sum of the squares is 2640:
-
-    3025 - 385 = 2640
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from difference_of_squares import difference, square_of_sum, sum_of_squares
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-## Source
+class DifferenceOfSquaresTest(unittest.TestCase):
+    def test_square_of_sum_1(self):
+        self.assertEqual(square_of_sum(1), 1)
 
-Problem 6 at Project Euler [http://projecteuler.net/problem=6](http://projecteuler.net/problem=6)
+    def test_square_of_sum_5(self):
+        self.assertEqual(square_of_sum(5), 225)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_square_of_sum_100(self):
+        self.assertEqual(square_of_sum(100), 25502500)
 
+    def test_sum_of_squares_1(self):
+        self.assertEqual(sum_of_squares(1), 1)
+
+    def test_sum_of_squares_5(self):
+        self.assertEqual(sum_of_squares(5), 55)
+
+    def test_sum_of_squares_100(self):
+        self.assertEqual(sum_of_squares(100), 338350)
+
+    def test_difference_of_squares_1(self):
+        self.assertEqual(difference(1), 0)
+
+    def test_difference_of_squares_5(self):
+        self.assertEqual(difference(5), 170)
+
+    def test_difference_of_squares_100(self):
+        self.assertEqual(difference(100), 25164150)
+
+
+if __name__ == '__main__':
+    unittest.main()

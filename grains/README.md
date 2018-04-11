@@ -1,45 +1,66 @@
-# Grains
+import unittest
 
-Write a program that calculates the number of grains of wheat on a chessboard given that the number on each square doubles.
-
-There once was a wise servant who saved the life of a prince. The king
-promised to pay whatever the servant could dream up. Knowing that the
-king loved chess, the servant told the king he would like to have grains
-of wheat. One grain on the first square of a chess board. Two grains on
-the next. Four on the third, and so on.
-
-There are 64 squares on a chessboard.
-
-Write a program that shows:
-- how many grains were on each square, and
-- the total number of grains
+from grains import (
+    on_square,
+    total_after,
+)
 
 
-## For bonus points
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-Did you get the tests passing and the code clean? If you want to, these
-are some additional things you could try:
+class GrainsTest(unittest.TestCase):
+    def test_square_1(self):
+        self.assertEqual(on_square(1), 1)
 
-- Optimize for speed.
-- Optimize for readability.
+    def test_square_2(self):
+        self.assertEqual(on_square(2), 2)
 
-Then please share your thoughts in a comment on the submission. Did this
-experiment make the code better? Worse? Did you learn anything from it?
+    def test_square_3(self):
+        self.assertEqual(on_square(3), 4)
 
-### Submitting Exercises
+    def test_square_4(self):
+        self.assertEqual(on_square(4), 8)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_square_16(self):
+        self.assertEqual(on_square(16), 32768)
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_square_32(self):
+        self.assertEqual(on_square(32), 2147483648)
+
+    def test_square_64(self):
+        self.assertEqual(on_square(64), 9223372036854775808)
+
+    def test_square_0_raises_exception(self):
+        with self.assertRaisesWithMessage(ValueError):
+            on_square(0)
+        with self.assertRaisesWithMessage(ValueError):
+            total_after(0)
+
+    def test_square_negative_raises_exception(self):
+        with self.assertRaisesWithMessage(ValueError):
+            on_square(-1)
+        with self.assertRaisesWithMessage(ValueError):
+            total_after(-1)
+
+    def test_square_gt_64_raises_exception(self):
+        with self.assertRaisesWithMessage(ValueError):
+            on_square(65)
+        with self.assertRaisesWithMessage(ValueError):
+            total_after(65)
+
+    def test_total(self):
+        self.assertEqual(total_after(64), 18446744073709551615)
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-JavaRanch Cattle Drive, exercise 6 [http://www.javaranch.com/grains.jsp](http://www.javaranch.com/grains.jsp)
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

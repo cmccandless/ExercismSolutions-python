@@ -1,43 +1,76 @@
-# Zipper
+import unittest
 
-Creating a zipper for a binary tree.
-
-[Zippers](https://en.wikipedia.org/wiki/Zipper_%28data_structure%29) are
-a purely functional way of navigating within a data structure and
-manipulating it.  They essentially contain a data structure and a
-pointer into that data structure (called the focus).
-
-For example given a rose tree (where each node contains a value and a
-list of child nodes) a zipper might support these operations:
-
-- `from_tree` (get a zipper out of a rose tree, the focus is on the root node)
-- `to_tree` (get the rose tree out of the zipper)
-- `value` (get the value of the focus node)
-- `prev` (move the focus to the previous child of the same parent,
-  returns a new zipper)
-- `next` (move the focus to the next child of the same parent, returns a
-  new zipper)
-- `up` (move the focus to the parent, returns a new zipper)
-- `set_value` (set the value of the focus node, returns a new zipper)
-- `insert_before` (insert a new subtree before the focus node, it
-  becomes the `prev` of the focus node, returns a new zipper)
-- `insert_after` (insert a new subtree after the focus node, it becomes
-  the `next` of the focus node, returns a new zipper)
-- `delete` (removes the focus node and all subtrees, focus moves to the
-  `next` node if possible otherwise to the `prev` node if possible,
-  otherwise to the parent node, returns a new zipper)
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from zipper import Zipper
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+
+class ZipperTest(unittest.TestCase):
+    def bt(self, value, left, right):
+        return {
+            'value': value,
+            'left': left,
+            'right': right
+        }
+
+    def leaf(self, value):
+        return self.bt(value, None, None)
+
+    def create_trees(self):
+        t1 = self.bt(1, self.bt(2, None, self.leaf(3)), self.leaf(4))
+        t2 = self.bt(1, self.bt(5, None, self.leaf(3)), self.leaf(4))
+        t3 = self.bt(1, self.bt(2, self.leaf(5), self.leaf(3)), self.leaf(4))
+        t4 = self.bt(1, self.leaf(2), self.leaf(4))
+        return (t1, t2, t3, t4)
+
+    def test_data_is_retained(self):
+        t1, _, _, _ = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        tree = zipper.to_tree()
+        self.assertEqual(tree, t1)
+
+    def test_left_and_right_value(self):
+        t1, _, _, _ = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        self.assertEqual(zipper.left().right().value(), 3)
+
+    def test_dead_end(self):
+        t1, _, _, _ = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        self.assertIsNone(zipper.left().left())
+
+    def test_tree_from_deep_focus(self):
+        t1, _, _, _ = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        self.assertEqual(zipper.left().right().to_tree(), t1)
+
+    def test_set_value(self):
+        t1, t2, _, _ = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        updatedZipper = zipper.left().set_value(5)
+        tree = updatedZipper.to_tree()
+        self.assertEqual(tree, t2)
+
+    def test_set_left_with_value(self):
+        t1, _, t3, _ = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        updatedZipper = zipper.left().set_left(self.leaf(5))
+        tree = updatedZipper.to_tree()
+        self.assertEqual(tree, t3)
+
+    def test_set_right_to_none(self):
+        t1, _, _, t4 = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        updatedZipper = zipper.left().set_right(None)
+        tree = updatedZipper.to_tree()
+        self.assertEqual(tree, t4)
+
+    def test_different_paths_to_same_zipper(self):
+        t1, _, _, _ = self.create_trees()
+        zipper = Zipper.from_tree(t1)
+        self.assertEqual(zipper.left().up().right().to_tree(),
+                         zipper.right().to_tree())
 
 
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

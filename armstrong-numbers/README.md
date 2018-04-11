@@ -1,28 +1,36 @@
-# Armstrong Numbers
+import unittest
 
-An [Armstrong number](https://en.wikipedia.org/wiki/Narcissistic_number) is a number that is the sum of its own digits each raised to the power of the number of digits.
+from armstrong_numbers import is_armstrong
 
-For example:
 
-- 9 is an Armstrong number, because `9 = 9^1 = 9`
-- 10 is *not* an Armstrong number, because `10 != 1^2 + 0^2 = 2`
-- 153 is an Armstrong number, because: `153 = 1^3 + 5^3 + 3^3 = 1 + 125 + 27 = 153`
-- 154 is *not* an Armstrong number, because: `154 != 1^3 + 5^3 + 4^3 = 1 + 125 + 64 = 190`
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-Write some code to determine whether a number is an Armstrong number.
+class ArmstrongTests(unittest.TestCase):
 
-## Submitting Exercises
+    def test_single_digit_numbers_are_armstrong_numbers(self):
+        self.assertIs(is_armstrong(5), True)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_there_are_no_two_digit_armstrong_numbers(self):
+        self.assertIs(is_armstrong(10), False)
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_three_digit_number_that_is_an_armstrong_number(self):
+        self.assertIs(is_armstrong(153), True)
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+    def test_three_digit_number_that_is_not_an_armstrong_number(self):
+        self.assertIs(is_armstrong(100), False)
 
-## Source
+    def test_four_digit_number_that_is_an_armstrong_number(self):
+        self.assertIs(is_armstrong(9474), True)
 
-Wikipedia [https://en.wikipedia.org/wiki/Narcissistic_number](https://en.wikipedia.org/wiki/Narcissistic_number)
+    def test_four_digit_number_that_is_not_an_armstrong_number(self):
+        self.assertIs(is_armstrong(9475), False)
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_seven_digit_number_that_is_an_armstrong_number(self):
+        self.assertIs(is_armstrong(9926315), True)
+
+    def test_seven_digit_number_that_is_not_an_armstrong_number(self):
+        self.assertIs(is_armstrong(9926314), False)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,48 +1,94 @@
-# All Your Base
+import unittest
 
-Convert a number, represented as a sequence of digits in one base, to any other base.
-
-Implement general base conversion. Given a number in base **a**,
-represented as a sequence of digits, convert it to base **b**.
-
-## Note
-- Try to implement the conversion yourself.
-  Do not use something else to perform the conversion for you.
-
-## About [Positional Notation](https://en.wikipedia.org/wiki/Positional_notation)
-
-In positional notation, a number in base **b** can be understood as a linear
-combination of powers of **b**.
-
-The number 42, *in base 10*, means:
-
-(4 * 10^1) + (2 * 10^0)
-
-The number 101010, *in base 2*, means:
-
-(1 * 2^5) + (0 * 2^4) + (1 * 2^3) + (0 * 2^2) + (1 * 2^1) + (0 * 2^0)
-
-The number 1120, *in base 3*, means:
-
-(1 * 3^3) + (1 * 3^2) + (2 * 3^1) + (0 * 3^0)
-
-I think you got the idea!
+from all_your_base import rebase
 
 
-*Yes. Those three numbers above are exactly the same. Congratulations!*
+# Tests adapted from `problem-specifications//canonical-data.json` @ v2.3.0
 
-### Submitting Exercises
+class AllYourBaseTests(unittest.TestCase):
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_single_bit_to_one_decimal(self):
+        self.assertEqual(rebase(2, [1], 10), [1])
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_binary_to_single_decimal(self):
+        self.assertEqual(rebase(2, [1, 0, 1], 10), [5])
+
+    def test_single_decimal_to_binary(self):
+        self.assertEqual(rebase(10, [5], 2), [1, 0, 1])
+
+    def test_binary_to_multiple_decimal(self):
+        self.assertEqual(rebase(2, [1, 0, 1, 0, 1, 0], 10), [4, 2])
+
+    def test_decimal_to_binary(self):
+        self.assertEqual(rebase(10, [4, 2], 2), [1, 0, 1, 0, 1, 0])
+
+    def test_trinary_to_hexadecimal(self):
+        self.assertEqual(rebase(3, [1, 1, 2, 0], 16), [2, 10])
+
+    def test_hexadecimal_to_trinary(self):
+        self.assertEqual(rebase(16, [2, 10], 3), [1, 1, 2, 0])
+
+    def test_15_bit_integer(self):
+        self.assertEqual(rebase(97, [3, 46, 60], 73), [6, 10, 45])
+
+    def test_empty_list(self):
+        self.assertEqual(rebase(2, [], 10), [])
+
+    def test_single_zero(self):
+        self.assertEqual(rebase(10, [0], 2), [])
+
+    def test_multiple_zeroes(self):
+        self.assertEqual(rebase(10, [0, 0, 0], 2), [])
+
+    def test_leading_zeros(self):
+        self.assertEqual(rebase(7, [0, 6, 0], 10), [4, 2])
+
+    def test_input_base_is_one(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(1, [0], 10)
+
+    def test_input_base_is_zero(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(0, [], 10)
+
+    def test_input_base_is_negative(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(-2, [1], 10)
+
+    def test_negative_digit(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(2, [1, -1, 1, 0, 1, 0], 10)
+
+    def test_invalid_positive_digit(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(2, [1, 2, 1, 0, 1, 0], 10)
+
+    def test_output_base_is_one(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(2, [1, 0, 1, 0, 1, 0], 1)
+
+    def test_output_base_is_zero(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(10, [7], 0)
+
+    def test_output_base_is_negative(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(2, [1], -7)
+
+    def test_both_bases_are_negative(self):
+        with self.assertRaisesWithMessage(ValueError):
+            rebase(-2, [1], -7)
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

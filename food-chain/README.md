@@ -1,81 +1,108 @@
-# Food chain
+import unittest
 
-Generate the lyrics of the song 'I Know an Old Lady Who Swallowed a Fly'.
-
-While you could copy/paste the lyrics,
-or read them from a file, this problem is much more
-interesting if you approach it algorithmically.
-
-This is a [cumulative song](http://en.wikipedia.org/wiki/Cumulative_song) of unknown origin.
-
-This is one of many common variants.
-
-```text
-I know an old lady who swallowed a fly.
-I don't know why she swallowed the fly. Perhaps she'll die.
-
-I know an old lady who swallowed a spider.
-It wriggled and jiggled and tickled inside her.
-She swallowed the spider to catch the fly.
-I don't know why she swallowed the fly. Perhaps she'll die.
-
-I know an old lady who swallowed a bird.
-How absurd to swallow a bird!
-She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
-She swallowed the spider to catch the fly.
-I don't know why she swallowed the fly. Perhaps she'll die.
-
-I know an old lady who swallowed a cat.
-Imagine that, to swallow a cat!
-She swallowed the cat to catch the bird.
-She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
-She swallowed the spider to catch the fly.
-I don't know why she swallowed the fly. Perhaps she'll die.
-
-I know an old lady who swallowed a dog.
-What a hog, to swallow a dog!
-She swallowed the dog to catch the cat.
-She swallowed the cat to catch the bird.
-She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
-She swallowed the spider to catch the fly.
-I don't know why she swallowed the fly. Perhaps she'll die.
-
-I know an old lady who swallowed a goat.
-Just opened her throat and swallowed a goat!
-She swallowed the goat to catch the dog.
-She swallowed the dog to catch the cat.
-She swallowed the cat to catch the bird.
-She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
-She swallowed the spider to catch the fly.
-I don't know why she swallowed the fly. Perhaps she'll die.
-
-I know an old lady who swallowed a cow.
-I don't know how she swallowed a cow!
-She swallowed the cow to catch the goat.
-She swallowed the goat to catch the dog.
-She swallowed the dog to catch the cat.
-She swallowed the cat to catch the bird.
-She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
-She swallowed the spider to catch the fly.
-I don't know why she swallowed the fly. Perhaps she'll die.
-
-I know an old lady who swallowed a horse.
-She's dead, of course!
-```
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from food_chain import recite
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v2.1.0
 
-## Source
+class FoodChainTest(unittest.TestCase):
 
-Inspired by the Extreme Startup game [https://github.com/rchatley/extreme_startup](https://github.com/rchatley/extreme_startup)
+    def test_fly(self):
+        expected = [
+            "I know an old lady who swallowed a fly."
+            "I don't know why she swallowed the fly. Perhaps she'll die."
+        ]
+        self.assertEqual(recite(1, 1), expected)
 
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_spider(self):
+        expected = [
+            "I know an old lady who swallowed a spider."
+            "It wriggled and jiggled and tickled inside her."
+            "She swallowed the spider to catch the fly."
+            "I don't know why she swallowed the fly. Perhaps she'll die."
+        ]
+        self.assertEqual(recite(2, 2), expected)
+
+    def test_bird(self):
+        expected = [
+            "I know an old lady who swallowed a bird."
+            "How absurd to swallow a bird!"
+            "She swallowed the bird to catch the spider that "
+            "wriggled and jiggled and tickled inside her."
+            "She swallowed the spider to catch the fly."
+            "I don't know why she swallowed the fly. Perhaps she'll die."
+        ]
+        self.assertEqual(recite(3, 3), expected)
+
+    def test_cat(self):
+        expected = [
+            "I know an old lady who swallowed a cat."
+            "Imagine that, to swallow a cat!"
+            "She swallowed the cat to catch the bird."
+            "She swallowed the bird to catch the spider that "
+            "wriggled and jiggled and tickled inside her."
+            "She swallowed the spider to catch the fly."
+            "I don't know why she swallowed the fly. Perhaps she'll die."
+        ]
+        self.assertEqual(recite(4, 4), expected)
+
+    def test_dog(self):
+        expected = [
+            "I know an old lady who swallowed a dog."
+            "What a hog, to swallow a dog!"
+            "She swallowed the dog to catch the cat."
+            "She swallowed the cat to catch the bird."
+            "She swallowed the bird to catch the spider that wriggled "
+            "and jiggled and tickled inside her."
+            "She swallowed the spider to catch the fly."
+            "I don't know why she swallowed the fly. Perhaps she'll die."
+        ]
+        self.assertEqual(recite(5, 5), expected)
+
+    def test_goat(self):
+        expected = [
+            "I know an old lady who swallowed a goat."
+            "Just opened her throat and swallowed a goat!"
+            "She swallowed the goat to catch the dog."
+            "She swallowed the dog to catch the cat."
+            "She swallowed the cat to catch the bird."
+            "She swallowed the bird to catch the spider that "
+            "wriggled and jiggled and tickled inside her."
+            "She swallowed the spider to catch the fly."
+            "I don't know why she swallowed the fly. Perhaps she'll die."
+        ]
+        self.assertEqual(recite(6, 6), expected)
+
+    def test_cow(self):
+        expected = [
+            "I know an old lady who swallowed a cow."
+            "I don't know how she swallowed a cow!"
+            "She swallowed the cow to catch the goat."
+            "She swallowed the goat to catch the dog."
+            "She swallowed the dog to catch the cat."
+            "She swallowed the cat to catch the bird."
+            "She swallowed the bird to catch the spider that "
+            "wriggled and jiggled and tickled inside her."
+            "She swallowed the spider to catch the fly."
+            "I don't know why she swallowed the fly. Perhaps she'll die."
+        ]
+        self.assertEqual(recite(7, 7), expected)
+
+    def test_horse(self):
+        expected = [
+            "I know an old lady who swallowed a horse."
+            "She's dead, of course!"
+        ]
+        self.assertEqual(recite(8, 8), expected)
+
+    def test_multiple_verses(self):
+        expected = [recite(n, n)[0] for n in range(1, 4)]
+        self.assertEqual(recite(1, 3), expected)
+
+    def test_full_song(self):
+        expected = [recite(n, n)[0] for n in range(1, 9)]
+        self.assertEqual(recite(1, 8), expected)
+
+
+if __name__ == '__main__':
+    unittest.main()

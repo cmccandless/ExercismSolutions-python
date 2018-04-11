@@ -1,42 +1,40 @@
-# Spiral Matrix
+import unittest
+
+from spiral_matrix import spiral
 
 
-Given the size, return a square matrix of numbers in spiral order.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-The matrix should be filled with natural numbers, starting from 1
-in the top-left corner, increasing in an inward, clockwise spiral order,
-like these examples:
 
-##### Spiral matrix of size 3
+class SpiralMatrixTest(unittest.TestCase):
+    def test_spiral_matrix_with_size_0(self):
+        self.assertEqual(spiral(0), [])
 
-```plain
-1 2 3
-8 9 4
-7 6 5
-```
+    def test_spiral_matrix_with_size_1(self):
+        self.assertEqual(spiral(1), [[1]])
 
-##### Spiral matrix of size 4
+    def test_spiral_matrix_with_size_2(self):
+        self.assertEqual(spiral(2), [[1, 2],
+                                     [4, 3]])
 
-```plain
- 1  2  3 4
-12 13 14 5
-11 16 15 6
-10  9  8 7
-```
+    def test_spiral_matrix_with_size_3(self):
+        self.assertEqual(spiral(3), [[1, 2, 3],
+                                     [8, 9, 4],
+                                     [7, 6, 5]])
 
-## Submitting Exercises
+    def test_spiral_matrix_with_size_4(self):
+        self.assertEqual(spiral(4), [[1,  2,  3,  4],
+                                     [12, 13, 14, 5],
+                                     [11, 16, 15, 6],
+                                     [10, 9,  8,  7]])
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+    def test_spiral_matrix_with_size_5(self):
+        self.assertEqual(spiral(5), [[1,  2,  3,  4,  5],
+                                     [16, 17, 18, 19, 6],
+                                     [15, 24, 25, 20, 7],
+                                     [14, 23, 22, 21, 8],
+                                     [13, 12, 11, 10, 9]])
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-Reddit r/dailyprogrammer challenge #320 [Easy] Spiral Ascension. [https://www.reddit.com/r/dailyprogrammer/comments/6i60lr/20170619_challenge_320_easy_spiral_ascension/](https://www.reddit.com/r/dailyprogrammer/comments/6i60lr/20170619_challenge_320_easy_spiral_ascension/)
-
-## Submitting Incomplete Solutions
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

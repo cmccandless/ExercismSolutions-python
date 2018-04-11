@@ -1,89 +1,83 @@
-# Wordy
+import unittest
 
-Write a program that takes a word problem and returns the answer as an integer.
-
-## Step 1
-
-E.g.
-
-> What is 5 plus 13?
-
-The program should handle large numbers and negative numbers.
-
-Remember, that these are verbal word problems, not treated as you
-normally would treat a written problem.  This means that you calculate
-as you move forward each step.  In other words, you should ignore order
-of operations.  3 + 2 * 3 = 15, not 9.
-
-Use the tests to drive your solution by deleting the `skip` in one test
-at a time.
-
-## Step 2
-
-E.g.
-
-> What is 5 plus 13?
-
-> What is 7 minus 5?
-
-> What is 6 multiplied by 4?
-
-> What is 25 divided by 5?
-
-## Step 3
-
-E.g.
-
-> What is 5 plus 13 plus 6?
-
-> What is 7 minus 5 minus 1?
-
-> What is 9 minus 3 plus 5?
-
-> What is 3 plus 5 minus 8?
-
-## Step 4
-
-E.g.
-
-> What is 5 plus 13?
-
-> What is 7 minus 5?
-
-> What is 6 times 4?
-
-> What is 25 divided by 5?
-
-> What is 78 plus 5 minus 3?
-
-> What is 18 times 3 plus 16?
-
-> What is 4 times 3 divided by 6?
-
-> What is 4 plus 3 times 2?
-
-## Extensions
-
-Implement questions of the type:
-
-> What is 2 raised to the 5th power?
-
-Remember to write failing tests for this code.
-
-### Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+from wordy import calculate
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-## Source
+class WordyTest(unittest.TestCase):
+    def test_addition(self):
+        self.assertEqual(calculate("What is 1 plus 1?"), 2)
 
-Inspired by one of the generated questions in the Extreme Startup game. [https://github.com/rchatley/extreme_startup](https://github.com/rchatley/extreme_startup)
+    def test_more_addition(self):
+        self.assertEqual(calculate("What is 53 plus 2?"), 55)
 
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_addition_with_negative_numbers(self):
+        self.assertEqual(calculate("What is -1 plus -10?"), -11)
 
+    def test_large_addition(self):
+        self.assertEqual(calculate("What is 123 plus 45678?"), 45801)
+
+    def test_subtraction(self):
+        self.assertEqual(calculate("What is 4 minus -12?"), 16)
+
+    def test_multiplication(self):
+        self.assertEqual(calculate("What is -3 multiplied by 25?"), -75)
+
+    def test_division(self):
+        self.assertEqual(calculate("What is 33 divided by -3?"), -11)
+
+    def test_multiple_addition(self):
+        self.assertEqual(calculate("What is 1 plus 1 plus 1?"), 3)
+
+    def test_addition_then_subtraction(self):
+        self.assertEqual(calculate("What is 1 plus 5 minus -2?"), 8)
+
+    def test_multiple_subtraction(self):
+        self.assertEqual(calculate("What is 20 minus 4 minus 13?"), 3)
+
+    def test_subtraction_then_addition(self):
+        self.assertEqual(calculate("What is 17 minus 6 plus 3?"), 14)
+
+    def test_multiple_multiplication(self):
+        self.assertEqual(
+            calculate("What is 2 multiplied by -2 multiplied by 3?"), -12)
+
+    def test_addition_then_multiplication(self):
+        self.assertEqual(calculate("What is -3 plus 7 multiplied by -2?"), -8)
+
+    def test_multiple_division(self):
+        self.assertEqual(
+            calculate("What is -12 divided by 2 divided by -3?"), 2)
+
+    def test_unknown_operation(self):
+        with self.assertRaisesWithMessage(ValueError):
+            calculate("What is 52 cubed?")
+
+    def test_non_math_question(self):
+        with self.assertRaisesWithMessage(ValueError):
+            calculate("Who is the President of the United States?")
+
+    # Additional tests for this track
+
+    def test_missing_operation(self):
+        with self.assertRaisesWithMessage(ValueError):
+            calculate("What is 2 2 minus 3?")
+
+    def test_missing_number(self):
+        with self.assertRaisesWithMessage(ValueError):
+            calculate("What is 7 plus multiplied by -2?")
+
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()

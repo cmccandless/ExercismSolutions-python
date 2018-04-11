@@ -2,6 +2,8 @@ def verify(isbn):
     total = 0
     index = 10
     isbn = list(isbn.replace('-', ''))
+    if len(isbn) != 10:
+        return False
     while isbn:
         ch = isbn.pop(0)
         if index == 1 and ch == 'X':

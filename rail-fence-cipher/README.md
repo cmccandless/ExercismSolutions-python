@@ -1,72 +1,38 @@
-# Rail Fence Cipher
+import unittest
 
-Implement encoding and decoding for the rail fence cipher.
-
-The Rail Fence cipher is a form of transposition cipher that gets its name from
-the way in which it's encoded. It was already used by the ancient Greeks.
-
-In the Rail Fence cipher, the message is written downwards on successive "rails"
-of an imaginary fence, then moving up when we get to the bottom (like a zig-zag).
-Finally the message is then read off in rows.
-
-For example, using three "rails" and the message "WE ARE DISCOVERED FLEE AT ONCE",
-the cipherer writes out:
-```
-W . . . E . . . C . . . R . . . L . . . T . . . E
-. E . R . D . S . O . E . E . F . E . A . O . C .
-. . A . . . I . . . V . . . D . . . E . . . N . .
-```
-
-Then reads off:
-```
-WECRLTEERDSOEEFEAOCAIVDEN
-```
+from rail_fence_cipher import encode, decode
 
 
-To decrypt a message you take the zig-zag shape and fill the ciphertext along the rows.
-```
-? . . . ? . . . ? . . . ? . . . ? . . . ? . . . ?
-. ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? .
-. . ? . . . ? . . . ? . . . ? . . . ? . . . ? . .
-```
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-The first row has seven spots that can be filled with "WECRLTE".
-```
-W . . . E . . . C . . . R . . . L . . . T . . . E
-. ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? .
-. . ? . . . ? . . . ? . . . ? . . . ? . . . ? . .
-```
+class RailFenceTests(unittest.TestCase):
+    def test_encode_with_two_rails(self):
+        self.assertMultiLineEqual(
+            encode('XOXOXOXOXOXOXOXOXO', 2), 'XXXXXXXXXOOOOOOOOO')
 
-Now the 2nd row takes "ERDSOEEFEAOC".
-```
-W . . . E . . . C . . . R . . . L . . . T . . . E
-. E . R . D . S . O . E . E . F . E . A . O . C .
-. . ? . . . ? . . . ? . . . ? . . . ? . . . ? . .
-```
+    def test_encode_with_three_rails(self):
+        self.assertMultiLineEqual(
+            encode('WEAREDISCOVEREDFLEEATONCE', 3),
+            'WECRLTEERDSOEEFEAOCAIVDEN')
 
-Leaving "AIVDEN" for the last row.
-```
-W . . . E . . . C . . . R . . . L . . . T . . . E
-. E . R . D . S . O . E . E . F . E . A . O . C .
-. . A . . . I . . . V . . . D . . . E . . . N . .
-```
+    def test_encode_with_ending_in_the_middle(self):
+        self.assertMultiLineEqual(encode('EXERCISES', 4), 'ESXIEECSR')
 
-If you now read along the zig-zag shape you can read the original message.
+    def test_decode_with_three_rails(self):
+        self.assertMultiLineEqual(
+            decode('TEITELHDVLSNHDTISEIIEA', 3), 'THEDEVILISINTHEDETAILS')
 
-### Submitting Exercises
+    def test_decode_with_five_rails(self):
+        self.assertMultiLineEqual(
+            decode('EIEXMSMESAORIWSCE', 5), 'EXERCISMISAWESOME')
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
-
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_decode_with_six_rails(self):
+        self.assertMultiLineEqual(
+            decode(
+                '133714114238148966225439541018335470986172518171757571896261',
+                6),
+            '112358132134558914423337761098715972584418167651094617711286')
 
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Source
-
-Wikipedia [https://en.wikipedia.org/wiki/Transposition_cipher#Rail_Fence_cipher](https://en.wikipedia.org/wiki/Transposition_cipher#Rail_Fence_cipher)
-
-## Submitting Incomplete Problems
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-
+if __name__ == '__main__':
+    unittest.main()

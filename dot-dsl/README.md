@@ -1,52 +1,127 @@
-# Dot Dsl
+import unittest
 
-Write a Domain Specific Language similar to the Graphviz dot language.
+from dot_dsl import Graph, Node, Edge, NODE, EDGE, ATTR
 
-A [Domain Specific Language
-(DSL)](https://en.wikipedia.org/wiki/Domain-specific_language) is a
-small language optimized for a specific domain.
 
-For example the dot language of [Graphviz](http://graphviz.org) allows
-you to write a textual description of a graph which is then transformed
-into a picture by one of the graphviz tools (such as `dot`). A simple
-graph looks like this:
+class DotDslTest(unittest.TestCase):
+    def test_empty_graph(self):
+        g = Graph()
 
-    graph {
-        graph [bgcolor="yellow"]
-        a [color="red"]
-        b [color="blue"]
-        a -- b [color="green"]
-    }
+        self.assertEqual(g.nodes, [])
+        self.assertEqual(g.edges, [])
+        self.assertEqual(g.attrs, {})
 
-Putting this in a file `example.dot` and running `dot example.dot -T png
--o example.png` creates an image `example.png` with red and blue circle
-connected by a green line on a yellow background.
+    def test_graph_with_one_node(self):
+        g = Graph([
+            (NODE, "a", {})
+        ])
 
-Create a DSL similar to the dot language.
+        self.assertEqual(g.nodes, [Node("a")])
+        self.assertEqual(g.edges, [])
+        self.assertEqual(g.attrs, {})
 
-## Description of DSL
+    def test_graph_with_one_node_with_keywords(self):
+        g = Graph([
+            (NODE, "a", {"color": "green"})
+        ])
 
-A graph, in this DSL, is an object of type `Graph`, taking a list of one 
-or more
+        self.assertEqual(g.nodes, [Node("a", {"color": "green"})])
+        self.assertEqual(g.edges, [])
+        self.assertEqual(g.attrs, {})
 
-+ attributes
-+ nodes
-+ edges
+    def test_graph_with_one_edge(self):
+        g = Graph([
+            (EDGE, "a", "b", {})
+        ])
 
-described as tuples.
+        self.assertEqual(g.nodes, [])
+        self.assertEqual(g.edges, [Edge("a", "b", {})])
+        self.assertEqual(g.attrs, {})
 
-The implementations of `Node` and `Edge` provided in `dot_dsl.py`.
+    def test_graph_with_one_attribute(self):
+        g = Graph([
+            (ATTR, "foo", "1")
+        ])
 
-Observe the test cases in `dot_dsl_test.py` to understand the DSL's design.
+        self.assertEqual(g.nodes, [])
+        self.assertEqual(g.edges, [])
+        self.assertEqual(g.attrs, {"foo": "1"})
 
-## Submitting Exercises
+    def test_graph_with_attributes(self):
+        g = Graph([
+            (ATTR, "foo", "1"),
+            (ATTR, "title", "Testing Attrs"),
+            (NODE, "a", {"color": "green"}),
+            (NODE, "c", {}),
+            (NODE, "b", {"label": "Beta!"}),
+            (EDGE, "b", "c", {}),
+            (EDGE, "a", "b", {"color": "blue"}),
+            (ATTR, "bar", "true")
+        ])
 
-Note that, when trying to submit an exercise, make sure the solution is in the `exercism/python/<exerciseName>` directory.
+        self.assertEqual(g.nodes, [Node("a", {"color": "green"}),
+                                   Node("c", {}),
+                                   Node("b", {"label": "Beta!"})])
+        self.assertEqual(g.edges, [Edge("b", "c", {}),
+                                   Edge("a", "b", {"color": "blue"})])
+        self.assertEqual(g.attrs, {
+            "foo": "1",
+            "title": "Testing Attrs",
+            "bar": "true"
+        })
 
-For example, if you're submitting `bob.py` for the Bob exercise, the submit command would be something like `exercism submit <path_to_exercism_dir>/python/bob/bob.py`.
+    def test_malformed_graph(self):
+        with self.assertRaisesWithMessage(TypeError):
+            Graph(1)
 
-For more detailed information about running tests, code style and linting, please see the [help page](http://exercism.io/languages/python).
+        with self.assertRaisesWithMessage(TypeError):
+            Graph("problematic")
 
-## Submitting Incomplete Solutions
+    def test_malformed_graph_item(self):
+        with self.assertRaisesWithMessage(TypeError):
+            Graph([
+                ()
+            ])
 
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+        with self.assertRaisesWithMessage(TypeError):
+            Graph([
+                (ATTR, )
+            ])
+
+    def test_malformed_attr(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Graph([
+                (ATTR, 1, 2, 3)
+            ])
+
+    def test_malformed_node(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Graph([
+                (NODE, 1, 2, 3)
+            ])
+
+    def test_malformed_EDGE(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Graph([
+                (EDGE, 1, 2)
+            ])
+
+    def test_unknown_item(self):
+        with self.assertRaisesWithMessage(ValueError):
+            Graph([
+                (99, 1, 2)
+            ])
+
+    # Utility methods
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
+
+
+if __name__ == '__main__':
+    unittest.main()
