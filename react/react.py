@@ -1,65 +1,60 @@
 class Cell(object):
-    def __init__(self, reactor, value=0, dependencies=set(),
-                 updater=None):
-        self.reactor = reactor
-        self.index = len(reactor.cells)
-        reactor.cells.append(self)
-        self.value = value
-        self.dirty = False
-        self.dependencies = dependencies
-        self.dependents = set()
-        self.updater = updater
-        self.watchers = set()
-        if updater is not None:
-            self.update()
-            self.notify()
+    def __init__(self):
+        self.__value__ = 0
+        self.dependents = []
 
-    def add_watcher(self, watcher):
-        self.watchers.add(watcher)
-
-    def remove_watcher(self, watcher):
-        self.watchers.remove(watcher)
-
-    def set_value(self, value, top=True):
-        self.value = value
+    def notify(self):
         for d in self.dependents:
             d.update()
-        if top:
-            self.reactor.notify()
+        for d in self.dependents:
+            if d.dirty():
+                d.report()
+
+    def __set_value__(self, new_val):
+        self.__value__ = new_val
+        self.notify()
+
+    @property
+    def value(self):
+        return self.__value__
+
+    @value.setter
+    def value(self, new_val):
+        self.__set_value__(new_val)
+
+
+class InputCell(Cell):
+    def __init__(self, value):
+        Cell.__init__(self)
+        self.value = value
+
+
+class ComputeCell(Cell):
+    def __init__(self, inputs, func):
+        Cell.__init__(self)
+        self.inputs = inputs
+        for i in self.inputs:
+            i.dependents.append(self)
+        self.func = func
+        self.callbacks = set()
+        self.update()
+        self.last_known = self.value
+        self.add_callback = self.callbacks.add
+        self.remove_callback = (
+            lambda cb: self.callbacks.difference_update({cb})
+        )
+
+    def __set_value__(self, new_val):
+        self.__value__ = new_val
 
     def update(self):
-        if self.updater is not None:
-            values = [d.value for d in self.dependencies]
-            value = self.updater(values)
-            if self.value != value:
-                self.set_value(value, False)
-                self.dirty = True
+        self.value = self.func([i.value for i in self.inputs])
 
-    def notify(self):
-        if self.dirty:
-            for watcher in self.watchers:
-                watcher(self, self.value)
-            self.dirty = False
+    def dirty(self):
+        return self.last_known != self.value
 
-    def __hash__(self):
-        return self.index
-
-
-class Reactor(object):
-    def __init__(self):
-        self.cells = []
-
-    def create_input_cell(self, value):
-        return Cell(self, value=value)
-
-    def create_compute_cell(self, dependencies, updater):
-        cell = Cell(self,
-                    dependencies=dependencies,
-                    updater=updater)
-        for d in dependencies:
-            d.dependents.add(cell)
-        return cell
-
-    def notify(self):
-        for cell in self.cells:
-            cell.notify()
+    def report(self):
+        self.last_known = self.value
+        for cb in self.callbacks:
+            cb(self.value)
+        self.notify()

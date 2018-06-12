@@ -1,85 +1,93 @@
-# Yacht
+import unittest
 
-# Score a single throw of dice in *Yacht*
+import yacht
+from yacht import score
 
-The dice game [Yacht](https://en.wikipedia.org/wiki/Yacht_(dice_game)) is from
-the same family as Poker Dice, Generala and particularly Yahtzee, of which it
-is a precursor. In the game, five dice are rolled and the result can be entered
-in any of twelve categories. The score of a throw of the dice depends on
-category chosen.
 
-## Scores in Yacht
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-    Category    Score                   Example
-    Ones            1 × number of ones      1 1 1 4 5 scores 3
-    Twos            2 × number of twos      2 2 3 4 5 scores 4
-    Threes          3 × number of threes    3 3 3 3 3 scores 15
-    Fours           4 × number of fours     1 2 3 3 5 scores 0
-    Fives           5 × number of fives     5 1 5 2 5 scores 15
-    Sixes           6 × number of sixes     2 3 4 5 6 scores 6
-    Full House      Total of the dice       3 3 3 5 5 scores 19
-    Four of a Kind  Total of the four dice  4 4 4 4 6 scores 16
-    Little Straight 30 points               1 2 3 4 5 scores 30 
-    Big Straight    30 points               2 3 4 5 6 scores 30
-    Choice          Sum of the dice         2 3 3 4 6 scores 18
-    Yacht           50 points               4 4 4 4 4 scores 50
+class YachtTests(unittest.TestCase):
+    def test_yacht(self):
+        self.assertEqual(score([5, 5, 5, 5, 5], yacht.YACHT), 50)
 
-If the dice do not satisfy the requirements of a category, the score is zero.
-If, for example, *Four Of A Kind* is entered in the *Yacht* category, zero
-points are scored. A *Yacht* scores zero if entered in the *Full House* category.
+    def test_not_yacht(self):
+        self.assertEqual(score([1, 3, 3, 2, 5], yacht.YACHT), 0)
 
-## Task 
-Given a list of values for five dice and a category, your solution should return
-the score of the dice for that category. If the dice do not satisfy the requirements
-of the category your solution should return 0. You can assume that five values
-will always be presented, and the value of each will be between one and six
-inclusively. You should not assume that the dice are ordered.
+    def test_ones(self):
+        self.assertEqual(score([1, 1, 1, 3, 5], yacht.ONES), 3)
 
-## Exception messages
+    def test_ones_out_of_order(self):
+        self.assertEqual(score([3, 1, 1, 5, 1], yacht.ONES), 3)
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def test_no_ones(self):
+        self.assertEqual(score([4, 3, 6, 5, 5], yacht.ONES), 0)
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_twos(self):
+        self.assertEqual(score([2, 3, 4, 5, 6], yacht.TWOS), 2)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_fours(self):
+        self.assertEqual(score([1, 4, 1, 4, 1], yacht.FOURS), 8)
 
-## Running the tests
+    def test_yacht_counted_as_threes(self):
+        self.assertEqual(score([3, 3, 3, 3, 3], yacht.THREES), 15)
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def test_yacht_of_threes_counted_as_fives(self):
+        self.assertEqual(score([3, 3, 3, 3, 3], yacht.FIVES), 0)
 
-- Python 2.7: `py.test yacht_test.py`
-- Python 3.3+: `pytest yacht_test.py`
+    def test_sixes(self):
+        self.assertEqual(score([2, 3, 4, 5, 6], yacht.SIXES), 6)
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest yacht_test.py`
+    def test_full_house_two_small_three_big(self):
+        self.assertEqual(score([2, 2, 4, 4, 4], yacht.FULL_HOUSE), 16)
 
-### Common `pytest` options
+    def test_full_house_three_small_two_big(self):
+        self.assertEqual(score([5, 3, 3, 5, 3], yacht.FULL_HOUSE), 19)
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+    def test_two_pair_is_not_a_full_house(self):
+        self.assertEqual(score([2, 2, 4, 4, 5], yacht.FULL_HOUSE), 0)
 
-For other options, see `python -m pytest -h`
+    def test_four_of_a_kind_is_not_a_full_house(self):
+        self.assertEqual(score([1, 4, 4, 4, 4], yacht.FULL_HOUSE), 0)
 
-## Submitting Exercises
+    def test_yacht_is_not_a_full_house(self):
+        self.assertEqual(score([2, 2, 2, 2, 2], yacht.FULL_HOUSE), 0)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/yacht` directory.
+    def test_four_of_a_kind(self):
+        self.assertEqual(score([6, 6, 4, 6, 6], yacht.FOUR_OF_A_KIND), 24)
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+    def test_yacht_can_be_scored_as_four_of_a_kind(self):
+        self.assertEqual(score([3, 3, 3, 3, 3], yacht.FOUR_OF_A_KIND), 12)
 
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
+    def test_full_house_is_not_four_of_a_kind(self):
+        self.assertEqual(score([3, 5, 4, 1, 2], yacht.FOUR_OF_A_KIND), 0)
 
-## Source
+    def test_little_straight(self):
+        self.assertEqual(score([3, 5, 4, 1, 2], yacht.LITTLE_STRAIGHT), 30)
 
-James Kilfiger, using wikipedia [https://en.wikipedia.org/wiki/Yacht_(dice_game)](https://en.wikipedia.org/wiki/Yacht_(dice_game))
+    def test_little_straight_as_big_straight(self):
+        self.assertEqual(score([1, 2, 3, 4, 5], yacht.BIG_STRAIGHT), 0)
 
-## Submitting Incomplete Solutions
+    def test_four_in_order_but_not_a_little_straight(self):
+        self.assertEqual(score([1, 1, 2, 3, 4], yacht.LITTLE_STRAIGHT), 0)
 
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_no_pairs_but_not_a_little_straight(self):
+        self.assertEqual(score([1, 2, 3, 4, 6], yacht.LITTLE_STRAIGHT), 0)
+
+    def test_min_1_max_5_but_not_a_little_straight(self):
+        self.assertEqual(score([1, 1, 3, 4, 5], yacht.LITTLE_STRAIGHT), 0)
+
+    def test_big_straight(self):
+        self.assertEqual(score([4, 6, 2, 5, 3], yacht.BIG_STRAIGHT), 30)
+
+    def test_big_straight_as_little_straight(self):
+        self.assertEqual(score([6, 5, 4, 3, 2], yacht.LITTLE_STRAIGHT), 0)
+
+    def test_choice(self):
+        self.assertEqual(score([3, 3, 5, 6, 6], yacht.CHOICE), 23)
+
+    def test_yacht_as_choice(self):
+        self.assertEqual(score([2, 2, 2, 2, 2], yacht.CHOICE), 10)
+
+
+if __name__ == '__main__':
+    unittest.main()
