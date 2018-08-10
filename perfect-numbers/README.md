@@ -1,68 +1,67 @@
-import unittest
+# Perfect Numbers
 
-from perfect_numbers import classify
+Determine if a number is perfect, abundant, or deficient based on
+Nicomachus' (60 - 120 CE) classification scheme for natural numbers.
 
+The Greek mathematician [Nicomachus](https://en.wikipedia.org/wiki/Nicomachus) devised a classification scheme for natural numbers, identifying each as belonging uniquely to the categories of **perfect**, **abundant**, or **deficient** based on their [aliquot sum](https://en.wikipedia.org/wiki/Aliquot_sum). The aliquot sum is defined as the sum of the factors of a number not including the number itself. For example, the aliquot sum of 15 is (1 + 3 + 5) = 9
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+- **Perfect**: aliquot sum = number
+  - 6 is a perfect number because (1 + 2 + 3) = 6
+  - 28 is a perfect number because (1 + 2 + 4 + 7 + 14) = 28
+- **Abundant**: aliquot sum > number
+  - 12 is an abundant number because (1 + 2 + 3 + 4 + 6) = 16
+  - 24 is an abundant number because (1 + 2 + 3 + 4 + 6 + 8 + 12) = 36
+- **Deficient**: aliquot sum < number
+  - 8 is a deficient number because (1 + 2 + 4) = 7
+  - Prime numbers are deficient
 
-class PerfectNumbersTest(unittest.TestCase):
-    def test_smallest_perfect_number(self):
-        self.assertIs(classify(6), "perfect")
+Implement a way to determine whether a given number is **perfect**. Depending on your language track, you may also need to implement a way to determine whether a given number is **abundant** or **deficient**.
 
-    def test_medium_perfect_number(self):
-        self.assertIs(classify(28), "perfect")
+## Exception messages
 
-    def test_large_perfect_number(self):
-        self.assertIs(classify(33550336), "perfect")
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-class AbundantNumbersTest(unittest.TestCase):
-    def test_smallest_abundant_number(self):
-        self.assertIs(classify(12), "abundant")
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_medium_abundant_number(self):
-        self.assertIs(classify(30), "abundant")
+## Running the tests
 
-    def test_large_abundant_number(self):
-        self.assertIs(classify(33550335), "abundant")
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
+- Python 2.7: `py.test perfect_numbers_test.py`
+- Python 3.4+: `pytest perfect_numbers_test.py`
 
-class DeficientNumbersTest(unittest.TestCase):
-    def test_smallest_prime_deficient_number(self):
-        self.assertIs(classify(2), "deficient")
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest perfect_numbers_test.py`
 
-    def test_smallest_nonprime_deficient_number(self):
-        self.assertIs(classify(4), "deficient")
+### Common `pytest` options
 
-    def test_medium_deficient_number(self):
-        self.assertIs(classify(32), "deficient")
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_large_deficient_number(self):
-        self.assertIs(classify(33550337), "deficient")
+For other options, see `python -m pytest -h`
 
-    def test_edge_case(self):
-        self.assertIs(classify(1), "deficient")
+## Submitting Exercises
 
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/perfect-numbers` directory.
 
-class InvalidInputsTest(unittest.TestCase):
-    def test_zero(self):
-        with self.assertRaisesWithMessage(ValueError):
-            classify(0)
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_negative(self):
-        with self.assertRaisesWithMessage(ValueError):
-            classify(-1)
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+## Source
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+Taken from Chapter 2 of Functional Thinking by Neal Ford. [http://shop.oreilly.com/product/0636920029687.do](http://shop.oreilly.com/product/0636920029687.do)
 
+## Submitting Incomplete Solutions
 
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

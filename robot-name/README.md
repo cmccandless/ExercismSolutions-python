@@ -1,51 +1,65 @@
-import unittest
-import random
+# Robot Name
 
-from robot_name import Robot
+Manage robot factory settings.
 
+When robots come off the factory floor, they have no name.
 
-class RobotTest(unittest.TestCase):
-    # assertRegex() alias to adress DeprecationWarning
-    # assertRegexpMatches got renamed in version 3.2
-    if not hasattr(unittest.TestCase, "assertRegex"):
-        assertRegex = unittest.TestCase.assertRegexpMatches
+The first time you boot them up, a random name is generated in the format
+of two uppercase letters followed by three digits, such as RX837 or BC811.
 
-    name_re = r'^[A-Z]{2}\d{3}$'
+Every once in a while we need to reset a robot to its factory settings,
+which means that their name gets wiped. The next time you ask, it will
+respond with a new random name.
 
-    def test_has_name(self):
-        self.assertRegex(Robot().name, self.name_re)
+The names must be random: they should not follow a predictable sequence.
+Random names means a risk of collisions. Your solution must ensure that
+every existing robot has a unique name.
 
-    def test_name_sticks(self):
-        robot = Robot()
-        robot.name
-        self.assertEqual(robot.name, robot.name)
+## Exception messages
 
-    def test_different_robots_have_different_names(self):
-        self.assertNotEqual(
-            Robot().name,
-            Robot().name
-        )
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_reset_name(self):
-        # Set a seed
-        seed = "Totally random."
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-        # Initialize RNG using the seed
-        random.seed(seed)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-        # Call the generator
-        robot = Robot()
-        name = robot.name
+## Running the tests
 
-        # Reinitialize RNG using seed
-        random.seed(seed)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-        # Call the generator again
-        robot.reset()
-        name2 = robot.name
-        self.assertNotEqual(name, name2)
-        self.assertRegex(name2, self.name_re)
+- Python 2.7: `py.test robot_name_test.py`
+- Python 3.4+: `pytest robot_name_test.py`
 
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest robot_name_test.py`
 
-if __name__ == '__main__':
-    unittest.main()
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/robot-name` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+A debugging session with Paul Blackwell at gSchool. [http://gschool.it](http://gschool.it)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

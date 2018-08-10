@@ -1,102 +1,63 @@
-import unittest
+# Bob
 
-import bob
+Bob is a lackadaisical teenager. In conversation, his responses are very limited.
 
+Bob answers 'Sure.' if you ask him a question.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+He answers 'Whoa, chill out!' if you yell at him.
 
-class BobTests(unittest.TestCase):
-    def test_stating_something(self):
-        self.assertEqual(bob.hey("Tom-ay-to, tom-aaaah-to."), "Whatever.")
+He answers 'Calm down, I know what I'm doing!' if you yell a question at him.
 
-    def test_shouting(self):
-        self.assertEqual(bob.hey("WATCH OUT!"), "Whoa, chill out!")
+He says 'Fine. Be that way!' if you address him without actually saying
+anything.
 
-    def test_shouting_gibberish(self):
-        self.assertEqual(bob.hey("FCECDFCAAB"), "Whoa, chill out!")
+He answers 'Whatever.' to anything else.
 
-    def test_asking_a_question(self):
-        self.assertEqual(
-            bob.hey("Does this cryogenic chamber make me look fat?"), "Sure.")
+## Exception messages
 
-    def test_asking_a_numeric_question(self):
-        self.assertEqual(bob.hey("You are, what, like 15?"), "Sure.")
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_asking_gibberish(self):
-        self.assertEqual(bob.hey("fffbbcbeab?"), "Sure.")
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_talking_forcefully(self):
-        self.assertEqual(
-            bob.hey("Let's go make out behind the gym!"), "Whatever.")
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_using_acronyms_in_regular_speech(self):
-        self.assertEqual(
-            bob.hey("It's OK if you don't want to go to the DMV."),
-            "Whatever.")
+## Running the tests
 
-    def test_forceful_question(self):
-        self.assertEqual(
-            bob.hey("WHAT THE HELL WERE YOU THINKING?"),
-            "Calm down, I know what I'm doing!"
-        )
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_shouting_numbers(self):
-        self.assertEqual(bob.hey("1, 2, 3 GO!"), "Whoa, chill out!")
+- Python 2.7: `py.test bob_test.py`
+- Python 3.4+: `pytest bob_test.py`
 
-    def test_only_numbers(self):
-        self.assertEqual(bob.hey("1, 2, 3"), "Whatever.")
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest bob_test.py`
 
-    def test_question_with_only_numbers(self):
-        self.assertEqual(bob.hey("4?"), "Sure.")
+### Common `pytest` options
 
-    def test_shouting_with_special_characters(self):
-        self.assertEqual(
-            bob.hey("ZOMG THE %^*@#$(*^ ZOMBIES ARE COMING!!11!!1!"),
-            "Whoa, chill out!")
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_shouting_with_no_exclamation_mark(self):
-        self.assertEqual(bob.hey("I HATE YOU"), "Whoa, chill out!")
+For other options, see `python -m pytest -h`
 
-    def test_statement_containing_question_mark(self):
-        self.assertEqual(
-            bob.hey("Ending with ? means a question."), "Whatever.")
+## Submitting Exercises
 
-    def test_non_letters_with_question(self):
-        self.assertEqual(bob.hey(":) ?"), "Sure.")
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/bob` directory.
 
-    def test_prattling_on(self):
-        self.assertEqual(
-            bob.hey("Wait! Hang on. Are you going to be OK?"), "Sure.")
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_silence(self):
-        self.assertEqual(bob.hey(""), "Fine. Be that way!")
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    def test_prolonged_silence(self):
-        self.assertEqual(bob.hey("          "), "Fine. Be that way!")
+## Source
 
-    def test_alternate_silence(self):
-        self.assertEqual(bob.hey("\t\t\t\t\t\t\t\t\t\t"), "Fine. Be that way!")
+Inspired by the 'Deaf Grandma' exercise in Chris Pine's Learn to Program tutorial. [http://pine.fm/LearnToProgram/?Chapter=06](http://pine.fm/LearnToProgram/?Chapter=06)
 
-    def test_multiple_line_question(self):
-        self.assertEqual(
-            bob.hey("\nDoes this cryogenic chamber make me look fat?\nno"),
-            "Whatever.")
+## Submitting Incomplete Solutions
 
-    def test_starting_with_whitespace(self):
-        self.assertEqual(bob.hey("         hmmmmmmm..."), "Whatever.")
-
-    def test_ending_with_whitespace(self):
-        self.assertEqual(
-            bob.hey("Okay if like my  spacebar  quite a bit?   "), "Sure.")
-
-    def test_other_whitespace(self):
-        self.assertEqual(bob.hey("\n\r \t"), "Fine. Be that way!")
-
-    def test_non_question_ending_with_whitespace(self):
-        self.assertEqual(
-            bob.hey("This is a statement ending with whitespace      "),
-            "Whatever.")
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

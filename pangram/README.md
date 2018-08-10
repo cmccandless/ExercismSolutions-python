@@ -1,58 +1,58 @@
-import unittest
+# Pangram
 
-from pangram import is_pangram
+Determine if a sentence is a pangram. A pangram (Greek: παν γράμμα, pan gramma,
+"every letter") is a sentence using every letter of the alphabet at least once.
+The best known English pangram is:
+> The quick brown fox jumps over the lazy dog.
 
+The alphabet used consists of ASCII letters `a` to `z`, inclusive, and is case
+insensitive. Input will not contain non-ASCII symbols.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.4.0
+## Exception messages
 
-class PangramTests(unittest.TestCase):
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_sentence_empty(self):
-        self.assertIs(is_pangram(''), False)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_recognizes_a_perfect_lower_case_pangram(self):
-        self.assertIs(is_pangram('abcdefghijklmnopqrstuvwxyz'), True)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_pangram_with_only_lower_case(self):
-        self.assertIs(
-            is_pangram('the quick brown fox jumps over the lazy dog'),
-            True)
+## Running the tests
 
-    def test_missing_character_x(self):
-        self.assertIs(
-            is_pangram('a quick movement of the enemy will '
-                       'jeopardize five gunboats'),
-            False)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_another_missing_character(self):
-        self.assertIs(is_pangram('five boxing wizards jump quickly at it'),
-                      False)
+- Python 2.7: `py.test pangram_test.py`
+- Python 3.4+: `pytest pangram_test.py`
 
-    def test_pangram_with_underscores(self):
-        self.assertIs(
-            is_pangram('the_quick_brown_fox_jumps_over_the_lazy_dog'),
-            True)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest pangram_test.py`
 
-    def test_pangram_with_numbers(self):
-        self.assertIs(
-            is_pangram('the 1 quick brown fox jumps over the 2 lazy dogs'),
-            True)
+### Common `pytest` options
 
-    def test_missing_letters_replaced_by_numbers(self):
-        self.assertIs(
-            is_pangram('7h3 qu1ck brown fox jumps ov3r 7h3 lazy dog'),
-            False)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_pangram_with_mixedcase_and_punctuation(self):
-        self.assertIs(
-            is_pangram('"Five quacking Zephyrs jolt my wax bed."'),
-            True)
+For other options, see `python -m pytest -h`
 
-    def test_upper_and_lower_case_versions_of_the_same_character(self):
-        self.assertIs(
-            is_pangram('the quick brown fox jumped over the lazy FX'),
-            False)
+## Submitting Exercises
 
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/pangram` directory.
 
-if __name__ == '__main__':
-    unittest.main()
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Wikipedia [https://en.wikipedia.org/wiki/Pangram](https://en.wikipedia.org/wiki/Pangram)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

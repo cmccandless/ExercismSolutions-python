@@ -1,44 +1,63 @@
-import unittest
+# Isogram
 
-from isogram import is_isogram
+Determine if a word or phrase is an isogram.
 
+An isogram (also known as a "nonpattern word") is a word or phrase without a repeating letter, however spaces and hyphens are allowed to appear multiple times.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+Examples of isograms:
 
-class TestIsogram(unittest.TestCase):
+- lumberjacks
+- background
+- downstream
+- six-year-old
 
-    def test_empty_string(self):
-        self.assertIs(is_isogram(""), True)
+The word *isograms*, however, is not an isogram, because the s repeats.
 
-    def test_isogram_with_only_lower_case_characters(self):
-        self.assertIs(is_isogram("isogram"), True)
+## Exception messages
 
-    def test_word_with_one_duplicated_character(self):
-        self.assertIs(is_isogram("eleven"), False)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_longest_reported_english_isogram(self):
-        self.assertIs(is_isogram("subdermatoglyphic"), True)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_word_with_duplicated_character_in_mixed_case(self):
-        self.assertIs(is_isogram("Alphabet"), False)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_hypothetical_isogrammic_word_with_hyphen(self):
-        self.assertIs(is_isogram("thumbscrew-japingly"), True)
+## Running the tests
 
-    def test_isogram_with_duplicated_hyphen(self):
-        self.assertIs(is_isogram("six-year-old"), True)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_made_up_name_that_is_an_isogram(self):
-        self.assertIs(is_isogram("Emily Jung Schwartzkopf"), True)
+- Python 2.7: `py.test isogram_test.py`
+- Python 3.4+: `pytest isogram_test.py`
 
-    def test_duplicated_character_in_the_middle(self):
-        self.assertIs(is_isogram("accentor"), False)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest isogram_test.py`
 
-    # Additional tests for this track
+### Common `pytest` options
 
-    def test_isogram_with_duplicated_letter_and_nonletter_character(self):
-        self.assertIs(is_isogram("Aleph Bot Chap"), False)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
+For other options, see `python -m pytest -h`
 
-if __name__ == '__main__':
-    unittest.main()
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/isogram` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Wikipedia [https://en.wikipedia.org/wiki/Isogram](https://en.wikipedia.org/wiki/Isogram)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.
