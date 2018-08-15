@@ -1,62 +1,56 @@
-import unittest
+# Anagram
 
-from anagram import detect_anagrams
+Given a word and a list of possible anagrams, select the correct sublist.
 
+Given `"listen"` and a list of candidates like `"enlists" "google"
+"inlets" "banana"` the program should return a list containing
+`"inlets"`.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+## Exception messages
 
-class AnagramTests(unittest.TestCase):
-    def test_no_matches(self):
-        candidates = ["hello", "world", "zombies", "pants"]
-        self.assertEqual(detect_anagrams("diaper", candidates), [])
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_detects_two_anagrams(self):
-        candidates = ["stream", "pigeon", "maters"]
-        self.assertEqual(
-            detect_anagrams("master", candidates), ["stream", "maters"])
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_does_not_detect_anagram_subsets(self):
-        self.assertEqual(detect_anagrams("good", ["dog", "goody"]), [])
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_detects_anagram(self):
-        candidates = ["enlists", "google", "inlets", "banana"]
-        self.assertEqual(detect_anagrams("listen", candidates), ["inlets"])
+## Running the tests
 
-    def test_detects_three_anagrams(self):
-        candidates = [
-            "gallery", "ballerina", "regally", "clergy", "largely", "leading"
-        ]
-        self.assertEqual(
-            detect_anagrams("allergy", candidates),
-            ["gallery", "regally", "largely"])
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_does_not_detect_non_anagrams_with_identical_checksum(self):
-        self.assertEqual(detect_anagrams("mass", ["last"]), [])
+- Python 2.7: `py.test anagram_test.py`
+- Python 3.4+: `pytest anagram_test.py`
 
-    def test_detects_anagrams_case_insensitively(self):
-        candidates = ["cashregister", "Carthorse", "radishes"]
-        self.assertEqual(
-            detect_anagrams("Orchestra", candidates), ["Carthorse"])
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest anagram_test.py`
 
-    def test_detects_anagrams_using_case_insensitive_subject(self):
-        candidates = ["cashregister", "carthorse", "radishes"]
-        self.assertEqual(
-            detect_anagrams("Orchestra", candidates), ["carthorse"])
+### Common `pytest` options
 
-    def test_detects_anagrams_using_case_insensitive_possible_matches(self):
-        candidates = ["cashregister", "Carthorse", "radishes"]
-        self.assertEqual(
-            detect_anagrams("orchestra", candidates), ["Carthorse"])
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_does_not_detect_a_anagram_if_the_original_word_is_repeated(self):
-        self.assertEqual(detect_anagrams("go", ["go Go GO"]), [])
+For other options, see `python -m pytest -h`
 
-    def test_anagrams_must_use_all_letters_exactly_once(self):
-        self.assertEqual(detect_anagrams("tapper", ["patter"]), [])
+## Submitting Exercises
 
-    def test_capital_word_is_not_own_anagram(self):
-        self.assertEqual(detect_anagrams("BANANA", ["Banana"]), [])
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/anagram` directory.
 
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-if __name__ == '__main__':
-    unittest.main()
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Inspired by the Extreme Startup game [https://github.com/rchatley/extreme_startup](https://github.com/rchatley/extreme_startup)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.
