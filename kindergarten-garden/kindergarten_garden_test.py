@@ -3,9 +3,9 @@ import unittest
 from kindergarten_garden import Garden
 
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.1
 
-class KindergartenGardenTests(unittest.TestCase):
+class KindergartenGardenTest(unittest.TestCase):
     def test_garden_with_single_student(self):
         self.assertEqual(
             Garden("RC\nGG").plants("Alice"),

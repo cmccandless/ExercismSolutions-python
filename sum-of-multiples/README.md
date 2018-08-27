@@ -1,59 +1,58 @@
-"""
-You can make the following assumptions about the inputs to the
-'sum_of_multiples' function:
-    * All input numbers are non-negative 'int's, i.e. natural numbers
-      including zero.
-    * A list of factors must be given, and its elements are unique
-      and sorted in ascending order.
-"""
+# Sum Of Multiples
 
-import unittest
+Given a number, find the sum of all the unique multiples of particular numbers up to
+but not including that number.
 
-from sum_of_multiples import sum_of_multiples
+If we list all the natural numbers below 20 that are multiples of 3 or 5,
+we get 3, 5, 6, 9, 10, 12, 15, and 18.
 
+The sum of these multiples is 78.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+## Exception messages
 
-class SumOfMultiplesTest(unittest.TestCase):
-    def test_multiples_of_3_or_5_up_to_1(self):
-        self.assertEqual(sum_of_multiples(1, [3, 5]), 0)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_multiples_of_3_or_5_up_to_4(self):
-        self.assertEqual(sum_of_multiples(4, [3, 5]), 3)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_multiples_of_3_up_to_7(self):
-        self.assertEqual(sum_of_multiples(7, [3]), 9)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_multiples_of_3_or_5_up_to_10(self):
-        self.assertEqual(sum_of_multiples(10, [3, 5]), 23)
+## Running the tests
 
-    def test_multiples_of_3_or_5_up_to_100(self):
-        self.assertEqual(sum_of_multiples(100, [3, 5]), 2318)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_multiples_of_3_or_5_up_to_1000(self):
-        self.assertEqual(sum_of_multiples(1000, [3, 5]), 233168)
+- Python 2.7: `py.test sum_of_multiples_test.py`
+- Python 3.4+: `pytest sum_of_multiples_test.py`
 
-    def test_multiples_of_7_13_or_17_up_to_20(self):
-        self.assertEqual(sum_of_multiples(20, [7, 13, 17]), 51)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest sum_of_multiples_test.py`
 
-    def test_multiples_of_4_or_6_up_to_15(self):
-        self.assertEqual(sum_of_multiples(15, [4, 6]), 30)
+### Common `pytest` options
 
-    def test_multiples_of_5_6_or_8_up_to_150(self):
-        self.assertEqual(sum_of_multiples(150, [5, 6, 8]), 4419)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_multiples_of_5_or_25_up_to_51(self):
-        self.assertEqual(sum_of_multiples(51, [5, 25]), 275)
+For other options, see `python -m pytest -h`
 
-    def test_multiples_of_43_or_47_up_to_10000(self):
-        self.assertEqual(sum_of_multiples(10000, [43, 47]), 2203160)
+## Submitting Exercises
 
-    def test_multiples_of_1_up_to_100(self):
-        self.assertEqual(sum_of_multiples(100, [1]), 4950)
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/sum-of-multiples` directory.
 
-    def test_multiples_of_an_empty_list_up_to_10000(self):
-        self.assertEqual(sum_of_multiples(10000, []), 0)
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-if __name__ == '__main__':
-    unittest.main()
+## Source
+
+A variation on Problem 1 at Project Euler [http://projecteuler.net/problem=1](http://projecteuler.net/problem=1)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.
