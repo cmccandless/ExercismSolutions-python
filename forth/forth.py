@@ -1,5 +1,4 @@
-class StackUnderflowError(Exception):
-    pass
+StackUnderflowError = IndexError
 
 
 def is_integer(string):
@@ -11,48 +10,42 @@ def is_integer(string):
 
 
 def evaluate(input_data):
-    defines = {}
-    if not input_data:
-        return []
-    while input_data[0][:1] == ':':
-        values = input_data.pop(0).split()[1:-1]
-        key = values.pop(0).lower()
-        if is_integer(key):
-            raise ValueError('cannot redefine numbers')
-        defines[key] = values
     stack = []
-    input_data = input_data[-1].split()
-    while any(input_data):
-        word = input_data.pop(0).lower()
-        try:
-            if is_integer(word):
-                stack.append(int(word))
-            elif word in defines:
-                input_data = defines[word] + input_data
-            elif word == '+':
-                stack.append(stack.pop() + stack.pop())
-            elif word == '-':
-                stack.append(-stack.pop() + stack.pop())
-            elif word == '*':
-                stack.append(stack.pop() * stack.pop())
-            elif word == '/':
-                divider = stack.pop()
-                if divider == 0:
-                    raise ZeroDivisionError('cannot divide by zero')
-                stack.append(int(stack.pop() / divider))
-            elif word == 'dup':
-                stack.append(stack[-1])
-            elif word == 'drop':
-                stack.pop()
-            elif word == 'swap':
-                stack.append(stack[-2])
-                del stack[-3]
-            elif word == 'over':
-                stack.append(stack[-2])
-            else:
-                raise ValueError('unknown word ' + word)
-        except ZeroDivisionError:
-            raise
-        except IndexError:
-            raise StackUnderflowError('not enough values for ' + word)
+    user_defined = {}
+    for line in input_data:
+        if line.startswith(':'):
+            tokens = line.lower().split(' ')[1:-1]
+            key = tokens.pop(0)
+            if is_integer(key):
+                raise ValueError('cannot redefine numbers')
+            values = []
+            for t in tokens:
+                if t in user_defined:
+                    values.extend(user_defined[t])
+                else:
+                    values.append(t)
+            user_defined[key] = values
+        else:
+            tokens = line.split(' ')
+            while tokens:
+                token = tokens.pop(0).lower()
+                if is_integer(token):
+                    stack.append(int(token))
+                    continue
+                if token in user_defined:
+                    tokens = user_defined[token] + tokens
+                elif token in {'+', '-', '*', '/'}:
+                    stack.append(int(eval('{}{}{}'.format(
+                        stack.pop(-2), token, stack.pop()
+                    ))))
+                elif token == 'dup':
+                    stack.append(stack[-1])
+                elif token == 'drop':
+                    stack.pop()
+                elif token == 'swap':
+                    stack.append(stack.pop(-2))
+                elif token == 'over':
+                    stack.append(stack[-2])
+                else:
+                    raise ValueError('unknown word ' + token)
     return stack
