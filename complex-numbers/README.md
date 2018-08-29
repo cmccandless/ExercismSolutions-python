@@ -1,86 +1,182 @@
-# Complex Numbers
+from __future__ import division
 
-A complex number is a number in the form `a + b * i` where `a` and `b` are real and `i` satisfies `i^2 = -1`.
+import unittest
 
-`a` is called the real part and `b` is called the imaginary part of `z`.
-The conjugate of the number `a + b * i` is the number `a - b * i`.
-The absolute value of a complex number `z = a + b * i` is a real number `|z| = sqrt(a^2 + b^2)`. The square of the absolute value `|z|^2` is the result of multiplication of `z` by its complex conjugate.
+import math
 
-The sum/difference of two complex numbers involves adding/subtracting their real and imaginary parts separately:
-`(a + i * b) + (c + i * d) = (a + c) + (b + d) * i`,
-`(a + i * b) - (c + i * d) = (a - c) + (b - d) * i`.
-
-Multiplication result is by definition
-`(a + i * b) * (c + i * d) = (a * c - b * d) + (b * c + a * d) * i`.
-
-The reciprocal of a non-zero complex number is
-`1 / (a + i * b) = a/(a^2 + b^2) - b/(a^2 + b^2) * i`.
-
-Dividing a complex number `a + i * b` by another `c + i * d` gives:
-`(a + i * b) / (c + i * d) = (a * c + b * d)/(c^2 + d^2) + (b * c - a * d)/(c^2 + d^2) * i`.
-
-Exponent of a complex number can be expressed as
-`exp(a + i * b) = exp(a) * exp(i * b)`,
-and the last term is given by Euler's formula `exp(i * b) = cos(b) + i * sin(b)`.
+from complex_numbers import ComplexNumber
 
 
-Implement the following operations:
- - addition, subtraction, multiplication and division of two complex numbers,
- - conjugate, absolute value, exponent of a given complex number.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
+
+class ComplexNumbersTest(unittest.TestCase):
+
+    def test_real_part_of_a_purely_real_number(self):
+        input_number = ComplexNumber(1, 0)
+        self.assertEqual(input_number.real, 1)
+
+    def test_real_part_of_a_purely_imaginary_number(self):
+        input_number = ComplexNumber(0, 1)
+        self.assertEqual(input_number.real, 0)
+
+    def test_real_part_of_a_number_with_real_and_imaginary_part(self):
+        input_number = ComplexNumber(1, 2)
+        self.assertEqual(input_number.real, 1)
+
+    def test_imaginary_part_of_a_purely_real_number(self):
+        input_number = ComplexNumber(1, 0)
+        self.assertEqual(input_number.imaginary, 0)
+
+    def test_imaginary_part_of_a_purely_imaginary_number(self):
+        input_number = ComplexNumber(0, 1)
+        self.assertEqual(input_number.imaginary, 1)
+
+    def test_imaginary_part_of_a_number_with_real_and_imaginary_part(self):
+        input_number = ComplexNumber(1, 2)
+        self.assertEqual(input_number.imaginary, 2)
+
+    def test_imaginary_unit(self):
+        first_input = ComplexNumber(0, 1)
+        second_input = ComplexNumber(0, 1)
+        expected = ComplexNumber(-1, 0)
+        self.assertEqual(first_input * second_input, expected)
+
+    def test_add_purely_real_numbers(self):
+        first_input = ComplexNumber(1, 0)
+        second_input = ComplexNumber(2, 0)
+        expected = ComplexNumber(3, 0)
+        self.assertEqual(first_input + second_input, expected)
+
+    def test_add_purely_imaginary_numbers(self):
+        first_input = ComplexNumber(0, 1)
+        second_input = ComplexNumber(0, 2)
+        expected = ComplexNumber(0, 3)
+        self.assertEqual(first_input + second_input, expected)
+
+    def test_add_numbers_with_real_and_imaginary_part(self):
+        first_input = ComplexNumber(1, 2)
+        second_input = ComplexNumber(3, 4)
+        expected = ComplexNumber(4, 6)
+        self.assertEqual(first_input + second_input, expected)
+
+    def test_subtract_purely_real_numbers(self):
+        first_input = ComplexNumber(1, 0)
+        second_input = ComplexNumber(2, 0)
+        expected = ComplexNumber(-1, 0)
+        self.assertEqual(first_input - second_input, expected)
+
+    def test_subtract_purely_imaginary_numbers(self):
+        first_input = ComplexNumber(0, 1)
+        second_input = ComplexNumber(0, 2)
+        expected = ComplexNumber(0, -1)
+        self.assertEqual(first_input - second_input, expected)
+
+    def test_subtract_numbers_with_real_and_imaginary_part(self):
+        first_input = ComplexNumber(1, 2)
+        second_input = ComplexNumber(3, 4)
+        expected = ComplexNumber(-2, -2)
+        self.assertEqual(first_input - second_input, expected)
+
+    def test_multiply_purely_real_numbers(self):
+        first_input = ComplexNumber(1, 0)
+        second_input = ComplexNumber(2, 0)
+        expected = ComplexNumber(2, 0)
+        self.assertEqual(first_input * second_input, expected)
+
+    def test_multiply_purely_imaginary_numbers(self):
+        first_input = ComplexNumber(0, 1)
+        second_input = ComplexNumber(0, 2)
+        expected = ComplexNumber(-2, 0)
+        self.assertEqual(first_input * second_input, expected)
+
+    def test_multiply_numbers_with_real_and_imaginary_part(self):
+        first_input = ComplexNumber(1, 2)
+        second_input = ComplexNumber(3, 4)
+        expected = ComplexNumber(-5, 10)
+        self.assertEqual(first_input * second_input, expected)
+
+    def test_divide_purely_real_numbers(self):
+        input_number = ComplexNumber(1.0, 0.0)
+        expected = ComplexNumber(0.5, 0.0)
+        divider = ComplexNumber(2.0, 0.0)
+        self.assertEqual(input_number / divider, expected)
+
+    def test_divide_purely_imaginary_numbers(self):
+        input_number = ComplexNumber(0, 1)
+        expected = ComplexNumber(0.5, 0)
+        divider = ComplexNumber(0, 2)
+        self.assertEqual(input_number / divider, expected)
+
+    def test_divide_numbers_with_real_and_imaginary_part(self):
+        input_number = ComplexNumber(1, 2)
+        expected = ComplexNumber(0.44, 0.08)
+        divider = ComplexNumber(3, 4)
+        self.assertEqual(input_number / divider, expected)
+
+    def test_absolute_value_of_a_positive_purely_real_number(self):
+        self.assertEqual(abs(ComplexNumber(5, 0)), 5)
+
+    def test_absolute_value_of_a_negative_purely_real_number(self):
+        self.assertEqual(abs(ComplexNumber(-5, 0)), 5)
+
+    def test_absolute_value_of_imaginary_number_positive_imaginary_part(self):
+        self.assertEqual(abs(ComplexNumber(0, 5)), 5)
+
+    def test_absolute_value_of_imaginary_number_negative_imaginary_part(self):
+        self.assertEqual(abs(ComplexNumber(0, -5)), 5)
+
+    def test_absolute_value_of_a_number_with_real_and_imaginary_part(self):
+        self.assertEqual(abs(ComplexNumber(3, 4)), 5)
+
+    def test_conjugate_a_purely_real_number(self):
+        input_number = ComplexNumber(5, 0)
+        expected = ComplexNumber(5, 0)
+        self.assertEqual(input_number.conjugate().real, expected.real)
+        self.assertEqual(input_number.conjugate().imaginary,
+                         expected.imaginary)
+
+    def test_conjugate_a_purely_imaginary_number(self):
+        input_number = ComplexNumber(0, 5)
+        expected = ComplexNumber(0, -5)
+        self.assertEqual(input_number.conjugate().real, expected.real)
+        self.assertEqual(input_number.conjugate().imaginary,
+                         expected.imaginary)
+
+    def test_conjugate_a_number_with_real_and_imaginary_part(self):
+        input_number = ComplexNumber(1, 1)
+        expected = ComplexNumber(1, -1)
+        self.assertEqual(input_number.conjugate().real, expected.real)
+        self.assertEqual(input_number.conjugate().imaginary,
+                         expected.imaginary)
+
+    def test_eulers_identity_formula(self):
+        input_number = ComplexNumber(0, math.pi)
+        expected = ComplexNumber(-1, 0)
+        actual = input_number.exp()
+        self.assertAlmostEqual(actual.real, expected.real)
+        self.assertAlmostEqual(actual.imaginary, expected.imaginary)
+
+    def test_exponential_of_0(self):
+        input_number = ComplexNumber(0, 0)
+        expected = ComplexNumber(1, 0)
+        actual = input_number.exp()
+        self.assertAlmostEqual(actual.real, expected.real)
+        self.assertAlmostEqual(actual.imaginary, expected.imaginary)
+
+    def test_exponential_of_a_purely_real_number(self):
+        input_number = ComplexNumber(1, 0)
+        expected = ComplexNumber(math.e, 0)
+        actual = input_number.exp()
+        self.assertAlmostEqual(actual.real, expected.real)
+        self.assertAlmostEqual(actual.imaginary, expected.imaginary)
+
+    def test_exponential_of_a_number_with_real_and_imaginary_part(self):
+        input_number = ComplexNumber(math.log(2), math.pi)
+        expected = ComplexNumber(-2, 0)
+        actual = input_number.exp()
+        self.assertAlmostEqual(actual.real, expected.real)
+        self.assertAlmostEqual(actual.imaginary, expected.imaginary)
 
 
-Assume the programming language you are using does not have an implementation of complex numbers.
-
-## Hints
-
-See [Emulating numeric types](https://docs.python.org/2/reference/datamodel.html#emulating-numeric-types) for help on operator overloading.
-
-
-## Exception messages
-
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
-
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
-
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
-
-## Running the tests
-
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
-
-- Python 2.7: `py.test complex_numbers_test.py`
-- Python 3.4+: `pytest complex_numbers_test.py`
-
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest complex_numbers_test.py`
-
-### Common `pytest` options
-
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
-
-For other options, see `python -m pytest -h`
-
-## Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/complex-numbers` directory.
-
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
-
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
-
-## Source
-
-Wikipedia [https://en.wikipedia.org/wiki/Complex_number](https://en.wikipedia.org/wiki/Complex_number)
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

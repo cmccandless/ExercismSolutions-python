@@ -1,65 +1,88 @@
-# Error Handling
+import unittest
 
-Implement various kinds of error handling and resource management.
-
-An important point of programming is how to handle errors and close
-resources even if errors occur.
-
-This exercise requires you to handle various errors. Because error handling
-is rather programming language specific you'll have to refer to the tests
-for your track to see what's exactly required.
-
-## Hints
-
-For the `filelike_objects_are_closed_on_exception` function, the `filelike_object`
-will be an instance of a custom `FileLike` class defined in the test suite. This
-class implements the following methods:
-- `open` and `close`, for explicit opening and closing.
-- `__enter__` and `__exit__`, for implicit opening and closing.
-- `do_something`, which may or may not throw an `Exception`.
+import error_handling as er
 
 
-## Exception messages
+class FileLike(object):
+    def __init__(self, fail_something=True):
+        self.is_open = False
+        self.was_open = False
+        self.did_something = False
+        self.fail_something = fail_something
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def open(self):
+        self.was_open = False
+        self.is_open = True
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def close(self):
+        self.is_open = False
+        self.was_open = True
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def __enter__(self):
+        self.open()
+        return self
 
-## Running the tests
+    def __exit__(self, *args):
+        self.close()
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def do_something(self):
+        self.did_something = True
+        if self.fail_something:
+            raise Exception("Failed while doing something")
 
-- Python 2.7: `py.test error_handling_test.py`
-- Python 3.4+: `pytest error_handling_test.py`
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest error_handling_test.py`
+class ErrorHandlingTest(unittest.TestCase):
+    def test_throw_exception(self):
+        with self.assertRaisesWithMessage(Exception):
+            er.handle_error_by_throwing_exception()
 
-### Common `pytest` options
+    def test_return_none(self):
+        self.assertEqual(er.handle_error_by_returning_none('1'), 1,
+                         'Result of valid input should not be None')
+        self.assertIsNone(er.handle_error_by_returning_none('a'),
+                          'Result of invalid input should be None')
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+    def test_return_tuple(self):
+        successful_result, result = er.handle_error_by_returning_tuple('1')
+        self.assertIs(successful_result, True,
+                      'Valid input should be successful')
+        self.assertEqual(result, 1, 'Result of valid input should not be None')
 
-For other options, see `python -m pytest -h`
+        failure_result, result = er.handle_error_by_returning_tuple('a')
+        self.assertIs(failure_result, False,
+                      'Invalid input should not be successful')
 
-## Submitting Exercises
+    def test_filelike_objects_are_closed_on_exception(self):
+        filelike_object = FileLike(fail_something=True)
+        with self.assertRaisesWithMessage(Exception):
+            er.filelike_objects_are_closed_on_exception(filelike_object)
+        self.assertIs(filelike_object.is_open, False,
+                      'filelike_object should be closed')
+        self.assertIs(filelike_object.was_open, True,
+                      'filelike_object should have been opened')
+        self.assertIs(filelike_object.did_something, True,
+                      'filelike_object should call do_something()')
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/error-handling` directory.
+    def test_filelike_objects_are_closed_without_exception(self):
+        filelike_object = FileLike(fail_something=False)
+        er.filelike_objects_are_closed_on_exception(filelike_object)
+        self.assertIs(filelike_object.is_open, False,
+                      'filelike_object should be closed')
+        self.assertIs(filelike_object.was_open, True,
+                      'filelike_object should have been opened')
+        self.assertIs(filelike_object.did_something, True,
+                      'filelike_object should call do_something()')
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
 
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
-## Submitting Incomplete Solutions
 
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

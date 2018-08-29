@@ -1,95 +1,52 @@
-import unittest
-import operator
+# List Ops
 
-import list_ops
+Implement basic list operations.
 
+In functional languages list operations like `length`, `map`, and
+`reduce` are very common. Implement a series of basic list operations,
+without using existing functions.
 
-# Tests adapted from problem-specifications//canonical-data.json @ v2.2.0
+## Exception messages
 
-class ListOpsTest(unittest.TestCase):
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    # test for append
-    def test_append_empty_lists(self):
-        self.assertEqual(list_ops.append([], []), [])
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_append_empty_list_to_list(self):
-        self.assertEqual(list_ops.append([], [1, 2, 3, 4]), [1, 2, 3, 4])
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_append_nonempty_lists(self):
-        self.assertEqual(list_ops.append([1, 2], [2, 3, 4, 5]),
-                         [1, 2, 2, 3, 4, 5])
+## Running the tests
 
-    # tests for concat
-    def test_concat_empty_list(self):
-        self.assertEqual(list_ops.concat([]), [])
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_concat_list_of_lists(self):
-        self.assertEqual(list_ops.concat([[1, 2], [3], [], [4, 5, 6]]),
-                         [1, 2, 3, 4, 5, 6])
+- Python 2.7: `py.test list_ops_test.py`
+- Python 3.4+: `pytest list_ops_test.py`
 
-    # tests for filter_clone
-    def test_filter_empty_list(self):
-        self.assertEqual(list_ops.filter_clone(lambda x: x % 2 == 1, []), [])
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest list_ops_test.py`
 
-    def test_filter_nonempty_list(self):
-        self.assertEqual(
-            list_ops.filter_clone(lambda x: x % 2 == 1, [1, 2, 3, 4, 5]),
-            [1, 3, 5])
+### Common `pytest` options
 
-    # tests for length
-    def test_length_empty_list(self):
-        self.assertEqual(list_ops.length([]), 0)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_length_nonempty_list(self):
-        self.assertEqual(list_ops.length([1, 2, 3, 4]), 4)
+For other options, see `python -m pytest -h`
 
-    # tests for map_clone
-    def test_map_empty_list(self):
-        self.assertEqual(list_ops.map_clone(lambda x: x + 1, []), [])
+## Submitting Exercises
 
-    def test_map_nonempty_list(self):
-        self.assertEqual(list_ops.map_clone(lambda x: x + 1, [1, 3, 5, 7]),
-                         [2, 4, 6, 8])
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/list-ops` directory.
 
-    # tests for foldl
-    def test_foldl_empty_list(self):
-        self.assertEqual(list_ops.foldl(operator.mul, [], 2), 2)
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_foldl_nonempty_list_addition(self):
-        self.assertEqual(list_ops.foldl(operator.add, [1, 2, 3, 4], 5), 15)
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    def test_foldl_nonempty_list_floordiv(self):
-        self.assertEqual(list_ops.foldl(operator.floordiv, [2, 5], 5), 0)
+## Submitting Incomplete Solutions
 
-    # tests for foldr
-    def test_foldr_empty_list(self):
-        self.assertEqual(list_ops.foldr(operator.mul, [], 2), 2)
-
-    def test_foldr_nonempty_list_addition(self):
-        self.assertEqual(list_ops.foldr(operator.add, [1, 2, 3, 4], 5), 15)
-
-    def test_foldr_nonempty_list_floordiv(self):
-        self.assertEqual(list_ops.foldr(operator.floordiv, [2, 5], 5), 2)
-
-    # additional test for foldr
-    def test_foldr_add_str(self):
-        self.assertEqual(
-            list_ops.foldr(operator.add,
-                           ["e", "x", "e", "r", "c", "i", "s", "m"], "!"),
-            "exercism!")
-
-    # tests for reverse
-    def test_reverse_empty_list(self):
-        self.assertEqual(list_ops.reverse([]), [])
-
-    def test_reverse_nonempty_list(self):
-        self.assertEqual(list_ops.reverse([1, 3, 5, 7]), [7, 5, 3, 1])
-
-    # additional test for reverse
-    def test_reverse_mixed_types(self):
-        self.assertEqual(
-            list_ops.reverse(["xyz", 4.0, "cat", 1]), [1, "cat", 4.0, "xyz"])
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

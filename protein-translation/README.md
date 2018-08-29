@@ -1,70 +1,91 @@
-import unittest
+# Protein Translation
 
-from protein_translation import proteins
+Translate RNA sequences into proteins.
 
+RNA can be broken into three nucleotide sequences called codons, and then translated to a polypeptide like so:
 
-# Tests adapted from problem-specifications/canonical-data.json @ v1.1.0
+RNA: `"AUGUUUUCU"` => translates to
 
-class ProteinTranslationTests(unittest.TestCase):
+Codons: `"AUG", "UUU", "UCU"`
+=> which become a polypeptide with the following sequence =>
 
-    def test_AUG_translates_to_methionine(self):
-        self.assertEqual(proteins('AUG'), ['Methionine'])
+Protein: `"Methionine", "Phenylalanine", "Serine"`
 
-    def test_identifies_Phenylalanine_codons(self):
-        for codon in ['UUU', 'UUC']:
-            self.assertEqual(proteins(codon), ['Phenylalanine'])
+There are 64 codons which in turn correspond to 20 amino acids; however, all of the codon sequences and resulting amino acids are not important in this exercise.  If it works for one codon, the program should work for all of them.
+However, feel free to expand the list in the test suite to include them all.
 
-    def test_identifies_Leucine_codons(self):
-        for codon in ['UUA', 'UUG']:
-            self.assertEqual(proteins(codon), ['Leucine'])
+There are also three terminating codons (also known as 'STOP' codons); if any of these codons are encountered (by the ribosome), all translation ends and the protein is terminated.
 
-    def test_identifies_Serine_codons(self):
-        for codon in ['UCU', 'UCC', 'UCA', 'UCG']:
-            self.assertEqual(proteins(codon), ['Serine'])
+All subsequent codons after are ignored, like this:
 
-    def test_identifies_Tyrosine_codons(self):
-        for codon in ['UAU', 'UAC']:
-            self.assertEqual(proteins(codon), ['Tyrosine'])
+RNA: `"AUGUUUUCUUAAAUG"` =>
 
-    def test_identifies_Cysteine_codons(self):
-        for codon in ['UGU', 'UGC']:
-            self.assertEqual(proteins(codon), ['Cysteine'])
+Codons: `"AUG", "UUU", "UCU", "UAA", "AUG"` =>
 
-    def test_identifies_Tryptophan_codons(self):
-        self.assertEqual(proteins('UGG'), ['Tryptophan'])
+Protein: `"Methionine", "Phenylalanine", "Serine"`
 
-    def test_identifies_stop_codons(self):
-        for codon in ['UAA', 'UAG', 'UGA']:
-            self.assertEqual(proteins(codon), [])
+Note the stop codon `"UAA"` terminates the translation and the final methionine is not translated into the protein sequence.
 
-    def test_translates_rna_strand_into_correct_protein_list(self):
-        strand = 'AUGUUUUGG'
-        expected = ['Methionine', 'Phenylalanine', 'Tryptophan']
-        self.assertEqual(proteins(strand), expected)
+Below are the codons and resulting Amino Acids needed for the exercise.
 
-    def test_stops_translation_if_stop_codon_at_beginning_of_sequence(self):
-        strand = 'UAGUGG'
-        expected = []
-        self.assertEqual(proteins(strand), expected)
+Codon                 | Protein
+:---                  | :---
+AUG                   | Methionine
+UUU, UUC              | Phenylalanine
+UUA, UUG              | Leucine
+UCU, UCC, UCA, UCG    | Serine
+UAU, UAC              | Tyrosine
+UGU, UGC              | Cysteine
+UGG                   | Tryptophan
+UAA, UAG, UGA         | STOP
 
-    def test_stops_translation_if_stop_codon_at_end_of_two_codon_sequence(
-            self):
-        strand = 'UGGUAG'
-        expected = ['Tryptophan']
-        self.assertEqual(proteins(strand), expected)
+Learn more about [protein translation on Wikipedia](http://en.wikipedia.org/wiki/Translation_(biology))
 
-    def test_stops_translation_if_stop_codon_at_end_of_three_codon_sequence(
-            self):
-        strand = 'AUGUUUUAA'
-        expected = ['Methionine', 'Phenylalanine']
-        self.assertEqual(proteins(strand), expected)
+## Exception messages
 
-    def test_stops_translation_if_stop_codon_in_middle_of_six_codon_sequence(
-            self):
-        strand = 'UGGUGUUAUUAAUGGUUU'
-        expected = ['Tryptophan', 'Cysteine', 'Tyrosine']
-        self.assertEqual(proteins(strand), expected)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-if __name__ == '__main__':
-    unittest.main()
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test protein_translation_test.py`
+- Python 3.4+: `pytest protein_translation_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest protein_translation_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/protein-translation` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Tyler Long
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

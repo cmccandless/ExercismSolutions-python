@@ -1,66 +1,77 @@
-import unittest
+# Linked List
 
-from linked_list import LinkedList
+Implement a doubly linked list.
 
+Like an array, a linked list is a simple linear data structure. Several
+common data types can be implemented using linked lists, like queues,
+stacks, and associative arrays.
 
-class LinkedListTests(unittest.TestCase):
-    def setUp(self):
-        self.list = LinkedList()
+A linked list is a collection of data elements called *nodes*. In a
+*singly linked list* each node holds a value and a link to the next node.
+In a *doubly linked list* each node also holds a link to the previous
+node.
 
-    def test_push_pop(self):
-        self.list.push(10)
-        self.list.push(20)
-        self.assertEqual(self.list.pop(), 20)
-        self.assertEqual(self.list.pop(), 10)
+You will write an implementation of a doubly linked list. Implement a
+Node to hold a value and pointers to the next and previous nodes. Then
+implement a List which holds references to the first and last node and
+offers an array-like interface for adding and removing items:
 
-    def test_push_shift(self):
-        self.list.push(10)
-        self.list.push(20)
-        self.assertEqual(self.list.shift(), 10)
-        self.assertEqual(self.list.shift(), 20)
+* `push` (*insert value at back*);
+* `pop` (*remove value at back*);
+* `shift` (*remove value at front*).
+* `unshift` (*insert value at front*);
 
-    def test_unshift_shift(self):
-        self.list.unshift(10)
-        self.list.unshift(20)
-        self.assertEqual(self.list.shift(), 20)
-        self.assertEqual(self.list.shift(), 10)
+To keep your implementation simple, the tests will not cover error
+conditions. Specifically: `pop` or `shift` will never be called on an
+empty list.
 
-    def test_unshift_pop(self):
-        self.list.unshift(10)
-        self.list.unshift(20)
-        self.assertEqual(self.list.pop(), 10)
-        self.assertEqual(self.list.pop(), 20)
+If you want to know more about linked lists, check [Wikipedia](https://en.wikipedia.org/wiki/Linked_list).
 
-    def test_all(self):
-        self.list.push(10)
-        self.list.push(20)
-        self.assertEqual(self.list.pop(), 20)
-        self.list.push(30)
-        self.assertEqual(self.list.shift(), 10)
-        self.list.unshift(40)
-        self.list.push(50)
-        self.assertEqual(self.list.shift(), 40)
-        self.assertEqual(self.list.pop(), 50)
-        self.assertEqual(self.list.shift(), 30)
+## Exception messages
 
-    @unittest.skip("extra-credit")
-    def test_length(self):
-        self.list.push(10)
-        self.list.push(20)
-        self.assertEqual(len(self.list), 2)
-        self.list.shift()
-        self.assertEqual(len(self.list), 1)
-        self.list.pop()
-        self.assertEqual(len(self.list), 0)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    @unittest.skip("extra-credit")
-    def test_iterator(self):
-        self.list.push(10)
-        self.list.push(20)
-        iterator = iter(self.list)
-        self.assertEqual(next(iterator), 10)
-        self.assertEqual(next(iterator), 20)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-if __name__ == '__main__':
-    unittest.main()
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test linked_list_test.py`
+- Python 3.4+: `pytest linked_list_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest linked_list_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/linked-list` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Classic computer science topic
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

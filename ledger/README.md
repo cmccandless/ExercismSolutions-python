@@ -1,60 +1,147 @@
-# Ledger
+# -*- coding: utf-8 -*-
+import unittest
 
-Refactor a ledger printer.
+from ledger import format_entries, create_entry
 
-The ledger exercise is a refactoring exercise. There is code that prints a
-nicely formatted ledger, given a locale (American or Dutch) and a currency (US
-dollar or euro). The code however is rather badly written, though (somewhat
-surprisingly) it consistently passes the test suite.
 
-Rewrite this code. Remember that in refactoring the trick is to make small steps
-that keep the tests passing. That way you can always quickly go back to a
-working version.  Version control tools like git can help here as well.
+class LedgerTest(unittest.TestCase):
+    maxDiff = 5000
 
-Please keep a log of what changes you've made and make a comment on the exercise
-containing that log, this will help reviewers.
+    def test_empty_ledger(self):
+        currency = 'USD'
+        locale = 'en_US'
+        entries = []
+        expected = 'Date       | Description               | Change       '
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-## Exception messages
+    def test_one_entry(self):
+        currency = 'USD'
+        locale = 'en_US'
+        entries = [
+            create_entry('2015-01-01', 'Buy present', -1000),
+        ]
+        expected = '\n'.join([
+            'Date       | Description               | Change       ',
+            '01/01/2015 | Buy present               |      ($10.00)',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def test_credit_and_debit(self):
+        currency = 'USD'
+        locale = 'en_US'
+        entries = [
+            create_entry('2015-01-02', 'Get present', 1000),
+            create_entry('2015-01-01', 'Buy present', -1000),
+        ]
+        expected = '\n'.join([
+            'Date       | Description               | Change       ',
+            '01/01/2015 | Buy present               |      ($10.00)',
+            '01/02/2015 | Get present               |       $10.00 ',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_multiple_entries_on_same_date_ordered_by_description(self):
+        currency = 'USD'
+        locale = 'en_US'
+        entries = [
+            create_entry('2015-01-02', 'Get present', 1000),
+            create_entry('2015-01-01', 'Buy present', -1000),
+        ]
+        expected = '\n'.join([
+            'Date       | Description               | Change       ',
+            '01/01/2015 | Buy present               |      ($10.00)',
+            '01/02/2015 | Get present               |       $10.00 ',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_final_order_tie_breaker_is_change(self):
+        currency = 'USD'
+        locale = 'en_US'
+        entries = [
+            create_entry('2015-01-01', 'Something', 0),
+            create_entry('2015-01-01', 'Something', -1),
+            create_entry('2015-01-01', 'Something', 1),
+        ]
+        expected = '\n'.join([
+            'Date       | Description               | Change       ',
+            '01/01/2015 | Something                 |       ($0.01)',
+            '01/01/2015 | Something                 |        $0.00 ',
+            '01/01/2015 | Something                 |        $0.01 ',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-## Running the tests
+    def test_overlong_description(self):
+        currency = 'USD'
+        locale = 'en_US'
+        entries = [
+            create_entry('2015-01-01', 'Freude schoner Gotterfunken', -123456),
+        ]
+        expected = '\n'.join([
+            'Date       | Description               | Change       ',
+            '01/01/2015 | Freude schoner Gotterf... |   ($1,234.56)',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def test_euros(self):
+        currency = 'EUR'
+        locale = 'en_US'
+        entries = [
+            create_entry('2015-01-01', 'Buy present', -1000),
+        ]
+        expected = '\n'.join([
+            'Date       | Description               | Change       ',
+            u'01/01/2015 | Buy present               |      (€10.00)',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-- Python 2.7: `py.test ledger_test.py`
-- Python 3.4+: `pytest ledger_test.py`
+    def test_dutch_locale(self):
+        currency = 'USD'
+        locale = 'nl_NL'
+        entries = [
+            create_entry('2015-03-12', 'Buy present', 123456),
+        ]
+        expected = '\n'.join([
+            'Datum      | Omschrijving              | Verandering  ',
+            '12-03-2015 | Buy present               |   $ 1.234,56 ',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest ledger_test.py`
+    def test_dutch_locale_and_euros(self):
+        currency = 'EUR'
+        locale = 'nl_NL'
+        entries = [
+            create_entry('2015-03-12', 'Buy present', 123456),
+        ]
+        expected = '\n'.join([
+            'Datum      | Omschrijving              | Verandering  ',
+            u'12-03-2015 | Buy present               |   € 1.234,56 ',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-### Common `pytest` options
+    def test_dutch_negative_number_with_3_digits_before_decimal_point(self):
+        currency = 'USD'
+        locale = 'nl_NL'
+        entries = [
+            create_entry('2015-03-12', 'Buy present', -12345),
+        ]
+        expected = '\n'.join([
+            'Datum      | Omschrijving              | Verandering  ',
+            '12-03-2015 | Buy present               |    $ -123,45 ',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+    def test_american_negative_number_with_3_digits_before_decimal_point(self):
+        currency = 'USD'
+        locale = 'en_US'
+        entries = [
+            create_entry('2015-03-12', 'Buy present', -12345),
+        ]
+        expected = '\n'.join([
+            'Date       | Description               | Change       ',
+            '03/12/2015 | Buy present               |     ($123.45)',
+        ])
+        self.assertEqual(format_entries(currency, locale, entries), expected)
 
-For other options, see `python -m pytest -h`
 
-## Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/ledger` directory.
-
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
-
-For more detailed information about running tests, code style and linting,
-please see the [help page](http://exercism.io/languages/python).
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

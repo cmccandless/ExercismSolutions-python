@@ -1,43 +1,96 @@
-import unittest
+# ETL
 
-from etl import transform
+We are going to do the `Transform` step of an Extract-Transform-Load.
 
+### ETL
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
+Extract-Transform-Load (ETL) is a fancy way of saying, "We have some crufty, legacy data over in this system, and now we need it in this shiny new system over here, so
+we're going to migrate this."
 
-class TransformTest(unittest.TestCase):
-    def test_a_single_letter(self):
-        self.assertEqual(transform({1: ['A']}), {'a': 1})
+(Typically, this is followed by, "We're only going to need to run this
+once." That's then typically followed by much forehead slapping and
+moaning about how stupid we could possibly be.)
 
-    def test_single_score_with_multiple_letters(self):
-        legacy_data = {1: ["A", "E", "I", "O", "U"]}
-        data = {"a": 1, "e": 1, "i": 1, "o": 1, "u": 1}
-        self.assertEqual(transform(legacy_data), data)
+### The goal
 
-    def test_multiple_scores_with_multiple_letters(self):
-        legacy_data = {1: ["A", "E"], 2: ["D", "G"]}
-        data = {"a": 1, "d": 2, "e": 1, "g": 2}
-        self.assertEqual(transform(legacy_data), data)
+We're going to extract some scrabble scores from a legacy system.
 
-    def test_multiple_scores_with_differing_numbers_of_letters(self):
-        legacy_data = {
-            1: ["A", "E", "I", "O", "U", "L", "N", "R", "S", "T"],
-            2: ["D", "G"],
-            3: ["B", "C", "M", "P"],
-            4: ["F", "H", "V", "W", "Y"],
-            5: ["K"],
-            8: ["J", "X"],
-            10: ["Q", "Z"]
-        }
-        data = {
-            "a": 1, "b": 3, "c": 3, "d": 2, "e": 1, "f": 4,
-            "g": 2, "h": 4, "i": 1, "j": 8, "k": 5, "l": 1,
-            "m": 3, "n": 1, "o": 1, "p": 3, "q": 10, "r": 1,
-            "s": 1, "t": 1, "u": 1, "v": 4, "w": 4, "x": 8,
-            "y": 4, "z": 10
-        }
-        self.assertEqual(transform(legacy_data), data)
+The old system stored a list of letters per score:
 
+- 1 point: "A", "E", "I", "O", "U", "L", "N", "R", "S", "T",
+- 2 points: "D", "G",
+- 3 points: "B", "C", "M", "P",
+- 4 points: "F", "H", "V", "W", "Y",
+- 5 points: "K",
+- 8 points: "J", "X",
+- 10 points: "Q", "Z",
 
-if __name__ == '__main__':
-    unittest.main()
+The shiny new scrabble system instead stores the score per letter, which
+makes it much faster and easier to calculate the score for a word. It
+also stores the letters in lower-case regardless of the case of the
+input letters:
+
+- "a" is worth 1 point.
+- "b" is worth 3 points.
+- "c" is worth 3 points.
+- "d" is worth 2 points.
+- Etc.
+
+Your mission, should you choose to accept it, is to transform the legacy data
+format to the shiny new format.
+
+### Notes
+
+A final note about scoring, Scrabble is played around the world in a
+variety of languages, each with its own unique scoring table. For
+example, an "E" is scored at 2 in the Māori-language version of the
+game while being scored at 4 in the Hawaiian-language version.
+
+## Exception messages
+
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test etl_test.py`
+- Python 3.4+: `pytest etl_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest etl_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/etl` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+The Jumpstart Lab team [http://jumpstartlab.com](http://jumpstartlab.com)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

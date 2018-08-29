@@ -1,96 +1,82 @@
-"""
-Notes regarding the implementation of smallest_palindrome and
-largest_palindrome:
+# Palindrome Products
 
-Both functions must take two keyword arguments:
-    max_factor -- int
-    min_factor -- int, default 0
+Detect palindrome products in a given range.
 
-Their return value must be a tuple (value, factors) where value is the
-palindrome itself, and factors is an iterable containing both factors of the
-palindrome in arbitrary order.
-"""
+A palindromic number is a number that remains the same when its digits are
+reversed. For example, `121` is a palindromic number but `112` is not.
 
-import unittest
+Given a range of numbers, find the largest and smallest palindromes which
+are products of numbers within that range.
 
-from palindrome_products import smallest_palindrome, largest_palindrome
+Your solution should return the largest and smallest palindromes, along with the
+factors of each within the range. If the largest or smallest palindrome has more
+than one pair of factors within the range, then return all the pairs.
 
+## Example 1
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+Given the range `[1, 9]` (both inclusive)...
 
-class PalindromesTests(unittest.TestCase):
-    def test_smallest_palindrome_from_single_digit_factors(self):
-        value, factors = smallest_palindrome(min_factor=1, max_factor=9)
-        self.assertEqual(value, 1)
-        self.assertFactorsEqual(factors, {(1, 1)})
+And given the list of all possible products within this range:
+`[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 15, 21, 24, 27, 20, 28, 32, 36, 25, 30, 35, 40, 45, 42, 48, 54, 49, 56, 63, 64, 72, 81]`
 
-    def test_largest_palindrome_from_single_digit_factors(self):
-        value, factors = largest_palindrome(min_factor=1, max_factor=9)
-        self.assertEqual(value, 9)
-        self.assertFactorsEqual(factors, {(1, 9), (3, 3)})
+The palindrome products are all single digit numbers (in this case):
+`[1, 2, 3, 4, 5, 6, 7, 8, 9]`
 
-    def test_smallest_palindrome_from_double_digit_factors(self):
-        value, factors = smallest_palindrome(min_factor=10, max_factor=99)
-        self.assertEqual(value, 121)
-        self.assertFactorsEqual(factors, {(11, 11)})
+The smallest palindrome product is `1`. Its factors are `(1, 1)`.
+The largest palindrome product is `9`. Its factors are `(1, 9)` and `(3, 3)`.
 
-    def test_largest_palindrome_from_double_digit_factors(self):
-        value, factors = largest_palindrome(min_factor=10, max_factor=99)
-        self.assertEqual(value, 9009)
-        self.assertFactorsEqual(factors, {(91, 99)})
+## Example 2
 
-    def test_smallest_palindrome_from_triple_digit_factors(self):
-        value, factors = smallest_palindrome(min_factor=100, max_factor=999)
-        self.assertEqual(value, 10201)
-        self.assertFactorsEqual(factors, {(101, 101)})
+Given the range `[10, 99]` (both inclusive)...
 
-    def test_largest_palindrome_from_triple_digit_factors(self):
-        value, factors = largest_palindrome(min_factor=100, max_factor=999)
-        self.assertEqual(value, 906609)
-        self.assertFactorsEqual(factors, {(913, 993)})
+The smallest palindrome product is `121`. Its factors are `(11, 11)`.
+The largest palindrome product is `9009`. Its factors are `(91, 99)`.
 
-    def test_smallest_palindrome_from_four_digit_factors(self):
-        value, factors = smallest_palindrome(min_factor=1000, max_factor=9999)
-        self.assertEqual(value, 1002001)
-        self.assertFactorsEqual(factors, {(1001, 1001)})
+## Exception messages
 
-    def test_largest_palindrome_from_four_digit_factors(self):
-        value, factors = largest_palindrome(min_factor=1000, max_factor=9999)
-        self.assertEqual(value, 99000099)
-        self.assertFactorsEqual(factors, {(9901, 9999)})
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_empty_for_smallest_palindrome_if_none_in_range(self):
-        with self.assertRaisesWithMessage(ValueError):
-            value, factors = smallest_palindrome(min_factor=1002,
-                                                 max_factor=1003)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_empty_for_largest_palindrome_if_none_in_range(self):
-        with self.assertRaisesWithMessage(ValueError):
-            value, factors = largest_palindrome(min_factor=15, max_factor=15)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_error_for_smallest_if_min_is_more_than_max(self):
-        with self.assertRaisesWithMessage(ValueError):
-            value, factors = smallest_palindrome(min_factor=10000,
-                                                 max_factor=1)
+## Running the tests
 
-    def test_error_for_largest_if_min_is_more_than_max(self):
-        with self.assertRaisesWithMessage(ValueError):
-            value, factors = largest_palindrome(min_factor=2, max_factor=1)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+- Python 2.7: `py.test palindrome_products_test.py`
+- Python 3.4+: `pytest palindrome_products_test.py`
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest palindrome_products_test.py`
 
-    def assertFactorsEqual(self, actual, expected):
-        self.assertEqual(set(map(frozenset, actual)),
-                         set(map(frozenset, expected)))
+### Common `pytest` options
 
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-if __name__ == '__main__':
-    unittest.main()
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/palindrome-products` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Problem 4 at Project Euler [http://projecteuler.net/problem=4](http://projecteuler.net/problem=4)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

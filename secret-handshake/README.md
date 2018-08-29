@@ -1,78 +1,81 @@
-# Secret Handshake
+import unittest
 
-> There are 10 types of people in the world: Those who understand
-> binary, and those who don't.
-
-You and your fellow cohort of those in the "know" when it comes to
-binary decide to come up with a secret "handshake".
-
-```text
-1 = wink
-10 = double blink
-100 = close your eyes
-1000 = jump
+from secret_handshake import handshake, secret_code
 
 
-10000 = Reverse the order of the operations in the secret handshake.
-```
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
 
-Given a decimal number, convert it to the appropriate sequence of events for a secret handshake.
+class SecretHandshakeTest(unittest.TestCase):
+    def test_wink_for_1(self):
+        self.assertEqual(handshake(1), ['wink'])
 
-Here's a couple of examples:
+    def test_double_blink_for_10(self):
+        self.assertEqual(handshake(2), ['double blink'])
 
-Given the input 3, the function would return the array
-["wink", "double blink"] because 3 is 11 in binary.
+    def test_close_your_eyes_for_100(self):
+        self.assertEqual(handshake(4), ['close your eyes'])
 
-Given the input 19, the function would return the array
-["double blink", "wink"] because 19 is 10011 in binary.
-Notice that the addition of 16 (10000 in binary)
-has caused the array to be reversed.
+    def test_jump_for_1000(self):
+        self.assertEqual(handshake(8), ['jump'])
 
-## Exception messages
+    def test_combine_two_actions(self):
+        self.assertEqual(handshake(3), ['wink', 'double blink'])
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def test_reverse_two_actions(self):
+        self.assertEqual(handshake(19), ['double blink', 'wink'])
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_reversing_one_action_gives_the_same_action(self):
+        self.assertEqual(handshake(24), ['jump'])
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_reversing_no_actions_still_gives_no_actions(self):
+        self.assertEqual(handshake(16), [])
 
-## Running the tests
+    def test_all_possible_actions(self):
+        self.assertEqual(handshake(15), ['wink',
+                                         'double blink',
+                                         'close your eyes',
+                                         'jump'])
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def test_reverse_all_possible_actions(self):
+        self.assertEqual(handshake(31), ['jump',
+                                         'close your eyes',
+                                         'double blink',
+                                         'wink'])
 
-- Python 2.7: `py.test secret_handshake_test.py`
-- Python 3.4+: `pytest secret_handshake_test.py`
+    def test_do_nothing_for_zero(self):
+        self.assertEqual(handshake(0), [])
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest secret_handshake_test.py`
+    # Track-specific tests
 
-### Common `pytest` options
+    @unittest.skip('extra-credit')
+    def test_code1(self):
+        self.assertEqual(secret_code(['close your eyes', 'jump']), 12)
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+    @unittest.skip('extra-credit')
+    def test_code2(self):
+        self.assertEqual(secret_code(['wink', 'double blink']), 3)
 
-For other options, see `python -m pytest -h`
+    @unittest.skip('extra-credit')
+    def test_code3(self):
+        self.assertEqual(secret_code(['jump', 'double blink']), 26)
 
-## Submitting Exercises
+    @unittest.skip('extra-credit')
+    def test_reversible1(self):
+        self.assertEqual(secret_code(handshake(27)), 27)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/secret-handshake` directory.
+    @unittest.skip('extra-credit')
+    def test_reversible2(self):
+        self.assertEqual(secret_code(handshake(1)), 1)
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+    @unittest.skip('extra-credit')
+    def test_reversible3(self):
+        self.assertEqual(secret_code(handshake(7)), 7)
 
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
+    @unittest.skip('extra-credit')
+    def test_reversible4(self):
+        inp = ['wink', 'double blink', 'jump']
+        self.assertEqual(handshake(secret_code(inp)), inp)
 
-## Source
 
-Bert, in Mary Poppins [http://www.imdb.com/title/tt0058331/quotes/qt0437047](http://www.imdb.com/title/tt0058331/quotes/qt0437047)
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

@@ -1,61 +1,78 @@
-import unittest
+# Atbash Cipher
 
-from atbash_cipher import decode, encode
+Create an implementation of the atbash cipher, an ancient encryption system created in the Middle East.
 
+The Atbash cipher is a simple substitution cipher that relies on
+transposing all the letters in the alphabet such that the resulting
+alphabet is backwards. The first letter is replaced with the last
+letter, the second with the second-last, and so on.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+An Atbash cipher for the Latin alphabet would be as follows:
 
-class AtbashCipherTest(unittest.TestCase):
-    def test_encode_no(self):
-        self.assertMultiLineEqual(encode("no"), "ml")
+```text
+Plain:  abcdefghijklmnopqrstuvwxyz
+Cipher: zyxwvutsrqponmlkjihgfedcba
+```
 
-    def test_encode_yes(self):
-        self.assertMultiLineEqual(encode("yes"), "bvh")
+It is a very weak cipher because it only has one possible key, and it is
+a simple monoalphabetic substitution cipher. However, this may not have
+been an issue in the cipher's time.
 
-    def test_encode_OMG(self):
-        self.assertMultiLineEqual(encode("OMG"), "lnt")
+Ciphertext is written out in groups of fixed length, the traditional group size
+being 5 letters, and punctuation is excluded. This is to make it harder to guess
+things based on word boundaries.
 
-    def test_encode_O_M_G(self):
-        self.assertMultiLineEqual(encode("O M G"), "lnt")
+## Examples
 
-    def test_encode_long_word(self):
-        self.assertMultiLineEqual(encode("mindblowingly"), "nrmwy oldrm tob")
+- Encoding `test` gives `gvhg`
+- Decoding `gvhg` gives `test`
+- Decoding `gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt` gives `thequickbrownfoxjumpsoverthelazydog`
 
-    def test_encode_numbers(self):
-        self.assertMultiLineEqual(
-            encode("Testing, 1 2 3, testing."), "gvhgr mt123 gvhgr mt")
+## Exception messages
 
-    def test_encode_sentence(self):
-        self.assertMultiLineEqual(
-            encode("Truth is fiction."), "gifgs rhurx grlm")
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_encode_all_things(self):
-        plaintext = "The quick brown fox jumps over the lazy dog."
-        ciphertext = "gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt"
-        self.assertMultiLineEqual(encode(plaintext), ciphertext)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_decode_word(self):
-        self.assertMultiLineEqual(decode("vcvix rhn"), "exercism")
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_decode_sentence(self):
-        self.assertMultiLineEqual(
-            decode("zmlyh gzxov rhlug vmzhg vkkrm thglm v"),
-            "anobstacleisoftenasteppingstone")
+## Running the tests
 
-    def test_decode_numbers(self):
-        self.assertMultiLineEqual(
-            decode("gvhgr mt123 gvhgr mt"), "testing123testing")
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_decode_all_the_letters(self):
-        ciphertext = "gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt"
-        plaintext = "thequickbrownfoxjumpsoverthelazydog"
-        self.assertMultiLineEqual(decode(ciphertext), plaintext)
+- Python 2.7: `py.test atbash_cipher_test.py`
+- Python 3.4+: `pytest atbash_cipher_test.py`
 
-    # additional track specific test
-    def test_encode_decode(self):
-        self.assertMultiLineEqual(
-            decode(encode("Testing, 1 2 3, testing.")), "testing123testing")
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest atbash_cipher_test.py`
 
+### Common `pytest` options
 
-if __name__ == '__main__':
-    unittest.main()
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/atbash-cipher` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Wikipedia [http://en.wikipedia.org/wiki/Atbash](http://en.wikipedia.org/wiki/Atbash)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

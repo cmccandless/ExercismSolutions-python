@@ -1,50 +1,60 @@
-import unittest
-from markdown import parse_markdown
+# Markdown
 
+Refactor a Markdown parser.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+The markdown exercise is a refactoring exercise. There is code that parses a
+given string with [Markdown
+syntax](https://guides.github.com/features/mastering-markdown/) and returns the
+associated HTML for that string. Even though this code is confusingly written
+and hard to follow, somehow it works and all the tests are passing! Your
+challenge is to re-write this code to make it easier to read and maintain
+while still making sure that all the tests keep passing.
 
-class TestMarkdown(unittest.TestCase):
+It would be helpful if you made notes of what you did in your refactoring in
+comments so reviewers can see that, but it isn't strictly necessary. The most
+important thing is to make the code better!
 
-    def test_paragraph(self):
-        self.assertEqual(parse_markdown('This will be a paragraph'),
-                         '<p>This will be a paragraph</p>')
+## Exception messages
 
-    def test_italics(self):
-        self.assertEqual(parse_markdown('_This will be italic_'),
-                         '<p><em>This will be italic</em></p>')
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_bold(self):
-        self.assertEqual(parse_markdown('__This will be bold__'),
-                         '<p><strong>This will be bold</strong></p>')
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_mixed_normal_italics_and_bold(self):
-        self.assertEqual(parse_markdown('This will _be_ __mixed__'),
-                         '<p>This will <em>be</em> <strong>mixed</strong></p>')
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_h1(self):
-        self.assertEqual(parse_markdown('# This will be an h1'),
-                         '<h1>This will be an h1</h1>')
+## Running the tests
 
-    def test_h2(self):
-        self.assertEqual(parse_markdown('## This will be an h2'),
-                         '<h2>This will be an h2</h2>')
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_h6(self):
-        self.assertEqual(parse_markdown(
-            '###### This will be an h6'), '<h6>This will be an h6</h6>')
+- Python 2.7: `py.test markdown_test.py`
+- Python 3.4+: `pytest markdown_test.py`
 
-    def test_unordered_lists(self):
-        self.assertEqual(parse_markdown('* Item 1\n* Item 2'),
-                         '<ul><li>Item 1</li>'
-                         '<li>Item 2</li></ul>')
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest markdown_test.py`
 
-    def test_little_bit_of_everything(self):
-        self.assertEqual(parse_markdown(
-            '# Header!\n* __Bold Item__\n* _Italic Item_'),
-            '<h1>Header!</h1><ul><li><strong>Bold Item</strong></li>'
-            '<li><em>Italic Item</em></li></ul>')
+### Common `pytest` options
 
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-if __name__ == '__main__':
-    unittest.main()
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/markdown` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

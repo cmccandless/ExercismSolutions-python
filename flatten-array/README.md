@@ -1,47 +1,60 @@
-import unittest
+# Flatten Array
 
-from flatten_array import flatten
+Take a nested list and return a single flattened list with all values except nil/null.
 
+The challenge is to write a function that accepts an arbitrarily-deep nested list-like structure and returns a flattened structure without any nil/null values.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+For Example
 
-class FlattenArrayTests(unittest.TestCase):
+input: [1,[2,3,null,4],[null],5]
 
-    def test_no_nesting(self):
-        self.assertEqual(flatten([0, 1, 2]), [0, 1, 2])
+output: [1,2,3,4,5]
 
-    def test_flatten_integers(self):
-        inputs = [1, [2, 3, 4, 5, 6, 7], 8]
-        expected = [1, 2, 3, 4, 5, 6, 7, 8]
-        self.assertEqual(flatten(inputs), expected)
+## Exception messages
 
-    def test_five_level_nesting(self):
-        inputs = [0, 2, [[2, 3], 8, 100, 4, [[[50]]]], -2]
-        expected = [0, 2, 2, 3, 8, 100, 4, 50, -2]
-        self.assertEqual(flatten(inputs), expected)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_six_level_nesting(self):
-        inputs = [1, [2, [[3]], [4, [[5]]], 6, 7], 8]
-        expected = [1, 2, 3, 4, 5, 6, 7, 8]
-        self.assertEqual(flatten(inputs), expected)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_with_none_values(self):
-        inputs = [0, 2, [[2, 3], 8, [[100]], None, [[None]]], -2]
-        expected = [0, 2, 2, 3, 8, 100, -2]
-        self.assertEqual(flatten(inputs), expected)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_all_values_are_none(self):
-        inputs = [None, [[[None]]], None, None, [[None, None], None], None]
-        expected = []
-        self.assertEqual(flatten(inputs), expected)
+## Running the tests
 
-    # Additional tests for this track
-    def test_empty_nested_lists(self):
-        self.assertEqual(flatten([[()]]), [])
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_strings(self):
-        self.assertEqual(flatten(['0', ['1', '2']]), ['0', '1', '2'])
+- Python 2.7: `py.test flatten_array_test.py`
+- Python 3.4+: `pytest flatten_array_test.py`
 
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest flatten_array_test.py`
 
-if __name__ == '__main__':
-    unittest.main()
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/flatten-array` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Interview Question [https://reference.wolfram.com/language/ref/Flatten.html](https://reference.wolfram.com/language/ref/Flatten.html)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

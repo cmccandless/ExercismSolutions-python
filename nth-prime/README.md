@@ -1,43 +1,58 @@
-import unittest
+# Nth Prime
 
-from nth_prime import nth_prime
+Given a number n, determine what the nth prime is.
 
+By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that
+the 6th prime is 13.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.1.0
+If your language provides methods in the standard library to deal with prime
+numbers, pretend they don't exist and implement them yourself.
 
-class NthPrimeTests(unittest.TestCase):
-    def test_first_prime(self):
-        self.assertEqual(nth_prime(1), 2)
+## Exception messages
 
-    def test_second_prime(self):
-        self.assertEqual(nth_prime(2), 3)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_sixth_prime(self):
-        self.assertEqual(nth_prime(6), 13)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_big_prime(self):
-        self.assertEqual(nth_prime(10001), 104743)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_there_is_no_zeroth_prime(self):
-        with self.assertRaisesWithMessage(ValueError):
-            nth_prime(0)
+## Running the tests
 
-    # additional track specific test
-    def test_first_twenty_primes(self):
-        self.assertEqual([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31,
-                          37, 41, 43, 47, 53, 59, 61, 67, 71],
-                         [nth_prime(n) for n in range(1, 21)])
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+- Python 2.7: `py.test nth_prime_test.py`
+- Python 3.4+: `pytest nth_prime_test.py`
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest nth_prime_test.py`
 
+### Common `pytest` options
 
-if __name__ == '__main__':
-    unittest.main()
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/nth-prime` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+A variation on Problem 7 at Project Euler [http://projecteuler.net/problem=7](http://projecteuler.net/problem=7)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

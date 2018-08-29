@@ -1,54 +1,63 @@
-# Bracket Push
+import unittest
 
-Given a string containing brackets `[]`, braces `{}`, parentheses `()`,
-or any combination thereof, verify that any and all pairs are matched
-and nested correctly.
+from bracket_push import is_paired
 
-## Exception messages
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.4.0
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+class BracketPushTest(unittest.TestCase):
+    def test_paired_square_brackets(self):
+        self.assertEqual(is_paired("[]"), True)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_empty_string(self):
+        self.assertEqual(is_paired(""), True)
 
-## Running the tests
+    def test_unpaired_brackets(self):
+        self.assertEqual(is_paired("[["), False)
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def test_wrong_ordered_brackets(self):
+        self.assertEqual(is_paired("}{"), False)
 
-- Python 2.7: `py.test bracket_push_test.py`
-- Python 3.4+: `pytest bracket_push_test.py`
+    def test_wrong_closing_bracket(self):
+        self.assertEqual(is_paired("{]"), False)
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest bracket_push_test.py`
+    def test_paired_with_whitespace(self):
+        self.assertEqual(is_paired("{ }"), True)
 
-### Common `pytest` options
+    def test_partially_paired_brackets(self):
+        self.assertEqual(is_paired("{[])"), False)
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+    def test_simple_nested_brackets(self):
+        self.assertEqual(is_paired("{[]}"), True)
 
-For other options, see `python -m pytest -h`
+    def test_several_paired_brackets(self):
+        self.assertEqual(is_paired("{}[]"), True)
 
-## Submitting Exercises
+    def test_paired_and_nested_brackets(self):
+        self.assertEqual(is_paired("([{}({}[])])"), True)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/bracket-push` directory.
+    def test_unopened_closing_brackets(self):
+        self.assertEqual(is_paired("{[)][]}"), False)
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+    def test_unpaired_and_nested_brackets(self):
+        self.assertEqual(is_paired("([{])"), False)
 
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
+    def test_paired_and_wrong_nested_brackets(self):
+        self.assertEqual(is_paired("[({]})"), False)
 
-## Source
+    def test_paried_and_incomplete_brackets(self):
+        self.assertEqual(is_paired("{}["), False)
 
-Ginna Baker
+    def test_math_expression(self):
+        self.assertEqual(
+            is_paired("(((185 + 223.85) * 15) - 543)/2"), True)
 
-## Submitting Incomplete Solutions
+    def test_complex_latex_expression(self):
+        self.assertEqual(
+            is_paired(
+                ("\\left(\\begin{array}{cc} \\frac{1}{3} & x\\\\ \\mathrm{e}^{"
+                 "x} &... x^2 \\end{array}\\right)")), True)
 
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+
+if __name__ == '__main__':
+    unittest.main()

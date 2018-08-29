@@ -1,110 +1,96 @@
-# SGF Parsing
+import unittest
 
-Parsing a Smart Game Format string.
+from sgf_parsing import parse, SgfTree
 
-[SGF](https://en.wikipedia.org/wiki/Smart_Game_Format) is a standard format for
-storing board game files, in particular go.
 
-SGF is a fairly simple format. An SGF file usually contains a single
-tree of nodes where each node is a property list. The property list
-contains key value pairs, each key can only occur once but may have
-multiple values.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-An SGF file may look like this:
+class SgfParsingTest(unittest.TestCase):
+    def test_empty_input(self):
+        input_string = ''
+        with self.assertRaisesWithMessage(ValueError):
+            parse(input_string)
 
-```text
-(;FF[4]C[root]SZ[19];B[aa];W[ab])
-```
+    def test_tree_with_no_nodes(self):
+        input_string = '()'
+        with self.assertRaisesWithMessage(ValueError):
+            parse(input_string)
 
-This is a tree with three nodes:
+    def test_node_without_tree(self):
+        input_string = ';'
+        with self.assertRaisesWithMessage(ValueError):
+            parse(input_string)
 
-- The top level node has two properties: FF\[4\] (key = "FF", value =
-  "4") and C\[root\](key = "C", value = "root"). (FF indicates the
-  version of SGF and C is a comment.)
-  - The top level node has a single child which has a single property:
-    B\[aa\].  (Black plays on the point encoded as "aa", which is the
-    1-1 point (which is a stupid place to play)).
-    - The B\[aa\] node has a single child which has a single property:
-      W\[ab\].
+    def test_node_without_properties(self):
+        input_string = '(;)'
+        expected = SgfTree()
+        self.assertEqual(parse(input_string), expected)
 
-As you can imagine an SGF file contains a lot of nodes with a single
-child, which is why there's a shorthand for it.
+    def test_single_node_tree(self):
+        input_string = '(;A[B])'
+        expected = SgfTree(properties={'A': ['B']})
+        self.assertEqual(parse(input_string), expected)
 
-SGF can encode variations of play. Go players do a lot of backtracking
-in their reviews (let's try this, doesn't work, let's try that) and SGF
-supports variations of play sequences. For example:
+    def test_properties_without_delimiter(self):
+        input_string = '(;A)'
+        with self.assertRaisesWithMessage(ValueError):
+            parse(input_string)
 
-```text
-(;FF[4](;B[aa];W[ab])(;B[dd];W[ee]))
-```
+    def test_all_lowercase_property(self):
+        input_string = '(;a[b])'
+        with self.assertRaisesWithMessage(ValueError):
+            parse(input_string)
 
-Here the root node has two variations. The first (which by convention
-indicates what's actually played) is where black plays on 1-1. Black was
-sent this file by his teacher who pointed out a more sensible play in
-the second child of the root node: `B[dd]` (4-4 point, a very standard
-opening to take the corner).
+    def test_upper_and_lowercase_property(self):
+        input_string = '(;Aa[b])'
+        with self.assertRaisesWithMessage(ValueError):
+            parse(input_string)
 
-A key can have multiple values associated with it. For example:
+    def test_two_nodes(self):
+        input_string = '(;A[B];B[C])'
+        expected = SgfTree(
+            properties={'A': ['B']},
+            children=[
+                SgfTree({'B': ['C']})
+            ]
+        )
+        self.assertEqual(parse(input_string), expected)
 
-```text
-(;FF[4];AB[aa][ab][ba])
-```
+    def test_two_child_trees(self):
+        input_string = '(;A[B](;B[C])(;C[D]))'
+        expected = SgfTree(
+            properties={'A': ['B']},
+            children=[
+                SgfTree({'B': ['C']}),
+                SgfTree({'C': ['D']}),
+            ]
+        )
+        self.assertEqual(parse(input_string), expected)
 
-Here `AB` (add black) is used to add three black stones to the board.
+    def test_multiple_property_values(self):
+        input_string = '(;A[b][c][d])'
+        expected = SgfTree(
+            properties={'A': ['b', 'c', 'd']}
+        )
+        self.assertEqual(parse(input_string), expected)
 
-There are a few more complexities to SGF (and parsing in general), which
-you can mostly ignore. You should assume that the input is encoded in
-UTF-8, the tests won't contain a charset property, so don't worry about
-that. Furthermore you may assume that all newlines are unix style (`\n`,
-no `\r` or `\r\n` will be in the tests) and that no optional whitespace
-between properties, nodes, etc will be in the tests.
+    def test_escaped_property(self):
+        input_string = '(;A[\]b\nc\nd\t\te \n\]])'
+        expected = SgfTree(
+            properties={'A': [']b\nc\nd  e \n]']}
+        )
+        self.assertEqual(parse(input_string), expected)
 
-The exercise will have you parse an SGF string and return a tree
-structure of properties. You do not need to encode knowledge about the
-data types of properties, just use the rules for the
-[text](http://www.red-bean.com/sgf/sgf4.html#text) type everywhere.
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
 
-## Exception messages
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
-
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
-
-## Running the tests
-
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
-
-- Python 2.7: `py.test sgf_parsing_test.py`
-- Python 3.4+: `pytest sgf_parsing_test.py`
-
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest sgf_parsing_test.py`
-
-### Common `pytest` options
-
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
-
-For other options, see `python -m pytest -h`
-
-## Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/sgf-parsing` directory.
-
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
-
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

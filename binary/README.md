@@ -1,62 +1,80 @@
-"""Tests for the binary exercise
+# Binary
 
-Implementation note:
-If the argument to parse_binary isn't a valid binary number the
-function should raise a ValueError with a meaningful error message.
-"""
-import unittest
+Convert a binary number, represented as a string (e.g. '101010'), to its decimal equivalent using first principles.
 
-from binary import parse_binary
+Implement binary to decimal conversion. Given a binary input
+string, your program should produce a decimal output. The
+program should handle invalid inputs.
 
+## Note
 
-class BinaryTests(unittest.TestCase):
-    def test_binary_1_is_decimal_1(self):
-        self.assertEqual(parse_binary("1"), 1)
+- Implement the conversion yourself.
+  Do not use something else to perform the conversion for you.
 
-    def test_binary_10_is_decimal_2(self):
-        self.assertEqual(parse_binary("10"), 2)
+## About Binary (Base-2)
 
-    def test_binary_11_is_decimal_3(self):
-        self.assertEqual(parse_binary("11"), 3)
+Decimal is a base-10 system.
 
-    def test_binary_100_is_decimal_4(self):
-        self.assertEqual(parse_binary("100"), 4)
+A number 23 in base 10 notation can be understood
+as a linear combination of powers of 10:
 
-    def test_binary_1001_is_decimal_9(self):
-        self.assertEqual(parse_binary("1001"), 9)
+- The rightmost digit gets multiplied by 10^0 = 1
+- The next number gets multiplied by 10^1 = 10
+- ...
+- The *n*th number gets multiplied by 10^*(n-1)*.
+- All these values are summed.
 
-    def test_binary_11010_is_decimal_26(self):
-        self.assertEqual(parse_binary("11010"), 26)
+So: `23 => 2*10^1 + 3*10^0 => 2*10 + 3*1 = 23 base 10`
 
-    def test_binary_10001101000_is_decimal_1128(self):
-        self.assertEqual(parse_binary("10001101000"), 1128)
+Binary is similar, but uses powers of 2 rather than powers of 10.
 
-    def test_invalid_binary_text_only(self):
-        with self.assertRaisesWithMessage(ValueError):
-            parse_binary("carrot")
+So: `101 => 1*2^2 + 0*2^1 + 1*2^0 => 1*4 + 0*2 + 1*1 => 4 + 1 => 5 base 10`.
 
-    def test_invalid_binary_number_not_base2(self):
-        with self.assertRaisesWithMessage(ValueError):
-            parse_binary("102011")
+## Exception messages
 
-    def test_invalid_binary_numbers_with_text(self):
-        with self.assertRaisesWithMessage(ValueError):
-            parse_binary("10nope")
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_invalid_binary_text_with_numbers(self):
-        with self.assertRaisesWithMessage(ValueError):
-            parse_binary("nope10")
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+## Running the tests
 
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-if __name__ == '__main__':
-    unittest.main()
+- Python 2.7: `py.test binary_test.py`
+- Python 3.4+: `pytest binary_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest binary_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/binary` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+All of Computer Science [http://www.wolframalpha.com/input/?i=binary&a=*C.binary-_*MathWorld-](http://www.wolframalpha.com/input/?i=binary&a=*C.binary-_*MathWorld-)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

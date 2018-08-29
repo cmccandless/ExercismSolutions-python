@@ -2,9 +2,9 @@ import unittest
 from markdown import parse_markdown
 
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
 
-class TestMarkdown(unittest.TestCase):
+class MarkdownTest(unittest.TestCase):
 
     def test_paragraph(self):
         self.assertEqual(parse_markdown('This will be a paragraph'),
@@ -44,6 +44,25 @@ class TestMarkdown(unittest.TestCase):
             '# Header!\n* __Bold Item__\n* _Italic Item_'),
             '<h1>Header!</h1><ul><li><strong>Bold Item</strong></li>'
             '<li><em>Italic Item</em></li></ul>')
+
+    def test_symbols_in_the_header_text_that_should_not_be_interpreted(self):
+        self.assertEqual(
+            parse_markdown('# This is a header with # and * in the text'),
+            '<h1>This is a header with # and * in the text</h1>')
+
+    def test_symbols_in_the_list_item_text_that_should_not_be_interpreted(
+            self):
+        self.assertEqual(
+            parse_markdown(
+                '* Item 1 with a # in the text\n* Item 2 with * in the text'),
+            '<ul><li>Item 1 with a # in the text</li>'
+            '<li>Item 2 with * in the text</li></ul>')
+
+    def test_symbols_in_the_paragraph_text_that_should_not_be_interpreted(
+            self):
+        self.assertEqual(
+            parse_markdown('This is a paragraph with # and * in the text'),
+            '<p>This is a paragraph with # and * in the text</p>')
 
 
 if __name__ == '__main__':

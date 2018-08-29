@@ -1,152 +1,128 @@
-"""Tests for the ocr-numbers exercise
+# OCR Numbers
 
-Implementation note:
-ocr.convert should validate its input and
-raise ValueErrors with meaningful error messages
-if necessary.
-"""
+Given a 3 x 4 grid of pipes, underscores, and spaces, determine which number is
+represented, or whether it is garbled.
 
-import unittest
+# Step One
 
-from ocr_numbers import convert
+To begin with, convert a simple binary font to a string containing 0 or 1.
 
+The binary font uses pipes and underscores, four rows high and three columns wide.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+```text
+     _   #
+    | |  # zero.
+    |_|  #
+         # the fourth row is always blank
+```
 
-class OcrTest(unittest.TestCase):
-    def test_recognizes_0(self):
-        self.assertEqual(convert([" _ ",
-                                  "| |",
-                                  "|_|",
-                                  "   "]), '0')
+Is converted to "0"
 
-    def test_recognizes_1(self):
-        self.assertEqual(convert(["   ",
-                                  "  |",
-                                  "  |",
-                                  "   "]), '1')
+```text
+         #
+      |  # one.
+      |  #
+         # (blank fourth row)
+```
 
-    def test_unreadable(self):
-        self.assertEqual(convert(["   ",
-                                  "  _",
-                                  "  |",
-                                  "   "]), '?')
+Is converted to "1"
 
-    def test_line_number_not_multiple_of_four(self):
-        with self.assertRaisesWithMessage(ValueError):
-            convert([" _ ",
-                     "| |",
-                     "   "])
+If the input is the correct size, but not recognizable, your program should return '?'
 
-    def test_col_number_not_multiple_of_three(self):
-        with self.assertRaisesWithMessage(ValueError):
-            convert(["    ",
-                     "   |",
-                     "   |",
-                     "    "])
+If the input is the incorrect size, your program should return an error.
 
-    def test_recognizes_110101100(self):
-        input_grid = [
-            "       _     _        _  _ ",
-            "  |  || |  || |  |  || || |",
-            "  |  ||_|  ||_|  |  ||_||_|",
-            "                           "
-        ]
-        self.assertEqual(convert(input_grid), "110101100")
+# Step Two
 
-    def test_garbled_numbers_in_string(self):
-        input_grid = [
-            "       _     _           _ ",
-            "  |  || |  || |     || || |",
-            "  |  | _|  ||_|  |  ||_||_|",
-            "                           "
-        ]
-        self.assertEqual(convert(input_grid), "11?10?1?0")
+Update your program to recognize multi-character binary strings, replacing garbled numbers with ?
 
-    def test_recognizes_2(self):
-        self.assertEqual(convert([" _ ",
-                                  " _|",
-                                  "|_ ",
-                                  "   "]), "2")
+# Step Three
 
-    def test_recognizes_3(self):
-        self.assertEqual(convert([" _ ",
-                                  " _|",
-                                  " _|",
-                                  "   "]), "3")
+Update your program to recognize all numbers 0 through 9, both individually and as part of a larger string.
 
-    def test_recognizes_4(self):
-        self.assertEqual(convert(["   ",
-                                  "|_|",
-                                  "  |",
-                                  "   "]), "4")
+```text
+ _ 
+ _|
+|_ 
+   
+```
 
-    def test_recognizes_5(self):
-        self.assertEqual(convert([" _ ",
-                                  "|_ ",
-                                  " _|",
-                                  "   "]), "5")
+Is converted to "2"
 
-    def test_recognizes_6(self):
-        self.assertEqual(convert([" _ ",
-                                  "|_ ",
-                                  "|_|",
-                                  "   "]), "6")
+```text
+      _  _     _  _  _  _  _  _  #
+    | _| _||_||_ |_   ||_||_|| | # decimal numbers.
+    ||_  _|  | _||_|  ||_| _||_| #
+                                 # fourth line is always blank
+```
 
-    def test_recognizes_7(self):
-        self.assertEqual(convert([" _ ",
-                                  "  |",
-                                  "  |",
-                                  "   "]), "7")
+Is converted to "1234567890"
 
-    def test_recognizes_8(self):
-        self.assertEqual(convert([" _ ",
-                                  "|_|",
-                                  "|_|",
-                                  "   "]), "8")
+# Step Four
 
-    def test_recognizes_9(self):
-        self.assertEqual(convert([" _ ",
-                                  "|_|",
-                                  " _|",
-                                  "   "]), "9")
+Update your program to handle multiple numbers, one per line. When converting several lines, join the lines with commas.
 
-    def test_recognizes_string_of_decimal_numbers(self):
-        input_grid = [
-            "    _  _     _  _  _  _  _  _ ",
-            "  | _| _||_||_ |_   ||_||_|| |",
-            "  ||_  _|  | _||_|  ||_| _||_|",
-            "                              "
-        ]
-        self.assertEqual(convert(input_grid), "1234567890")
+```text
+    _  _ 
+  | _| _|
+  ||_  _|
+         
+    _  _ 
+|_||_ |_ 
+  | _||_|
+         
+ _  _  _ 
+  ||_||_|
+  ||_| _|
+         
+```
 
-    def test_recognizes_numbers_separated_by_empty_lines(self):
-        input_grid = [
-            "    _  _ ",
-            "  | _| _|",
-            "  ||_  _|",
-            "         ",
-            "    _  _ ",
-            "|_||_ |_ ",
-            "  | _||_|",
-            "         ",
-            " _  _  _ ",
-            "  ||_||_|",
-            "  ||_| _|",
-            "         "
-        ]
-        self.assertEqual(convert(input_grid), "123,456,789")
+Is converted to "123,456,789"
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+## Exception messages
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-if __name__ == '__main__':
-    unittest.main()
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test ocr_numbers_test.py`
+- Python 3.4+: `pytest ocr_numbers_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest ocr_numbers_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/ocr-numbers` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Inspired by the Bank OCR kata [http://codingdojo.org/cgi-bin/wiki.pl?KataBankOCR](http://codingdojo.org/cgi-bin/wiki.pl?KataBankOCR)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

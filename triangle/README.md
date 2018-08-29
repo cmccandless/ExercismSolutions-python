@@ -1,72 +1,66 @@
-# Triangle
+import unittest
 
-Determine if a triangle is equilateral, isosceles, or scalene.
+from triangle import is_equilateral, is_isosceles, is_scalene
 
-An _equilateral_ triangle has all three sides the same length.
 
-An _isosceles_ triangle has at least two sides the same length. (It is sometimes
-specified as having exactly two sides the same length, but for the purposes of
-this exercise we'll say at least two.)
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-A _scalene_ triangle has all sides of different lengths.
+class is_equilateralTests(unittest.TestCase):
+    def test_true_if_all_sides_are_equal(self):
+        self.assertIs(is_equilateral([2, 2, 2]), True)
 
-## Note
+    def test_false_if_any_side_is_unequal(self):
+        self.assertIs(is_equilateral([2, 3, 2]), False)
 
-For a shape to be a triangle at all, all sides have to be of length > 0, and
-the sum of the lengths of any two sides must be greater than or equal to the
-length of the third side. See [Triangle Inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+    def test_false_if_no_sides_are_equal(self):
+        self.assertIs(is_equilateral([5, 4, 6]), False)
 
-## Dig Deeper
+    def test_false_if_all_sides_are_zero(self):
+        self.assertIs(is_equilateral([0, 0, 0]), False)
 
-The case where the sum of the lengths of two sides _equals_ that of the
-third is known as a _degenerate_ triangle - it has zero area and looks like
-a single line. Feel free to add your own code/tests to check for degenerate triangles.
+    def test_sides_may_be_floats(self):
+        self.assertIs(is_equilateral([0.5, 0.5, 0.5]), True)
 
-## Exception messages
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+class is_isoscelesTests(unittest.TestCase):
+    def test_true_if_last_two_sides_are_equal(self):
+        self.assertIs(is_isosceles([3, 4, 4]), True)
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_true_if_first_two_sides_are_equal(self):
+        self.assertIs(is_isosceles([4, 4, 3]), True)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_true_if_first_and_last_sides_are_equal(self):
+        self.assertIs(is_isosceles([4, 3, 4]), True)
 
-## Running the tests
+    def test_is_equilateral_triangles_are_also_is_isosceles(self):
+        self.assertIs(is_isosceles([4, 4, 4]), True)
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def test_false_if_no_sides_are_equal(self):
+        self.assertIs(is_isosceles([2, 3, 4]), False)
 
-- Python 2.7: `py.test triangle_test.py`
-- Python 3.4+: `pytest triangle_test.py`
+    def test_violation_of_triangle_inequality_not_is_isosceles(self):
+        self.assertIs(is_isosceles([1, 1, 3]), False)
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest triangle_test.py`
+    def test_sides_may_be_floats(self):
+        self.assertIs(is_isosceles([0.5, 0.4, 0.5]), True)
 
-### Common `pytest` options
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+class is_scaleneTests(unittest.TestCase):
+    def test_true_if_no_sides_are_equal(self):
+        self.assertIs(is_scalene([5, 4, 6]), True)
 
-For other options, see `python -m pytest -h`
+    def test_false_if_all_sides_are_equal(self):
+        self.assertIs(is_scalene([4, 4, 4]), False)
 
-## Submitting Exercises
+    def test_false_if_two_sides_are_equal(self):
+        self.assertIs(is_scalene([4, 4, 3]), False)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/triangle` directory.
+    def test_violation_of_triangle_inequality_not_is_scalene(self):
+        self.assertIs(is_scalene([7, 3, 2]), False)
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+    def test_sides_may_be_floats(self):
+        self.assertIs(is_scalene([0.5, 0.4, 0.6]), True)
 
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-## Source
-
-The Ruby Koans triangle project, parts 1 & 2 [http://rubykoans.com](http://rubykoans.com)
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

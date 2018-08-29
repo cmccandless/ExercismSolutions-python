@@ -1,59 +1,84 @@
-import unittest
+# Binary Search
 
-from binary_search import binary_search
+Implement a binary search algorithm.
 
+Searching a sorted collection is a common task. A dictionary is a sorted
+list of word definitions. Given a word, one can find its definition. A
+telephone book is a sorted list of people's names, addresses, and
+telephone numbers. Knowing someone's name allows one to quickly find
+their telephone number and address.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+If the list to be searched contains more than a few items (a dozen, say)
+a binary search will require far fewer comparisons than a linear search,
+but it imposes the requirement that the list be sorted.
 
-class BinarySearchTests(unittest.TestCase):
-    def test_finds_value_in_array_with_one_element(self):
-        self.assertEqual(binary_search([6], 6), 0)
+In computer science, a binary search or half-interval search algorithm
+finds the position of a specified input value (the search "key") within
+an array sorted by key value.
 
-    def test_finds_value_in_middle_of_array(self):
-        self.assertEqual(binary_search([1, 3, 4, 6, 8, 9, 11], 6), 3)
+In each step, the algorithm compares the search key value with the key
+value of the middle element of the array.
 
-    def test_finds_value_at_beginning_of_array(self):
-        self.assertEqual(binary_search([1, 3, 4, 6, 8, 9, 11], 1), 0)
+If the keys match, then a matching element has been found and its index,
+or position, is returned.
 
-    def test_finds_value_at_end_of_array(self):
-        self.assertEqual(binary_search([1, 3, 4, 6, 8, 9, 11], 11), 6)
+Otherwise, if the search key is less than the middle element's key, then
+the algorithm repeats its action on the sub-array to the left of the
+middle element or, if the search key is greater, on the sub-array to the
+right.
 
-    def test_finds_value_in_array_of_odd_length(self):
-        self.assertEqual(
-            binary_search([1, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 634],
-                          144), 9)
+If the remaining array to be searched is empty, then the key cannot be
+found in the array and a special "not found" indication is returned.
 
-    def test_finds_value_in_array_of_even_length(self):
-        self.assertEqual(
-            binary_search([1, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377], 21),
-            5)
+A binary search halves the number of items to check with each iteration,
+so locating an item (or determining its absence) takes logarithmic time.
+A binary search is a dichotomic divide and conquer search algorithm.
 
-    def test_identifies_value_missing(self):
-        with self.assertRaisesWithMessage(ValueError):
-            binary_search([1, 3, 4, 6, 8, 9, 11], 7)
+## Exception messages
 
-    def test_value_smaller_than_arrays_minimum(self):
-        with self.assertRaisesWithMessage(ValueError):
-            binary_search([1, 3, 4, 6, 8, 9, 11], 0)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_value_larger_than_arrays_maximum(self):
-        with self.assertRaisesWithMessage(ValueError):
-            binary_search([1, 3, 4, 6, 8, 9, 11], 13)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_empty_array(self):
-        with self.assertRaisesWithMessage(ValueError):
-            binary_search([], 1)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+## Running the tests
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
+- Python 2.7: `py.test binary_search_test.py`
+- Python 3.4+: `pytest binary_search_test.py`
 
-if __name__ == '__main__':
-    unittest.main()
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest binary_search_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/binary-search` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Wikipedia [http://en.wikipedia.org/wiki/Binary_search_algorithm](http://en.wikipedia.org/wiki/Binary_search_algorithm)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

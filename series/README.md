@@ -1,70 +1,58 @@
-# Series
+"""Tests for the series exercise
 
-Given a string of digits, output all the contiguous substrings of length `n` in
-that string in the order that they appear.
+Implementation note:
+The slices function should raise a ValueError with a meaningful error
+message if its length argument doesn't fit the series.
+"""
+import unittest
 
-For example, the string "49142" has the following 3-digit series:
+from series import slices
 
-- "491"
-- "914"
-- "142"
 
-And the following 4-digit series:
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-- "4914"
-- "9142"
+class SeriesTest(unittest.TestCase):
+    def test_slices_of_one_from_one(self):
+        self.assertEqual(slices("1", 1), ["1"])
 
-And if you ask for a 6-digit series from a 5-digit string, you deserve
-whatever you get.
+    def test_slices_of_one_from_two(self):
+        self.assertEqual(slices("12", 1), ["1", "2"])
 
-Note that these series are only required to occupy *adjacent positions*
-in the input; the digits need not be *numerically consecutive*.
+    def test_slices_of_two(self):
+        self.assertEqual(slices("35", 2), ["35"])
 
-## Exception messages
+    def test_slices_of_two_overlap(self):
+        self.assertEqual(slices("9142", 2), ["91", "14", "42"])
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def test_slices_can_include_duplicates(self):
+        self.assertEqual(slices("777777", 3), ["777", "777", "777", "777"])
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_slice_length_is_too_large(self):
+        with self.assertRaisesWithMessage(ValueError):
+            slices("12345", 6)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_slice_length_cannot_be_zero(self):
+        with self.assertRaisesWithMessage(ValueError):
+            slices("12345", 0)
 
-## Running the tests
+    def test_slice_length_cannot_be_negative(self):
+        with self.assertRaisesWithMessage(ValueError):
+            slices("123", -1)
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def test_empty_series_is_invalid(self):
+        with self.assertRaisesWithMessage(ValueError):
+            slices("", 1)
 
-- Python 2.7: `py.test series_test.py`
-- Python 3.4+: `pytest series_test.py`
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest series_test.py`
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
-### Common `pytest` options
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
-
-For other options, see `python -m pytest -h`
-
-## Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/series` directory.
-
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
-
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
-
-## Source
-
-A subset of the Problem 8 at Project Euler [http://projecteuler.net/problem=8](http://projecteuler.net/problem=8)
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

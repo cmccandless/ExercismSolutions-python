@@ -1,99 +1,103 @@
-import unittest
+# Binary Search Tree
 
-from binary_search_tree import BinarySearchTree, TreeNode
+Insert and search for numbers in a binary tree.
 
+When we need to represent sorted data, an array does not make a good
+data structure.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
+Say we have the array `[1, 3, 4, 5]`, and we add 2 to it so it becomes
+`[1, 3, 4, 5, 2]` now we must sort the entire array again! We can
+improve on this by realizing that we only need to make space for the new
+item `[1, nil, 3, 4, 5]`, and then adding the item in the space we
+added. But this still requires us to shift many elements down by one.
 
-class BinarySearchTreeTests(unittest.TestCase):
+Binary Search Trees, however, can operate on sorted data much more
+efficiently.
 
-    def test_data_is_retained(self):
-        expected = TreeNode('4', None, None)
-        self.assertTreeEqual(BinarySearchTree(['4']).data(), expected)
+A binary search tree consists of a series of connected nodes. Each node
+contains a piece of data (e.g. the number 3), a variable named `left`,
+and a variable named `right`. The `left` and `right` variables point at
+`nil`, or other nodes. Since these other nodes in turn have other nodes
+beneath them, we say that the left and right variables are pointing at
+subtrees. All data in the left subtree is less than or equal to the
+current node's data, and all data in the right subtree is greater than
+the current node's data.
 
-    # Test inserting data at proper node
-    def test_smaller_data_at_left_node(self):
-        expected = TreeNode('4', TreeNode('2', None, None), None)
-        self.assertTreeEqual(BinarySearchTree(['4', '2']).data(), expected)
+For example, if we had a node containing the data 4, and we added the
+data 2, our tree would look like this:
 
-    def test_same_number_at_left_node(self):
-        expected = TreeNode('4', TreeNode('4', None, None), None)
-        self.assertTreeEqual(BinarySearchTree(['4', '4']).data(), expected)
+      4
+     /
+    2
 
-    def test_greater_number_at_right_node(self):
-        expected = TreeNode('4', None, TreeNode('5', None, None))
-        self.assertTreeEqual(BinarySearchTree(['4', '5']).data(), expected)
+If we then added 6, it would look like this:
 
-    def test_can_create_complex_tree(self):
-        expected = TreeNode(
-            '4',
-            TreeNode(
-                '2',
-                TreeNode('1', None, None),
-                TreeNode('3', None, None)
-            ),
-            TreeNode(
-                '6',
-                TreeNode('5', None, None),
-                TreeNode('7', None, None)
-            )
-        )
-        self.assertTreeEqual(
-            BinarySearchTree(['4', '2', '6', '1', '3', '5', '7']).data(),
-            expected
-        )
+      4
+     / \
+    2   6
 
-    # Test can sort data
-    def test_can_sort_single_number(self):
-        self.assertEqual(BinarySearchTree(['2']).sorted_data(), ['2'])
+If we then added 3, it would look like this
 
-    def test_can_sort_if_second_number_is_smaller_than_first(self):
-        self.assertEqual(
-            BinarySearchTree(['2', '1']).sorted_data(), ['1', '2']
-        )
+       4
+     /   \
+    2     6
+     \
+      3
 
-    def test_can_sort_if_second_number_is_same_as_first(self):
-        self.assertEqual(
-            BinarySearchTree(['2', '2']).sorted_data(), ['2', '2']
-        )
+And if we then added 1, 5, and 7, it would look like this
 
-    def test_can_sort_if_second_number_is_greater_than_first(self):
-        self.assertEqual(
-            BinarySearchTree(['2', '3']).sorted_data(), ['2', '3']
-        )
+          4
+        /   \
+       /     \
+      2       6
+     / \     / \
+    1   3   5   7
 
-    def test_can_sort_complex_tree(self):
-        self.assertEqual(
-            BinarySearchTree(['2', '1', '3', '6', '7', '5']).sorted_data(),
-            ['1', '2', '3', '5', '6', '7']
-        )
+## Exception messages
 
-    # Utilities
-    def assertTreeEqual(self, tree_one, tree_two):
-        try:
-            self.compare_tree(tree_one, tree_two)
-        except AssertionError:
-            raise AssertionError("{} != {}".format(tree_one, tree_two))
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def compare_tree(self, tree_one, tree_two):
-        self.assertEqual(tree_one.data, tree_two.data)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-        # Compare left tree nodes
-        if tree_one.left and tree_two.left:
-            self.compare_tree(tree_one.left, tree_two.left)
-        elif tree_one.left is None and tree_two.left is None:
-            pass
-        else:
-            raise AssertionError
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-        # Compare right tree nodes
-        if tree_one.right and tree_two.right:
-            self.compare_tree(tree_one.right, tree_two.right)
-        elif tree_one.right is None and tree_two.right is None:
-            pass
-        else:
-            raise AssertionError
+## Running the tests
 
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-if __name__ == '__main__':
-    unittest.main()
+- Python 2.7: `py.test binary_search_tree_test.py`
+- Python 3.4+: `pytest binary_search_tree_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest binary_search_tree_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/binary-search-tree` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Josh Cheek [https://twitter.com/josh_cheek](https://twitter.com/josh_cheek)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

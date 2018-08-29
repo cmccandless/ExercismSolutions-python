@@ -1,90 +1,63 @@
-# ISBN Verifier
+import unittest
 
-The [ISBN-10 verification process](https://en.wikipedia.org/wiki/International_Standard_Book_Number) is used to validate book identification
-numbers. These normally contain dashes and look like: `3-598-21508-8`
-
-## ISBN
-
-The ISBN-10 format is 9 digits (0 to 9) plus one check character (either a digit or an X only). In the case the check character is an X, this represents the value '10'. These may be communicated with or without hyphens, and can be checked for their validity by the following formula:
-
-```
-(x1 * 10 + x2 * 9 + x3 * 8 + x4 * 7 + x5 * 6 + x6 * 5 + x7 * 4 + x8 * 3 + x9 * 2 + x10 * 1) mod 11 == 0
-```
-
-If the result is 0, then it is a valid ISBN-10, otherwise it is invalid.
-
-## Example
-
-Let's take the ISBN-10 `3-598-21508-8`. We plug it in to the formula, and get:
-```
-(3 * 10 + 5 * 9 + 9 * 8 + 8 * 7 + 2 * 6 + 1 * 5 + 5 * 4 + 0 * 3 + 8 * 2 + 8 * 1) mod 11 == 0
-```
-
-Since the result is 0, this proves that our ISBN is valid.
-
-## Task
-
-Given a string the program should check if the provided string is a valid ISBN-10.
-Putting this into place requires some thinking about preprocessing/parsing of the string prior to calculating the check digit for the ISBN.
-
-The program should be able to verify ISBN-10 both with and without separating dashes.
+from isbn_verifier import verify
 
 
-## Caveats
+# Tests adapted from `problem-specifications//canonical-data.json` @ v2.7.0
 
-Converting from strings to numbers can be tricky in certain languages.
-Now, it's even trickier since the check digit of an ISBN-10 may be 'X' (representing '10'). For instance `3-598-21507-X` is a valid ISBN-10.
+class IsbnVerifierTest(unittest.TestCase):
 
-## Bonus tasks
+    def test_valid_isbn_number(self):
+        self.assertIs(verify('3-598-21508-8'), True)
 
-* Generate a valid ISBN-13 from the input ISBN-10 (and maybe verify it again with a derived verifier).
+    def test_invalid_check_digit(self):
+        self.assertIs(verify('3-598-21508-9'), False)
 
-* Generate valid ISBN, maybe even from a given starting ISBN.
-## Exception messages
+    def test_valid_with_X_check_digit(self):
+        self.assertIs(verify('3-598-21507-X'), True)
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def test_invalid_check_digit_other_than_X(self):
+        self.assertIs(verify('3-598-21507-A'), False)
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_invalid_character_in_isbn(self):
+        self.assertIs(verify('3-598-P1581-X'), False)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_invalid_X_other_than_check_digit(self):
+        self.assertIs(verify('3-598-2X507-9'), False)
 
-## Running the tests
+    def test_valid_isbn_without_separating_dashes(self):
+        self.assertIs(verify('3598215088'), True)
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+    def test_valid_isbn_without_separating_dashes_with_X_check_digit(self):
+        self.assertIs(verify('359821507X'), True)
 
-- Python 2.7: `py.test isbn_verifier_test.py`
-- Python 3.4+: `pytest isbn_verifier_test.py`
+    def test_invalid_isbn_without_check_digit_and_dashes(self):
+        self.assertIs(verify('359821507'), False)
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest isbn_verifier_test.py`
+    def test_invalid_too_long_isbn_with_no_dashes(self):
+        self.assertIs(verify('3598215078X'), False)
 
-### Common `pytest` options
+    def test_invalid_too_short_isbn(self):
+        self.assertIs(verify('00'), False)
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+    def test_invalid_isbn_without_check_digit(self):
+        self.assertIs(verify('3-598-21507'), False)
 
-For other options, see `python -m pytest -h`
+    def test_invalid_check_digit_X_used_for_0(self):
+        self.assertIs(verify('3-598-21515-X'), False)
 
-## Submitting Exercises
+    def test_valid_empty_isbn(self):
+        self.assertIs(verify(''), False)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/isbn-verifier` directory.
+    def test_input_is_nine_characters(self):
+        self.assertIs(verify('134456729'), False)
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+    def test_invalid_characters_are_not_ignored(self):
+        self.assertIs(verify('3132P34035'), False)
 
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
+    def test_input_is_too_long_but_contains_a_valid_isbn(self):
+        self.assertIs(verify('98245726788'), False)
 
-## Source
 
-Converting a string into a number and some basic processing utilizing a relatable real world example. [https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-10_check_digit_calculation](https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-10_check_digit_calculation)
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

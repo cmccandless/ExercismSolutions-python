@@ -1,112 +1,86 @@
-# Say
+import unittest
 
-Given a number from 0 to 999,999,999,999, spell out that number in English.
+from say import say
 
-## Step 1
 
-Handle the basic case of 0 through 99.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-If the input to the program is `22`, then the output should be
-`'twenty-two'`.
+class SayTest(unittest.TestCase):
+    def test_zero(self):
+        self.assertEqual(say(0), "zero")
 
-Your program should complain loudly if given a number outside the
-blessed range.
+    def test_one(self):
+        self.assertEqual(say(1), "one")
 
-Some good test cases for this program are:
+    def test_fourteen(self):
+        self.assertEqual(say(14), "fourteen")
 
-- 0
-- 14
-- 50
-- 98
-- -1
-- 100
+    def test_twenty(self):
+        self.assertEqual(say(20), "twenty")
 
-### Extension
+    def test_twenty_two(self):
+        self.assertEqual(say(22), "twenty-two")
 
-If you're on a Mac, shell out to Mac OS X's `say` program to talk out
-loud. If you're on Linux or Windows, eSpeakNG may be available with the command `espeak`.
+    def test_one_hundred(self):
+        self.assertEqual(say(100), "one hundred")
 
-## Step 2
+    # additional track specific test
+    def test_one_hundred_twenty(self):
+        self.assertEqual(say(120), "one hundred and twenty")
 
-Implement breaking a number up into chunks of thousands.
+    def test_one_hundred_twenty_three(self):
+        self.assertEqual(say(123), "one hundred and twenty-three")
 
-So `1234567890` should yield a list like 1, 234, 567, and 890, while the
-far simpler `1000` should yield just 1 and 0.
+    def test_one_thousand(self):
+        self.assertEqual(say(1000), "one thousand")
 
-The program must also report any values that are out of range.
+    def test_one_thousand_two_hundred_thirty_four(self):
+        self.assertEqual(say(1234), "one thousand two hundred and thirty-four")
 
-## Step 3
+    # additional track specific test
+    def test_eight_hundred_and_ten_thousand(self):
+        self.assertEqual(say(810000), "eight hundred and ten thousand")
 
-Now handle inserting the appropriate scale word between those chunks.
+    def test_one_million(self):
+        self.assertEqual(say(1e6), "one million")
 
-So `1234567890` should yield `'1 billion 234 million 567 thousand 890'`
+    # additional track specific test
+    def test_one_million_two(self):
+        self.assertEqual(say(1000002), "one million and two")
 
-The program must also report any values that are out of range.  It's
-fine to stop at "trillion".
+    def test_1002345(self):
+        self.assertEqual(
+            say(1002345),
+            "one million two thousand three hundred and forty-five")
 
-## Step 4
+    def test_one_billion(self):
+        self.assertEqual(say(1e9), "one billion")
 
-Put it all together to get nothing but plain English.
+    def test_987654321123(self):
+        self.assertEqual(
+            say(987654321123), ("nine hundred and eighty-seven billion "
+                                "six hundred and fifty-four million "
+                                "three hundred and twenty-one thousand "
+                                "one hundred and twenty-three"))
 
-`12345` should give `twelve thousand three hundred forty-five`.
+    def test_number_too_large(self):
+        with self.assertRaisesWithMessage(ValueError):
+            say(1e12)
 
-The program must also report any values that are out of range.
+    def test_number_negative(self):
+        with self.assertRaisesWithMessage(ValueError):
+            say(-1)
 
-### Extensions
+    # Utility functions
+    def setUp(self):
+        try:
+            self.assertRaisesRegex
+        except AttributeError:
+            self.assertRaisesRegex = self.assertRaisesRegexp
 
-Use _and_ (correctly) when spelling out the number in English:
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
-- 14 becomes "fourteen".
-- 100 becomes "one hundred".
-- 120 becomes "one hundred and twenty".
-- 1002 becomes "one thousand and two".
-- 1323 becomes "one thousand three hundred and twenty-three".
 
-## Exception messages
-
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
-
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
-
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
-
-## Running the tests
-
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
-
-- Python 2.7: `py.test say_test.py`
-- Python 3.4+: `pytest say_test.py`
-
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest say_test.py`
-
-### Common `pytest` options
-
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
-
-For other options, see `python -m pytest -h`
-
-## Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/say` directory.
-
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
-
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
-
-## Source
-
-A variation on JavaRanch CattleDrive, exercise 4a [http://www.javaranch.com/say.jsp](http://www.javaranch.com/say.jsp)
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

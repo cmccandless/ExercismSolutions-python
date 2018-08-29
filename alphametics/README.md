@@ -1,112 +1,77 @@
-import unittest
+# Alphametics
 
-from alphametics import solve
+Write a function to solve alphametics puzzles.
 
+[Alphametics](https://en.wikipedia.org/wiki/Alphametics) is a puzzle where
+letters in words are replaced with numbers.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+For example `SEND + MORE = MONEY`:
 
-class TestAlphametics(unittest.TestCase):
-    def test_puzzle_with_three_letters(self):
-        self.assertEqual(solve("I + BB == ILL"), {"I": 1, "B": 9, "L": 0})
+```text
+  S E N D
+  M O R E +
+-----------
+M O N E Y
+```
 
-    def test_solution_must_have_unique_value_for_each_letter(self):
-        self.assertEqual(solve("A == B"), {})
+Replacing these with valid numbers gives:
 
-    def test_leading_zero_solution_is_invalid(self):
-        self.assertEqual(solve("ACA + DD == BD"), {})
+```text
+  9 5 6 7
+  1 0 8 5 +
+-----------
+1 0 6 5 2
+```
 
-    def test_puzzle_with_four_letters(self):
-        self.assertEqual(
-            solve("AS + A == MOM"), {"A": 9, "S": 2, "M": 1, "O": 0})
+This is correct because every letter is replaced by a different number and the
+words, translated into numbers, then make a valid sum.
 
-    def test_puzzle_with_six_letters(self):
-        self.assertEqual(
-            solve("NO + NO + TOO == LATE"),
-            {"N": 7,
-             "O": 4,
-             "T": 9,
-             "L": 1,
-             "A": 0,
-             "E": 2})
+Each letter must represent a different digit, and the leading digit of
+a multi-digit number must not be zero.
 
-    def test_puzzle_with_seven_letters(self):
-        self.assertEqual(
-            solve("HE + SEES + THE == LIGHT"),
-            {"E": 4,
-             "G": 2,
-             "H": 5,
-             "I": 0,
-             "L": 1,
-             "S": 9,
-             "T": 7})
+Write a function to solve alphametics puzzles.
 
-    def test_puzzle_with_eight_letters(self):
-        self.assertEqual(
-            solve("SEND + MORE == MONEY"),
-            {"S": 9,
-             "E": 5,
-             "N": 6,
-             "D": 7,
-             "M": 1,
-             "O": 0,
-             "R": 8,
-             "Y": 2})
+## Exception messages
 
-    def test_puzzle_with_ten_letters(self):
-        self.assertEqual(
-            solve("AND + A + STRONG + OFFENSE + AS + A + GOOD == DEFENSE"),
-            {"A": 5,
-             "D": 3,
-             "E": 4,
-             "F": 7,
-             "G": 8,
-             "N": 0,
-             "O": 2,
-             "R": 1,
-             "S": 6,
-             "T": 9})
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    @unittest.skip("extra-credit")
-    def test_puzzle_with_ten_letters_and_199_addends(self):
-        self.assertEqual(
-            solve(
-                "THIS + A + FIRE + THEREFORE + FOR + ALL + HISTORIES + I + "
-                "TELL + A + TALE + THAT + FALSIFIES + ITS + TITLE + TIS + "
-                "A + LIE + THE + TALE + OF + THE + LAST + FIRE + HORSES + "
-                "LATE + AFTER + THE + FIRST + FATHERS + FORESEE + THE + "
-                "HORRORS + THE + LAST + FREE + TROLL + TERRIFIES + THE + "
-                "HORSES + OF + FIRE + THE + TROLL + RESTS + AT + THE + "
-                "HOLE + OF + LOSSES + IT + IS + THERE + THAT + SHE + STORES + "
-                "ROLES + OF + LEATHERS + AFTER + SHE + SATISFIES + HER + "
-                "HATE + OFF + THOSE + FEARS + A + TASTE + RISES + AS + SHE + "
-                "HEARS + THE + LEAST + FAR + HORSE + THOSE + FAST + HORSES + "
-                "THAT + FIRST + HEAR + THE + TROLL + FLEE + OFF + TO + THE + "
-                "FOREST + THE + HORSES + THAT + ALERTS + RAISE + THE + STARES "
-                "+ OF + THE + OTHERS + AS + THE + TROLL + ASSAILS + AT + THE "
-                "+ TOTAL + SHIFT + HER + TEETH + TEAR + HOOF + OFF + TORSO + "
-                "AS + THE + LAST + HORSE + FORFEITS + ITS + LIFE + THE + "
-                "FIRST + FATHERS + HEAR + OF + THE + HORRORS + THEIR + FEARS "
-                "+ THAT + THE + FIRES + FOR + THEIR + FEASTS + ARREST + AS + "
-                "THE + FIRST + FATHERS + RESETTLE + THE + LAST + OF + THE + "
-                "FIRE + HORSES + THE + LAST + TROLL + HARASSES + THE + FOREST "
-                "+ HEART + FREE + AT + LAST + OF + THE + LAST + TROLL + ALL + "
-                "OFFER + THEIR + FIRE + HEAT + TO + THE + ASSISTERS + FAR + "
-                "OFF + THE + TROLL + FASTS + ITS + LIFE + SHORTER + AS + "
-                "STARS + RISE + THE + HORSES + REST + SAFE + AFTER + ALL + "
-                "SHARE + HOT + FISH + AS + THEIR + AFFILIATES + TAILOR + A + "
-                "ROOFS + FOR + THEIR + SAFE == FORTRESSES"
-            ),
-            {"A": 1,
-             "E": 0,
-             "F": 5,
-             "H": 8,
-             "I": 7,
-             "L": 2,
-             "O": 6,
-             "R": 3,
-             "S": 4,
-             "T": 9})
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-if __name__ == '__main__':
-    unittest.main()
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test alphametics_test.py`
+- Python 3.4+: `pytest alphametics_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest alphametics_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/alphametics` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

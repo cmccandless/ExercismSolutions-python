@@ -1,72 +1,120 @@
-# Bank Account
+import sys
+import threading
+import time
+import unittest
 
-Simulate a bank account supporting opening/closing, withdrawals, and deposits
-of money. Watch out for concurrent transactions!
+from bank_account import BankAccount
 
-A bank account can be accessed in multiple ways. Clients can make
-deposits and withdrawals using the internet, mobile phones, etc. Shops
-can charge against the account.
 
-Create an account that can be accessed from multiple threads/processes
-(terminology depends on your programming language).
+class BankAccountTest(unittest.TestCase):
 
-It should be possible to close an account; operations against a closed
-account must fail.
+    def setUp(self):
+        self.account = BankAccount()
 
-## Instructions
+    def test_newly_opened_account_has_zero_balance(self):
+        self.account.open()
+        self.assertEqual(self.account.get_balance(), 0)
 
-Run the test file, and fix each of the errors in turn. When you get the
-first test to pass, go to the first pending or skipped test, and make
-that pass as well. When all of the tests are passing, feel free to
-submit.
+    def test_can_deposit_money(self):
+        self.account.open()
+        self.account.deposit(100)
+        self.assertEqual(self.account.get_balance(), 100)
 
-Remember that passing code is just the first step. The goal is to work
-towards a solution that is as readable and expressive as you can make
-it.
+    def test_can_deposit_money_sequentially(self):
+        self.account.open()
+        self.account.deposit(100)
+        self.account.deposit(50)
 
-Have fun!
+        self.assertEqual(self.account.get_balance(), 150)
 
-## Exception messages
+    def test_can_withdraw_money(self):
+        self.account.open()
+        self.account.deposit(100)
+        self.account.withdraw(50)
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+        self.assertEqual(self.account.get_balance(), 50)
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_can_withdraw_money_sequentially(self):
+        self.account.open()
+        self.account.deposit(100)
+        self.account.withdraw(20)
+        self.account.withdraw(80)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+        self.assertEqual(self.account.get_balance(), 0)
 
-## Running the tests
+    def test_checking_balance_of_closed_account_throws_error(self):
+        self.account.open()
+        self.account.close()
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+        with self.assertRaises(ValueError):
+            self.account.get_balance()
 
-- Python 2.7: `py.test bank_account_test.py`
-- Python 3.4+: `pytest bank_account_test.py`
+    def test_deposit_into_closed_account(self):
+        self.account.open()
+        self.account.close()
 
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest bank_account_test.py`
+        with self.assertRaises(ValueError):
+            self.account.deposit(50)
 
-### Common `pytest` options
+    def test_withdraw_from_closed_account(self):
+        self.account.open()
+        self.account.close()
 
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
+        with self.assertRaises(ValueError):
+            self.account.withdraw(50)
 
-For other options, see `python -m pytest -h`
+    def test_cannot_withdraw_more_than_deposited(self):
+        self.account.open()
+        self.account.deposit(25)
 
-## Submitting Exercises
+        with self.assertRaises(ValueError):
+            self.account.withdraw(50)
 
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/bank-account` directory.
+    def test_cannot_withdraw_negative(self):
+        self.account.open()
+        self.account.deposit(100)
 
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+        with self.assertRaises(ValueError):
+            self.account.withdraw(-50)
 
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
+    def test_cannot_deposit_negative(self):
+        self.account.open()
 
-## Submitting Incomplete Solutions
+        with self.assertRaises(ValueError):
+            self.account.deposit(-50)
 
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+    def test_can_handle_concurrent_transactions(self):
+        self.account.open()
+        self.account.deposit(1000)
+
+        for _ in range(10):
+            self.adjust_balance_concurrently()
+
+    def adjust_balance_concurrently(self):
+        def transact():
+            self.account.deposit(5)
+            time.sleep(0.001)
+            self.account.withdraw(5)
+
+        # Greatly improve the chance of an operation being interrupted
+        # by thread switch, thus testing synchronization effectively
+        try:
+            sys.setswitchinterval(1e-12)
+        except AttributeError:
+            # For Python 2 compatibility
+            sys.setcheckinterval(1)
+
+        threads = []
+        for _ in range(1000):
+            t = threading.Thread(target=transact)
+            threads.append(t)
+            t.start()
+
+        for thread in threads:
+            thread.join()
+
+        self.assertEqual(self.account.get_balance(), 1000)
+
+
+if __name__ == '__main__':
+    unittest.main()

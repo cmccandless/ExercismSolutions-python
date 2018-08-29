@@ -1,78 +1,150 @@
-# Twelve Days
+import unittest
 
-Output the lyrics to 'The Twelve Days of Christmas'.
+from twelve_days import recite
 
-```text
-On the first day of Christmas my true love gave to me, a Partridge in a Pear Tree.
 
-On the second day of Christmas my true love gave to me, two Turtle Doves, and a Partridge in a Pear Tree.
+# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
 
-On the third day of Christmas my true love gave to me, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+class TwelveDaysTest(unittest.TestCase):
+    def test_verse1(self):
+        expected = ["On the first day of Christmas my true love gave to me, "
+                    "a Partridge in a Pear Tree."]
+        self.assertEqual(recite(1, 1), expected)
 
-On the fourth day of Christmas my true love gave to me, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse2(self):
+        expected = ["On the second day of Christmas my true love gave to me, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(2, 2), expected)
 
-On the fifth day of Christmas my true love gave to me, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse3(self):
+        expected = ["On the third day of Christmas my true love gave to me, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(3, 3), expected)
 
-On the sixth day of Christmas my true love gave to me, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse4(self):
+        expected = ["On the fourth day of Christmas my true love gave to me, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(4, 4), expected)
 
-On the seventh day of Christmas my true love gave to me, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse5(self):
+        expected = ["On the fifth day of Christmas my true love gave to me, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(5, 5), expected)
 
-On the eighth day of Christmas my true love gave to me, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse6(self):
+        expected = ["On the sixth day of Christmas my true love gave to me, "
+                    "six Geese-a-Laying, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(6, 6), expected)
 
-On the ninth day of Christmas my true love gave to me, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse7(self):
+        expected = ["On the seventh day of Christmas my true love gave to me, "
+                    "seven Swans-a-Swimming, "
+                    "six Geese-a-Laying, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(7, 7), expected)
 
-On the tenth day of Christmas my true love gave to me, ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse8(self):
+        expected = ["On the eighth day of Christmas my true love gave to me, "
+                    "eight Maids-a-Milking, "
+                    "seven Swans-a-Swimming, "
+                    "six Geese-a-Laying, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(8, 8), expected)
 
-On the eleventh day of Christmas my true love gave to me, eleven Pipers Piping, ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
+    def test_verse9(self):
+        expected = ["On the ninth day of Christmas my true love gave to me, "
+                    "nine Ladies Dancing, "
+                    "eight Maids-a-Milking, "
+                    "seven Swans-a-Swimming, "
+                    "six Geese-a-Laying, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(9, 9), expected)
 
-On the twelfth day of Christmas my true love gave to me, twelve Drummers Drumming, eleven Pipers Piping, ten Lords-a-Leaping, nine Ladies Dancing, eight Maids-a-Milking, seven Swans-a-Swimming, six Geese-a-Laying, five Gold Rings, four Calling Birds, three French Hens, two Turtle Doves, and a Partridge in a Pear Tree.
-```
+    def test_verse10(self):
+        expected = ["On the tenth day of Christmas my true love gave to me, "
+                    "ten Lords-a-Leaping, "
+                    "nine Ladies Dancing, "
+                    "eight Maids-a-Milking, "
+                    "seven Swans-a-Swimming, "
+                    "six Geese-a-Laying, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(10, 10), expected)
 
-## Exception messages
+    def test_verse11(self):
+        expected = ["On the eleventh day of Christmas "
+                    "my true love gave to me, "
+                    "eleven Pipers Piping, "
+                    "ten Lords-a-Leaping, "
+                    "nine Ladies Dancing, "
+                    "eight Maids-a-Milking, "
+                    "seven Swans-a-Swimming, "
+                    "six Geese-a-Laying, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(11, 11), expected)
 
-Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
-indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
-every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
-a message.
+    def test_verse12(self):
+        expected = ["On the twelfth day of Christmas my true love gave to me, "
+                    "twelve Drummers Drumming, "
+                    "eleven Pipers Piping, "
+                    "ten Lords-a-Leaping, "
+                    "nine Ladies Dancing, "
+                    "eight Maids-a-Milking, "
+                    "seven Swans-a-Swimming, "
+                    "six Geese-a-Laying, "
+                    "five Gold Rings, "
+                    "four Calling Birds, "
+                    "three French Hens, "
+                    "two Turtle Doves, "
+                    "and a Partridge in a Pear Tree."]
+        self.assertEqual(recite(12, 12), expected)
 
-To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
-`raise Exception`, you should write:
+    def test_first_three_verses_of_the_song(self):
+        expected = [recite(n, n)[0] for n in range(1, 4)]
+        self.assertEqual(recite(1, 3), expected)
 
-```python
-raise Exception("Meaningful message indicating the source of the error")
-```
+    def test_three_verses_from_the_middle_of_the_song(self):
+        expected = [recite(n, n)[0] for n in range(4, 7)]
+        self.assertEqual(recite(4, 6), expected)
 
-## Running the tests
+    def test_the_whole_song(self):
+        expected = [recite(n, n)[0] for n in range(1, 13)]
+        self.assertEqual(recite(1, 12), expected)
 
-To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-- Python 2.7: `py.test twelve_days_test.py`
-- Python 3.4+: `pytest twelve_days_test.py`
-
-Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
-`python -m pytest twelve_days_test.py`
-
-### Common `pytest` options
-
-- `-v` : enable verbose output
-- `-x` : stop running tests on first failure
-- `--ff` : run failures from previous test before running other test cases
-
-For other options, see `python -m pytest -h`
-
-## Submitting Exercises
-
-Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/twelve-days` directory.
-
-You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
-
-For more detailed information about running tests, code style and linting,
-please see [Running the Tests](http://exercism.io/tracks/python/tests).
-
-## Source
-
-Wikipedia [http://en.wikipedia.org/wiki/The_Twelve_Days_of_Christmas_(song)](http://en.wikipedia.org/wiki/The_Twelve_Days_of_Christmas_(song))
-
-## Submitting Incomplete Solutions
-
-It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+if __name__ == '__main__':
+    unittest.main()

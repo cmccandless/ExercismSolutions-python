@@ -1,57 +1,117 @@
-import unittest
+# Book Store
 
-from book_store import calculate_total
+To try and encourage more sales of different books from a popular 5 book
+series, a bookshop has decided to offer discounts on multiple book purchases.
 
+One copy of any of the five books costs $8.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
+If, however, you buy two different books, you get a 5%
+discount on those two books.
 
-class BookStoreTests(unittest.TestCase):
-    def test_only_a_single_book(self):
-        self.assertEqual(calculate_total([1]), 800)
+If you buy 3 different books, you get a 10% discount.
 
-    def test_two_of_the_same_book(self):
-        self.assertEqual(calculate_total([2, 2]), 1600)
+If you buy 4 different books, you get a 20% discount.
 
-    def test_empty_basket(self):
-        self.assertEqual(calculate_total([]), 0)
+If you buy all 5, you get a 25% discount.
 
-    def test_two_different_books(self):
-        self.assertEqual(calculate_total([1, 2]), 1520)
+Note: that if you buy four books, of which 3 are
+different titles, you get a 10% discount on the 3 that
+form part of a set, but the fourth book still costs $8.
 
-    def test_three_different_books(self):
-        self.assertEqual(calculate_total([1, 2, 3]), 2160)
+Your mission is to write a piece of code to calculate the
+price of any conceivable shopping basket (containing only
+books of the same series), giving as big a discount as
+possible.
 
-    def test_four_different_books(self):
-        self.assertEqual(calculate_total([1, 2, 3, 4]), 2560)
+For example, how much does this basket of books cost?
 
-    def test_five_different_books(self):
-        self.assertEqual(calculate_total([1, 2, 3, 4, 5]), 3000)
+- 2 copies of the first book
+- 2 copies of the second book
+- 2 copies of the third book
+- 1 copy of the fourth book
+- 1 copy of the fifth book
 
-    def test_two_groups_of_4_is_cheaper_than_group_of_5_plus_group_of_3(self):
-        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 3, 4, 5]), 5120)
+One way of grouping these 8 books is:
 
-    def test_group_of_4_plus_group_of_2_is_cheaper_than_2_groups_of_3(self):
-        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 4]), 4080)
+- 1 group of 5 --> 25% discount (1st,2nd,3rd,4th,5th)
+- +1 group of 3 --> 10% discount (1st,2nd,3rd)
 
-    def test_two_each_of_first_4_books_and_1_copy_each_of_rest(self):
-        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5]), 5560)
+This would give a total of:
 
-    def test_two_copies_of_each_book(self):
-        self.assertEqual(calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]), 6000)
+- 5 books at a 25% discount
+- +3 books at a 10% discount
 
-    def test_three_copies_of_first_book_and_2_each_of_remaining(self):
-        self.assertEqual(
-            calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 1]), 6800)
+Resulting in:
 
-    def test_three_each_of_first_2_books_and_2_each_of_remaining_books(self):
-        self.assertEqual(
-            calculate_total([1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 1, 2]), 7520)
+- 5 x (8 - 2.00) == 5 x 6.00 == $30.00
+- +3 x (8 - 0.80) == 3 x 7.20 == $21.60
 
-    def test_four_groups_of_4_are_cheaper_than_2_groups_each_of_5_and_3(self):
-        self.assertEqual(
-            calculate_total([1, 1, 2, 2, 3, 3, 4, 5, 1, 1, 2, 2, 3, 3, 4, 5]),
-            10240)
+For a total of $51.60
 
+However, a different way to group these 8 books is:
 
-if __name__ == '__main__':
-    unittest.main()
+- 1 group of 4 books --> 20% discount  (1st,2nd,3rd,4th)
+- +1 group of 4 books --> 20% discount  (1st,2nd,3rd,5th)
+
+This would give a total of:
+
+- 4 books at a 20% discount
+- +4 books at a 20% discount
+
+Resulting in:
+
+- 4 x (8 - 1.60) == 4 x 6.40 == $25.60
+- +4 x (8 - 1.60) == 4 x 6.40 == $25.60
+
+For a total of $51.20
+
+And $51.20 is the price with the biggest discount.
+
+## Exception messages
+
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test book_store_test.py`
+- Python 3.4+: `pytest book_store_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest book_store_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/book-store` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Inspired by the harry potter kata from Cyber-Dojo. [http://cyber-dojo.org](http://cyber-dojo.org)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.
