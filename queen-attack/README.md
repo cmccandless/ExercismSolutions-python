@@ -1,72 +1,76 @@
-import unittest
+# Queen Attack
 
-from queen_attack import Queen
+Given the position of two queens on a chess board, indicate whether or not they
+are positioned so that they can attack each other.
 
+In the game of chess, a queen can attack pieces which are on the same
+row, column, or diagonal.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.1.0
+A chessboard can be represented by an 8 by 8 array.
 
-class QueenAttackTest(unittest.TestCase):
+So if you're told the white queen is at (2, 3) and the black queen at
+(5, 6), then you'd know you've got a set-up like so:
 
-    # Test creation of Queens with valid and invalid positions
-    def test_queen_valid_position(self):
-        try:
-            Queen(2, 2)
-        except ValueError:
-            self.fail("Unexpected Exception")
+```text
+_ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _
+_ _ _ W _ _ _ _
+_ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _
+_ _ _ _ _ _ B _
+_ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _
+```
 
-    def test_queen_negative_row(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Queen(-2, 2)
+You'd also be able to answer whether the queens can attack each other.
+In this case, that answer would be yes, they can, because both pieces
+share a diagonal.
 
-    def test_queen_invalid_row(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Queen(8, 4)
+## Exception messages
 
-    def test_queen_negative_column(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Queen(2, -2)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_queen_invalid_column(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Queen(4, 8)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    # Test the ability of one queen to attack another
-    def test_attack_false(self):
-        self.assertIs(Queen(2, 4).can_attack(Queen(6, 6)), False)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_attack_same_row(self):
-        self.assertIs(Queen(2, 4).can_attack(Queen(2, 6)), True)
+## Running the tests
 
-    def test_attack_same_column(self):
-        self.assertIs(Queen(4, 5).can_attack(Queen(2, 5)), True)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_attack_diagonal1(self):
-        self.assertIs(Queen(2, 2).can_attack(Queen(0, 4)), True)
+- Python 2.7: `py.test queen_attack_test.py`
+- Python 3.4+: `pytest queen_attack_test.py`
 
-    def test_attack_diagonal2(self):
-        self.assertIs(Queen(2, 2).can_attack(Queen(3, 1)), True)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest queen_attack_test.py`
 
-    def test_attack_diagonal3(self):
-        self.assertIs(Queen(2, 2).can_attack(Queen(1, 1)), True)
+### Common `pytest` options
 
-    def test_attack_diagonal4(self):
-        self.assertIs(Queen(2, 2).can_attack(Queen(5, 5)), True)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    # Track-specific tests
-    def test_queens_same_position_can_attack(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Queen(2, 2).can_attack(Queen(2, 2))
+For other options, see `python -m pytest -h`
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+## Submitting Exercises
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/queen-attack` directory.
 
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-if __name__ == '__main__':
-    unittest.main()
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+J Dalbey's Programming Practice problems [http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html](http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

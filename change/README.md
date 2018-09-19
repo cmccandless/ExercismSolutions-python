@@ -1,63 +1,66 @@
-import unittest
+# Change
 
-from change import find_minimum_coins
+Correctly determine the fewest number of coins to be given to a customer such
+that the sum of the coins' value would equal the correct amount of change.
 
+## For example
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+- An input of 15 with [1, 5, 10, 25, 100] should return one nickel (5)
+  and one dime (10) or [0, 1, 1, 0, 0]
+- An input of 40 with [1, 5, 10, 25, 100] should return one nickel (5)
+  and one dime (10) and one quarter (25) or [0, 1, 1, 1, 0]
 
-class ChangeTest(unittest.TestCase):
-    def test_single_coin_change(self):
-        self.assertEqual(find_minimum_coins(25, [1, 5, 10, 25, 100]), [25])
+## Edge cases
 
-    def test_multiple_coin_change(self):
-        self.assertEqual(find_minimum_coins(15, [1, 5, 10, 25, 100]), [5, 10])
+- Does your algorithm work for any given set of coins?
+- Can you ask for negative change?
+- Can you ask for a change value smaller than the smallest coin value?
 
-    def test_change_with_Lilliputian_Coins(self):
-        self.assertEqual(find_minimum_coins(23, [1, 4, 15, 20, 50]),
-                         [4, 4, 15])
+## Exception messages
 
-    def test_change_with_Lower_Elbonia_Coins(self):
-        self.assertEqual(find_minimum_coins(63, [1, 5, 10, 21, 25]),
-                         [21, 21, 21])
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_large_target_values(self):
-        self.assertEqual(find_minimum_coins(999, [1, 2, 5, 10, 20, 50, 100]),
-                         [2, 2, 5, 20, 20, 50, 100, 100, 100,
-                          100, 100, 100, 100, 100, 100])
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_possible_change_without_unit_coins_available(self):
-        self.assertEqual(find_minimum_coins(21, [2, 5, 10, 20, 50]),
-                         [2, 2, 2, 5, 10])
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_another_possible_change_without_unit_coins_available(self):
-        self.assertEqual(find_minimum_coins(27, [4, 5]),
-                         [4, 4, 4, 5, 5, 5])
+## Running the tests
 
-    def test_no_coins_make_0_change(self):
-        self.assertEqual(find_minimum_coins(0, [1, 5, 10, 21, 25]), [])
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_error_testing_for_change_smaller_than_smallest_coin(self):
-        with self.assertRaisesWithMessage(ValueError):
-            find_minimum_coins(3, [5, 10])
+- Python 2.7: `py.test change_test.py`
+- Python 3.4+: `pytest change_test.py`
 
-    def test_error_if_no_combination_can_add_up_to_target(self):
-        with self.assertRaisesWithMessage(ValueError):
-            find_minimum_coins(94, [5, 10])
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest change_test.py`
 
-    def test_cannot_find_negative_change_values(self):
-        with self.assertRaisesWithMessage(ValueError):
-            find_minimum_coins(-5, [1, 2, 5])
+### Common `pytest` options
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+For other options, see `python -m pytest -h`
 
+## Submitting Exercises
 
-if __name__ == "__main__":
-    unittest.main()
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/change` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Software Craftsmanship - Coin Change Kata [https://web.archive.org/web/20130115115225/http://craftsmanship.sv.cmu.edu:80/exercises/coin-change-kata](https://web.archive.org/web/20130115115225/http://craftsmanship.sv.cmu.edu:80/exercises/coin-change-kata)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

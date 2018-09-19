@@ -1,212 +1,53 @@
-import unittest
+# Custom Set
 
-from custom_set import CustomSet
+Create a custom set type.
 
+Sometimes it is necessary to define a custom data structure of some
+type, like a set. In this exercise you will define your own set. How it
+works internally doesn't matter, as long as it behaves like a set of
+unique elements.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
+## Exception messages
 
-class CustomSetTest(unittest.TestCase):
-    def test_sets_with_no_elements_are_empty(self):
-        sut = CustomSet()
-        self.assertIs(sut.isempty(), True)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_sets_with_elements_are_not_empty(self):
-        sut = CustomSet([1])
-        self.assertIs(sut.isempty(), False)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_empty_set_contains_nothing(self):
-        sut = CustomSet()
-        self.assertNotIn(1, sut)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_set_contains_when_element_in_set(self):
-        sut = CustomSet([1])
-        self.assertIn(1, sut)
+## Running the tests
 
-    def test_set_does_not_contains_when_element_not_in_set(self):
-        sut = CustomSet([1, 2, 3])
-        self.assertNotIn(4, sut)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_empty_set_is_subset_of_another_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet()
-        self.assertIs(set1.issubset(set2), True)
+- Python 2.7: `py.test custom_set_test.py`
+- Python 3.4+: `pytest custom_set_test.py`
 
-    def test_empty_set_is_subset_of_non_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet([1])
-        self.assertIs(set1.issubset(set2), True)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest custom_set_test.py`
 
-    def test_non_empty_set_is_not_subet_of_empty_set(self):
-        set1 = CustomSet([1])
-        set2 = CustomSet()
-        self.assertIs(set1.issubset(set2), False)
+### Common `pytest` options
 
-    def test_set_is_subset_of_set_with_exact_same_elements(self):
-        set1 = CustomSet([1, 2, 3])
-        set2 = CustomSet([1, 2, 3])
-        self.assertIs(set1.issubset(set2), True)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_set_is_subset_of_larger_set_with_same_elements(self):
-        set1 = CustomSet([1, 2, 3])
-        set2 = CustomSet([4, 1, 2, 3])
-        self.assertIs(set1.issubset(set2), True)
+For other options, see `python -m pytest -h`
 
-    def test_set_not_subset_of_set_that_does_not_contain_its_elements(self):
-        set1 = CustomSet([1, 2, 3])
-        set2 = CustomSet([4, 1, 3])
-        self.assertIs(set1.issubset(set2), False)
+## Submitting Exercises
 
-    def test_empty_set_disjoint_with_itself(self):
-        set1 = CustomSet()
-        set2 = CustomSet()
-        self.assertIs(set1.isdisjoint(set2), True)
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/custom-set` directory.
 
-    def test_empty_set_disjoint_with_non_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet([1])
-        self.assertIs(set1.isdisjoint(set2), True)
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_non_empty_set_disjoint_with_empty_set(self):
-        set1 = CustomSet([1])
-        set2 = CustomSet()
-        self.assertIs(set1.isdisjoint(set2), True)
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    def test_sets_not_disjoint_if_element_is_shared(self):
-        set1 = CustomSet([1, 2])
-        set2 = CustomSet([2, 3])
-        self.assertIs(set1.isdisjoint(set2), False)
+## Submitting Incomplete Solutions
 
-    def test_sets_disjoint_if_not_elements_are_shared(self):
-        set1 = CustomSet([1, 2])
-        set2 = CustomSet([3, 4])
-        self.assertIs(set1.isdisjoint(set2), True)
-
-    def test_empty_sets_are_equal(self):
-        set1 = CustomSet()
-        set2 = CustomSet()
-        self.assertEqual(set1, set2)
-
-    def test_empty_set_not_equal_to_non_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet([1, 2, 3])
-        self.assertNotEqual(set1, set2)
-
-    def test_non_empty_set_not_equal_to_empty_set(self):
-        set1 = CustomSet([1, 2, 3])
-        set2 = CustomSet()
-        self.assertNotEqual(set1, set2)
-
-    def test_sets_with_same_exact_same_elements_are_equal(self):
-        set1 = CustomSet([1, 2])
-        set2 = CustomSet([2, 1])
-        self.assertEqual(set1, set2)
-
-    def test_sets_with_different_elements_are_not_equal(self):
-        set1 = CustomSet([1, 2, 3])
-        set2 = CustomSet([1, 2, 4])
-        self.assertNotEqual(set1, set2)
-
-    def test_set_is_not_equal_to_larger_set_with_same_elements(self):
-        set1 = CustomSet([1, 2, 3])
-        set2 = CustomSet([1, 2, 3, 4])
-        self.assertNotEqual(set1, set2)
-
-    def test_add_to_empty_set(self):
-        sut = CustomSet()
-        sut.add(1)
-        expected = CustomSet([1])
-        self.assertEqual(sut, expected)
-
-    def test_add_to_non_empty_set(self):
-        sut = CustomSet([1, 2, 4])
-        sut.add(3)
-        expected = CustomSet([1, 2, 3, 4])
-        self.assertEqual(sut, expected)
-
-    def test_adding_existing_element_does_not_change_set(self):
-        sut = CustomSet([1, 2, 3])
-        sut.add(3)
-        expected = CustomSet([1, 2, 3])
-        self.assertEqual(sut, expected)
-
-    def test_intersection_of_two_empty_sets_is_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet()
-        expected = CustomSet()
-        self.assertEqual(set1.intersection(set2), expected)
-
-    def test_intersection_of_empty_set_and_non_empty_set_is_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet([3, 2, 5])
-        expected = CustomSet()
-        self.assertEqual(set1.intersection(set2), expected)
-
-    def test_intersection_of_non_empty_set_and_empty_set_is_empty_set(self):
-        set1 = CustomSet([1, 2, 3, 4])
-        set2 = CustomSet()
-        expected = CustomSet()
-        self.assertEqual(set1.intersection(set2), expected)
-
-    def test_intersection_of_sets_with_no_shared_elements_is_empty_set(self):
-        set1 = CustomSet([1, 2, 3])
-        set2 = CustomSet([4, 5, 6])
-        expected = CustomSet()
-        self.assertEqual(set1.intersection(set2), expected)
-
-    def test_intersection_contains_shared_elements_only(self):
-        set1 = CustomSet([1, 2, 3, 4])
-        set2 = CustomSet([3, 2, 5])
-        expected = CustomSet([2, 3])
-        self.assertEqual(set1.intersection(set2), expected)
-
-    def test_difference_of_two_empty_sets_is_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet()
-        expected = CustomSet()
-        self.assertEqual(set1 - set2, expected)
-
-    def test_difference_of_empty_set_and_non_empty_set_is_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet([3, 2, 5])
-        expected = CustomSet()
-        self.assertEqual(set1 - set2, expected)
-
-    def test_difference_of_non_empty_set_and_empty_set_is_non_empty_set(self):
-        set1 = CustomSet([1, 2, 3, 4])
-        set2 = CustomSet()
-        expected = CustomSet([1, 2, 3, 4])
-        self.assertEqual(set1 - set2, expected)
-
-    def test_difference_of_non_empty_sets_elements_in_first_set_only(self):
-        set1 = CustomSet([3, 2, 1])
-        set2 = CustomSet([2, 4])
-        expected = CustomSet([1, 3])
-        self.assertEqual(set1 - set2, expected)
-
-    def test_union_of_empty_sets_is_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet()
-        expected = CustomSet()
-        self.assertEqual(set1 + set2, expected)
-
-    def test_union_of_empty_set_and_non_empty_set_is_the_non_empty_set(self):
-        set1 = CustomSet()
-        set2 = CustomSet([2])
-        expected = CustomSet([2])
-        self.assertEqual(set1 + set2, expected)
-
-    def test_union_of_non_empty_set_and_empty_set_is_the_non_empty_set(self):
-        set1 = CustomSet([1, 3])
-        set2 = CustomSet()
-        expected = CustomSet([1, 3])
-        self.assertEqual(set1 + set2, expected)
-
-    def test_union_of_non_empty_sets_contains_all_unique_elements(self):
-        set1 = CustomSet([1, 3])
-        set2 = CustomSet([2, 3])
-        expected = CustomSet([1, 2, 3])
-        self.assertEqual(set1 + set2, expected)
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

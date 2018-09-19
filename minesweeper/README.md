@@ -1,162 +1,72 @@
-""" Tests for the minesweeper exercise
+# Minesweeper
 
-Implementation note:
-The board function must validate its input and raise a
-ValueError with a meaningfull error message if the
-input turns out to be malformed.
-"""
+Add the numbers to a minesweeper board.
 
-import unittest
+Minesweeper is a popular game where the user has to find the mines using
+numeric hints that indicate how many mines are directly adjacent
+(horizontally, vertically, diagonally) to a square.
 
-from minesweeper import board
+In this exercise you have to create some code that counts the number of
+mines adjacent to a square and transforms boards like this (where `*`
+indicates a mine):
 
+    +-----+
+    | * * |
+    |  *  |
+    |  *  |
+    |     |
+    +-----+
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+into this:
 
-class MinesweeperTest(unittest.TestCase):
+    +-----+
+    |1*3*1|
+    |13*31|
+    | 2*2 |
+    | 111 |
+    +-----+
 
-    def test_no_rows(self):
-        self.assertEqual(board([]), [])
+## Exception messages
 
-    def test_no_columns(self):
-        self.assertEqual(board([""]), [""])
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_no_mines(self):
-        inp = ["   ",
-               "   ",
-               "   "]
-        out = ["   ",
-               "   ",
-               "   "]
-        self.assertEqual(board(inp), out)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_board_with_only_mines(self):
-        inp = ["***",
-               "***",
-               "***"]
-        out = ["***",
-               "***",
-               "***"]
-        self.assertEqual(board(inp), out)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_mine_surrounded_by_spaces(self):
-        inp = ["   ",
-               " * ",
-               "   "]
-        out = ["111",
-               "1*1",
-               "111"]
-        self.assertEqual(board(inp), out)
+## Running the tests
 
-    def test_space_surrounded_by_mines(self):
-        inp = ["***",
-               "* *",
-               "***"]
-        out = ["***",
-               "*8*",
-               "***"]
-        self.assertEqual(board(inp), out)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_horizontal_line(self):
-        inp = [" * * "]
-        out = ["1*2*1"]
-        self.assertEqual(board(inp), out)
+- Python 2.7: `py.test minesweeper_test.py`
+- Python 3.4+: `pytest minesweeper_test.py`
 
-    def test_horizontal_line_mines_at_edges(self):
-        inp = ["*   *"]
-        out = ["*1 1*"]
-        self.assertEqual(board(inp), out)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest minesweeper_test.py`
 
-    def test_vertical_line(self):
-        inp = [" ",
-               "*",
-               " ",
-               "*",
-               " "]
-        out = ["1",
-               "*",
-               "2",
-               "*",
-               "1"]
-        self.assertEqual(board(inp), out)
+### Common `pytest` options
 
-    def test_vertical_line_mines_at_edges(self):
-        inp = ["*",
-               " ",
-               " ",
-               " ",
-               "*"]
-        out = ["*",
-               "1",
-               " ",
-               "1",
-               "*"]
-        self.assertEqual(board(inp), out)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_cross(self):
-        inp = ["  *  ",
-               "  *  ",
-               "*****",
-               "  *  ",
-               "  *  "]
-        out = [" 2*2 ",
-               "25*52",
-               "*****",
-               "25*52",
-               " 2*2 "]
-        self.assertEqual(board(inp), out)
+For other options, see `python -m pytest -h`
 
-    def test_large_board(self):
-        inp = [" *  * ",
-               "  *   ",
-               "    * ",
-               "   * *",
-               " *  * ",
-               "      "]
-        out = ["1*22*1",
-               "12*322",
-               " 123*2",
-               "112*4*",
-               "1*22*2",
-               "111111"]
-        self.assertEqual(board(inp), out)
+## Submitting Exercises
 
-    # Additional test for this track
-    def test_board9(self):
-        inp = ["     ",
-               "   * ",
-               "     ",
-               "     ",
-               " *   "]
-        out = ["  111",
-               "  1*1",
-               "  111",
-               "111  ",
-               "1*1  "]
-        self.assertEqual(board(inp), out)
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/minesweeper` directory.
 
-    def test_different_len(self):
-        inp = [" ",
-               "*  ",
-               "  "]
-        with self.assertRaisesWithMessage(ValueError):
-            board(inp)
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_invalid_char(self):
-        inp = ["X  * "]
-        with self.assertRaisesWithMessage(ValueError):
-            board(inp)
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+## Submitting Incomplete Solutions
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

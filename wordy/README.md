@@ -1,83 +1,101 @@
-import unittest
+# Wordy
 
-from wordy import calculate
+Parse and evaluate simple math word problems returning the answer as an integer.
 
+## Iteration 1 — Addition
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+Add two numbers together.
 
-class WordyTest(unittest.TestCase):
-    def test_addition(self):
-        self.assertEqual(calculate("What is 1 plus 1?"), 2)
+> What is 5 plus 13?
 
-    def test_more_addition(self):
-        self.assertEqual(calculate("What is 53 plus 2?"), 55)
+Evaluates to 18.
 
-    def test_addition_with_negative_numbers(self):
-        self.assertEqual(calculate("What is -1 plus -10?"), -11)
+Handle large numbers and negative numbers.
 
-    def test_large_addition(self):
-        self.assertEqual(calculate("What is 123 plus 45678?"), 45801)
+## Iteration 2 — Subtraction, Multiplication and Division
 
-    def test_subtraction(self):
-        self.assertEqual(calculate("What is 4 minus -12?"), 16)
+Now, perform the other three operations.
 
-    def test_multiplication(self):
-        self.assertEqual(calculate("What is -3 multiplied by 25?"), -75)
+> What is 7 minus 5?
 
-    def test_division(self):
-        self.assertEqual(calculate("What is 33 divided by -3?"), -11)
+2
 
-    def test_multiple_addition(self):
-        self.assertEqual(calculate("What is 1 plus 1 plus 1?"), 3)
+> What is 6 multiplied by 4?
 
-    def test_addition_then_subtraction(self):
-        self.assertEqual(calculate("What is 1 plus 5 minus -2?"), 8)
+24
 
-    def test_multiple_subtraction(self):
-        self.assertEqual(calculate("What is 20 minus 4 minus 13?"), 3)
+> What is 25 divided by 5?
 
-    def test_subtraction_then_addition(self):
-        self.assertEqual(calculate("What is 17 minus 6 plus 3?"), 14)
+5
 
-    def test_multiple_multiplication(self):
-        self.assertEqual(
-            calculate("What is 2 multiplied by -2 multiplied by 3?"), -12)
+## Iteration 3 — Multiple Operations
 
-    def test_addition_then_multiplication(self):
-        self.assertEqual(calculate("What is -3 plus 7 multiplied by -2?"), -8)
+Handle a set of operations, in sequence.
 
-    def test_multiple_division(self):
-        self.assertEqual(
-            calculate("What is -12 divided by 2 divided by -3?"), 2)
+Since these are verbal word problems, evaluate the expression from
+left-to-right, _ignoring the typical order of operations._
 
-    def test_unknown_operation(self):
-        with self.assertRaisesWithMessage(ValueError):
-            calculate("What is 52 cubed?")
+> What is 5 plus 13 plus 6?
 
-    def test_non_math_question(self):
-        with self.assertRaisesWithMessage(ValueError):
-            calculate("Who is the President of the United States?")
+24
 
-    # Additional tests for this track
+> What is 3 plus 2 multiplied by 3?
 
-    def test_missing_operation(self):
-        with self.assertRaisesWithMessage(ValueError):
-            calculate("What is 2 2 minus 3?")
+15  (i.e. not 9)
 
-    def test_missing_number(self):
-        with self.assertRaisesWithMessage(ValueError):
-            calculate("What is 7 plus multiplied by -2?")
+## Bonus — Exponentials
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+If you'd like, handle exponentials.
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+> What is 2 raised to the 5th power?
 
+32
 
-if __name__ == '__main__':
-    unittest.main()
+## Exception messages
+
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test wordy_test.py`
+- Python 3.4+: `pytest wordy_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest wordy_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/wordy` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Inspired by one of the generated questions in the Extreme Startup game. [https://github.com/rchatley/extreme_startup](https://github.com/rchatley/extreme_startup)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

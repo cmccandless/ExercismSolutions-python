@@ -1,118 +1,76 @@
-import unittest
+# Connect
 
-import connect
+Compute the result for a game of Hex / Polygon.
 
+The abstract boardgame known as
+[Hex](https://en.wikipedia.org/wiki/Hex_%28board_game%29) / Polygon /
+CON-TAC-TIX is quite simple in rules, though complex in practice. Two players
+place stones on a rhombus with hexagonal fields. The player to connect his/her
+stones to the opposite side first wins. The four sides of the rhombus are
+divided between the two players (i.e. one player gets assigned a side and the
+side directly opposite it and the other player gets assigned the two other
+sides).
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+Your goal is to build a program that given a simple representation of a board
+computes the winner (or lack thereof). Note that all games need not be "fair".
+(For example, players may have mismatched piece counts.)
 
-testcases = [
-    {
-        "description": "an empty board has no winner",
-        "board":
-        """ . . . . .
-             . . . . .
-              . . . . .
-               . . . . .
-                . . . . .""",
-        "winner": ""
-    },
-    {
-        "description": "O can win on a 1x1 board",
-        "board": "O",
-        "winner": "O"
-    },
-    {
-        "description": "X can win on a 1x1 board",
-        "board": "X",
-        "winner": "X"
-    },
-    {
-        "description": "only edges does not make a winner",
-        "board":
-            """ O O O X
-                 X . . X
-                  X . . X
-                   X O O O""",
-        "winner": ""
-    },
-    {
-        "description": "illegal diagonal does not make a winner",
-        "board":
-            """ X O . .
-                 O X X X
-                  O X O .
-                   . O X .
-                    X X O O""",
-        "winner": ""
-    },
-    {
-        "description": "nobody wins crossing adjacent angles",
-        "board":
-            """ X . . .
-                 . X O .
-                  O . X O
-                   . O . X
-                    . . O .""",
-        "winner": ""
-    },
-    {
-        "description": "X wins crossing from left to right",
-        "board":
-            """ . O . .
-                 O X X X
-                  O X O .
-                   X X O X
-                    . O X .""",
-        "winner": "X"
-    },
-    {
-        "description": "X wins using a convoluted path",
-        "board":
-            """ . X X . .
-                 X . X . X
-                  . X . X .
-                   . X X . .
-                    O O O O O""",
-        "winner": "X"
-    },
-    {
-        "description": "O wins crossing from top to bottom",
-        "board":
-            """ . O . .
-                 O X X X
-                  O O O .
-                   X X O X
-                    . O X .""",
-        "winner": "O"
-    },
-    {
-        "description": "X wins using a spiral path",
-        "board":
-            """ O X X X X X X X X
-                 O X O O O O O O O
-                  O X O X X X X X O
-                   O X O X O O O X O
-                    O X O X X X O X O
-                     O X O O O X O X O
-                      O X X X X X O X O
-                       O O O O O O O X O
-                        X X X X X X X X O """,
-        "winner": "X"
-    },
-]
+The boards look like this (with spaces added for readability, which won't be in
+the representation passed to your code):
 
+```text
+. O . X .
+ . X X O .
+  O O O X .
+   . X O X O
+    X O O O X
+```
 
-class ConnectTest(unittest.TestCase):
-    def test_game(self):
-        for testcase in testcases:
-            game = connect.ConnectGame(testcase["board"])
-            winner = game.get_winner()
-            expected = testcase["winner"] if testcase["winner"] else "None"
-            got = winner if winner else "None"
-            self.assertEqual(winner, testcase["winner"],
-                             "Test failed: %s, expected winner: %s, got: %s"
-                             % (testcase["description"], expected, got))
+"Player `O`" plays from top to bottom, "Player `X`" plays from left to right. In
+the above example `O` has made a connection from left to right but nobody has
+won since `O` didn't connect top and bottom.
 
+## Exception messages
 
-if __name__ == '__main__':
-    unittest.main()
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test connect_test.py`
+- Python 3.4+: `pytest connect_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest connect_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/connect` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

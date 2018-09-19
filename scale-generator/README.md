@@ -1,99 +1,94 @@
-import unittest
+# Scale Generator
 
-from scale_generator import Scale
+Given a tonic, or starting note, and a set of intervals, generate
+the musical scale starting with the tonic and following the
+specified interval pattern.
 
+Scales in Western music are based on the chromatic (12-note) scale. This
+scale can be expressed as the following group of pitches:
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
+A, A#, B, C, C#, D, D#, E, F, F#, G, G#
 
-class ScaleGeneratorTest(unittest.TestCase):
+A given sharp note (indicated by a #) can also be expressed as the flat
+of the note above it (indicated by a b) so the chromatic scale can also be
+written like this:
 
-    # Test chromatic scales
-    def test_chromatic_scale_with_sharps(self):
-        expected = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
-                    'G', 'G#', 'A', 'A#', 'B']
-        self.assertEqual(Scale('C').pitches, expected)
+A, Bb, B, C, Db, D, Eb, E, F, Gb, G, Ab
 
-    def test_chromatic_scale_with_flats(self):
-        expected = ['F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B',
-                    'C', 'Db', 'D', 'Eb', 'E']
-        self.assertEqual(Scale('F').pitches, expected)
+The major and minor scale and modes are subsets of this twelve-pitch
+collection. They have seven pitches, and are called diatonic scales.
+The collection of notes in these scales is written with either sharps or
+flats, depending on the tonic. Here is a list of which are which:
 
-    # Test scales with specified intervals
-    def test_simple_major_scale(self):
-        expected = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-        self.assertEqual(Scale('C', 'MMmMMMm').pitches, expected)
+No Sharps or Flats:
+C major
+a minor
 
-    def test_major_scale_with_sharps(self):
-        expected = ['G', 'A', 'B', 'C', 'D', 'E', 'F#']
-        self.assertEqual(Scale('G', 'MMmMMMm').pitches, expected)
+Use Sharps:
+G, D, A, E, B, F# major
+e, b, f#, c#, g#, d# minor
 
-    def test_major_scale_with_flats(self):
-        expected = ['F', 'G', 'A', 'Bb', 'C', 'D', 'E']
-        self.assertEqual(Scale('F', 'MMmMMMm').pitches, expected)
+Use Flats:
+F, Bb, Eb, Ab, Db, Gb major
+d, g, c, f, bb, eb minor
 
-    def test_minor_scale_with_sharps(self):
-        expected = ['F#', 'G#', 'A', 'B', 'C#', 'D', 'E']
-        self.assertEqual(Scale('f#', 'MmMMmMM').pitches, expected)
+The diatonic scales, and all other scales that derive from the
+chromatic scale, are built upon intervals. An interval is the space
+between two pitches.
 
-    def test_minor_scale_with_flats(self):
-        expected = ['Bb', 'C', 'Db', 'Eb', 'F', 'Gb', 'Ab']
-        self.assertEqual(Scale('bb', 'MmMMmMM').pitches, expected)
+The simplest interval is between two adjacent notes, and is called a
+"half step", or "minor second" (sometimes written as a lower-case "m").
+The interval between two notes that have an interceding note is called
+a "whole step" or "major second" (written as an upper-case "M"). The
+diatonic scales are built using only these two intervals between
+adjacent notes.
 
-    def test_dorian_mode(self):
-        expected = ['D', 'E', 'F', 'G', 'A', 'B', 'C']
-        self.assertEqual(Scale('d', 'MmMMMmM').pitches, expected)
+Non-diatonic scales can contain other intervals.  An "augmented first"
+interval, written "A", has two interceding notes (e.g., from A to C or
+Db to E). There are also smaller and larger intervals, but they will not
+figure into this exercise.
 
-    def test_mixolydian_mode(self):
-        expected = ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'Db']
-        self.assertEqual(Scale('Eb', 'MMmMMmM').pitches, expected)
+## Exception messages
 
-    def test_lydian_mode(self):
-        expected = ['A', 'B', 'C#', 'D#', 'E', 'F#', 'G#']
-        self.assertEqual(Scale('a', 'MMMmMMm').pitches, expected)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_phrygian_mode(self):
-        expected = ['E', 'F', 'G', 'A', 'B', 'C', 'D']
-        self.assertEqual(Scale('e', 'mMMMmMM').pitches, expected)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_locrian_mode(self):
-        expected = ['G', 'Ab', 'Bb', 'C', 'Db', 'Eb', 'F']
-        self.assertEqual(Scale('g', 'mMMmMMM').pitches, expected)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_harmonic_minor(self):
-        expected = ['D', 'E', 'F', 'G', 'A', 'Bb', 'Db']
-        self.assertEqual(Scale('d', 'MmMMmAm').pitches, expected)
+## Running the tests
 
-    def test_octatonic(self):
-        expected = ['C', 'D', 'D#', 'F', 'F#', 'G#', 'A', 'B']
-        self.assertEqual(Scale('C', 'MmMmMmMm').pitches, expected)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_hexatonic(self):
-        expected = ['Db', 'Eb', 'F', 'G', 'A', 'B']
-        self.assertEqual(Scale('Db', 'MMMMMM').pitches, expected)
+- Python 2.7: `py.test scale_generator_test.py`
+- Python 3.4+: `pytest scale_generator_test.py`
 
-    def test_pentatonic(self):
-        expected = ['A', 'B', 'C#', 'E', 'F#']
-        self.assertEqual(Scale('A', 'MMAMA').pitches, expected)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest scale_generator_test.py`
 
-    def test_enigmatic(self):
-        expected = ['G', 'G#', 'B', 'C#', 'D#', 'F', 'F#']
-        self.assertEqual(Scale('G', 'mAMMMmm').pitches, expected)
+### Common `pytest` options
 
-    # Track-specific tests
-    def test_brokeninterval(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Scale('G', 'mAMMMmM')
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+For other options, see `python -m pytest -h`
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+## Submitting Exercises
 
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/scale-generator` directory.
 
-if __name__ == '__main__':
-    unittest.main()
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

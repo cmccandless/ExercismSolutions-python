@@ -12,83 +12,72 @@ def json_io(func):
     return dec
 
 
-def update_db(func):
-    @wraps(func)
-    def dec(self, *args, **kwargs):
-        if self.db is None:
-            self.db = {}
-        elif not isinstance(self.db, dict):
-            raise TypeError('database must be a dictionary')
-        if 'users' not in self.db:
-            self.db['users'] = []
-        return func(self, *args, **kwargs)
-    return dec
+class User(object):
+    def __init__(self, name, owed_by=None, owes=None, **kwargs):
+        self.name = name
+        self.records = {}
+        for borrower, amount in (owed_by or {}).items():
+            self.loan(borrower, amount)
+        for lender, amount in (owes or {}).items():
+            self.borrow(lender, amount)
+
+    def borrow(self, borrower, amount):
+        self.records[borrower] = self.records.get(borrower, 0) - amount
+
+    def loan(self, lender, amount):
+        self.records[lender] = self.records.get(lender, 0) + amount
+
+    @property
+    def owes(self):
+        return {k: -v for k, v in self.records.items() if v < 0}
+
+    @property
+    def owed_by(self):
+        return {k: v for k, v in self.records.items() if v > 0}
+
+    @property
+    def balance(self):
+        return sum(self.records.values())
+
+    @property
+    def __dict__(self):
+        return {
+            'name': self.name,
+            'owes': self.owes,
+            'owed_by': self.owed_by,
+            'balance': self.balance
+        }
 
 
 class RestAPI(object):
     def __init__(self, database=None):
-        self.db = database
+        self.users = {
+            user['name']: User(**user)
+            for user in (database or {}).get('users', [])
+        }
 
-    def __balance_db__(self):
-        for user in self.db['users']:
-            balance = 0
-            for other in self.db['users']:
-                other_name = other['name']
-                if user['name'] == other_name:
-                    continue
-                owed = user['owed_by'].pop(other_name, 0)
-                owes = user['owes'].pop(other_name, 0)
-                delta = owed - owes
-                if delta > 0:
-                    user['owed_by'][other_name] = delta
-                elif delta < 0:
-                    user['owes'][other_name] = -delta
-                balance += delta
-            user['balance'] = balance
-
-    @update_db
     @json_io
     def get(self, url, payload=None):
         if url == '/users':
-            if payload is None:
-                return self.db
-            else:
-                return {
-                    'users': [
-                        u for u in self.db['users']
-                        if u['name'] in payload['users']
-                    ]
-                }
+            return {'users': [
+                user.__dict__
+                for name, user in sorted(self.users.items())
+                if payload is None or name in payload['users']
+            ]}
 
-    @update_db
     @json_io
     def post(self, url, payload):
         if url == '/add':
-            user = {
-                'name': payload['user'],
-                'owes': {},
-                'owed_by': {},
-                'balance': 0
-            }
-            self.db['users'].append(user)
-            return user
+            user = User(payload['user'])
+            self.users[user.name] = user
+            return user.__dict__
         elif url == '/iou':
-            lender_name = payload['lender']
-            borrower_name = payload['borrower']
-            for user in self.db['users']:
-                if user['name'] == lender_name:
-                    user['owed_by'][borrower_name] = (
-                        user['owed_by'].get(borrower_name, 0) +
-                        payload['amount']
-                    )
-                    lender = user
-                elif user['name'] == borrower_name:
-                    user['owes'][lender_name] = (
-                        user['owes'].get(lender_name, 0) +
-                        payload['amount']
-                    )
-                    borrower = user
-            self.__balance_db__()
-            return {
-                'users': sorted([lender, borrower], key=lambda u: u['name'])
-            }
+            lender = self.users[payload['lender']]
+            borrower = self.users[payload['borrower']]
+            amount = payload['amount']
+            lender.loan(borrower.name, amount)
+            borrower.borrow(lender.name, amount)
+            return {'users': sorted(
+                [lender.__dict__, borrower.__dict__],
+                key=lambda u: u['name']
+            )}

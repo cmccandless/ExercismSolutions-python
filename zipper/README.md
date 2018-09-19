@@ -1,76 +1,73 @@
-import unittest
+# Zipper
 
-from zipper import Zipper
+Creating a zipper for a binary tree.
 
+[Zippers](https://en.wikipedia.org/wiki/Zipper_%28data_structure%29) are
+a purely functional way of navigating within a data structure and
+manipulating it.  They essentially contain a data structure and a
+pointer into that data structure (called the focus).
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+For example given a rose tree (where each node contains a value and a
+list of child nodes) a zipper might support these operations:
 
-class ZipperTest(unittest.TestCase):
-    def bt(self, value, left, right):
-        return {
-            'value': value,
-            'left': left,
-            'right': right
-        }
+- `from_tree` (get a zipper out of a rose tree, the focus is on the root node)
+- `to_tree` (get the rose tree out of the zipper)
+- `value` (get the value of the focus node)
+- `prev` (move the focus to the previous child of the same parent,
+  returns a new zipper)
+- `next` (move the focus to the next child of the same parent, returns a
+  new zipper)
+- `up` (move the focus to the parent, returns a new zipper)
+- `set_value` (set the value of the focus node, returns a new zipper)
+- `insert_before` (insert a new subtree before the focus node, it
+  becomes the `prev` of the focus node, returns a new zipper)
+- `insert_after` (insert a new subtree after the focus node, it becomes
+  the `next` of the focus node, returns a new zipper)
+- `delete` (removes the focus node and all subtrees, focus moves to the
+  `next` node if possible otherwise to the `prev` node if possible,
+  otherwise to the parent node, returns a new zipper)
 
-    def leaf(self, value):
-        return self.bt(value, None, None)
+## Exception messages
 
-    def create_trees(self):
-        t1 = self.bt(1, self.bt(2, None, self.leaf(3)), self.leaf(4))
-        t2 = self.bt(1, self.bt(5, None, self.leaf(3)), self.leaf(4))
-        t3 = self.bt(1, self.bt(2, self.leaf(5), self.leaf(3)), self.leaf(4))
-        t4 = self.bt(1, self.leaf(2), self.leaf(4))
-        return (t1, t2, t3, t4)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_data_is_retained(self):
-        t1, _, _, _ = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        tree = zipper.to_tree()
-        self.assertEqual(tree, t1)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_left_and_right_value(self):
-        t1, _, _, _ = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        self.assertEqual(zipper.left().right().value(), 3)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_dead_end(self):
-        t1, _, _, _ = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        self.assertIsNone(zipper.left().left())
+## Running the tests
 
-    def test_tree_from_deep_focus(self):
-        t1, _, _, _ = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        self.assertEqual(zipper.left().right().to_tree(), t1)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_set_value(self):
-        t1, t2, _, _ = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        updatedZipper = zipper.left().set_value(5)
-        tree = updatedZipper.to_tree()
-        self.assertEqual(tree, t2)
+- Python 2.7: `py.test zipper_test.py`
+- Python 3.4+: `pytest zipper_test.py`
 
-    def test_set_left_with_value(self):
-        t1, _, t3, _ = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        updatedZipper = zipper.left().set_left(self.leaf(5))
-        tree = updatedZipper.to_tree()
-        self.assertEqual(tree, t3)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest zipper_test.py`
 
-    def test_set_right_to_none(self):
-        t1, _, _, t4 = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        updatedZipper = zipper.left().set_right(None)
-        tree = updatedZipper.to_tree()
-        self.assertEqual(tree, t4)
+### Common `pytest` options
 
-    def test_different_paths_to_same_zipper(self):
-        t1, _, _, _ = self.create_trees()
-        zipper = Zipper.from_tree(t1)
-        self.assertEqual(zipper.left().up().right().to_tree(),
-                         zipper.right().to_tree())
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
+For other options, see `python -m pytest -h`
 
-if __name__ == '__main__':
-    unittest.main()
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/zipper` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

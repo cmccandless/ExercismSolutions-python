@@ -1,43 +1,90 @@
-import unittest
+# Matrix
 
-from matrix import Matrix
+Given a string representing a matrix of numbers, return the rows and columns of
+that matrix.
 
+So given a string with embedded newlines like:
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
+```text
+9 8 7
+5 3 2
+6 6 7
+```
 
-class MatrixTest(unittest.TestCase):
-    def test_extract_row_from_one_number_matrix(self):
-        matrix = Matrix("1")
-        self.assertEqual(matrix.row(0), [1])
+representing this matrix:
 
-    def test_can_extract_row(self):
-        matrix = Matrix("1 2\n3 4")
-        self.assertEqual(matrix.row(1), [3, 4])
+```text
+    0  1  2
+  |---------
+0 | 9  8  7
+1 | 5  3  2
+2 | 6  6  7
+```
 
-    def test_extract_row_where_numbers_have_different_widths(self):
-        matrix = Matrix("1 2\n10 20")
-        self.assertEqual(matrix.row(1), [10, 20])
+your code should be able to spit out:
 
-    def test_can_extract_row_from_non_square_matrix(self):
-        matrix = Matrix("1 2 3\n4 5 6\n7 8 9\n8 7 6")
-        self.assertEqual(matrix.row(2), [7, 8, 9])
+- A list of the rows, reading each row left-to-right while moving
+  top-to-bottom across the rows,
+- A list of the columns, reading each column top-to-bottom while moving
+  from left-to-right.
 
-    def test_extract_column_from_one_number_matrix(self):
-        matrix = Matrix("1")
-        self.assertEqual(matrix.column(0), [1])
+The rows for our example matrix:
 
-    def test_can_extract_column(self):
-        matrix = Matrix("1 2 3\n4 5 6\n7 8 9")
-        self.assertEqual(matrix.column(2), [3, 6, 9])
+- 9, 8, 7
+- 5, 3, 2
+- 6, 6, 7
 
-    def test_can_extract_column_from_non_square_matrix(self):
-        matrix = Matrix("1 2 3\n4 5 6\n7 8 9\n8 7 6")
-        self.assertEqual(matrix.column(2), [3, 6, 9, 6])
+And its columns:
 
-    def test_extract_column_where_numbers_have_different_widths(self):
-        matrix = Matrix("89 1903 3\n18 3 1\n9 4 800")
-        self.assertEqual(matrix.column(1), [1903, 3, 4])
+- 9, 5, 6
+- 8, 3, 6
+- 7, 2, 7
 
+## Exception messages
 
-if __name__ == '__main__':
-    unittest.main()
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test matrix_test.py`
+- Python 3.4+: `pytest matrix_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest matrix_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/matrix` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Warmup to the `saddle-points` warmup. [http://jumpstartlab.com](http://jumpstartlab.com)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

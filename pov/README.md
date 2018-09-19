@@ -1,222 +1,87 @@
-import unittest
+# POV
 
-from pov import Tree
+Reparent a graph on a selected node.
 
+This exercise is all about re-orientating a graph to see things from a different
+point of view. For example family trees are usually presented from the
+ancestor's perspective:
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
+```text
+    +------0------+
+    |      |      |
+  +-1-+  +-2-+  +-3-+
+  |   |  |   |  |   |
+  4   5  6   7  8   9
+```
 
-class PovTest(unittest.TestCase):
+But the same information can be presented from the perspective of any other node
+in the graph, by pulling it up to the root and dragging its relationships along
+with it. So the same graph from 6's perspective would look like:
 
-    def test_singleton_returns_same_tree(self):
-        tree = Tree('x')
-        self.assertTreeEquals(tree.from_pov('x'), tree)
+```text
+        6
+        |
+  +-----2-----+
+  |           |
+  7     +-----0-----+
+        |           |
+      +-1-+       +-3-+
+      |   |       |   |
+      4   5       8   9
+```
 
-    def test_can_reroot_tree_with_parent_and_one_sibling(self):
-        tree = Tree('parent', [
-            Tree('x'),
-            Tree('sibling')
-        ])
-        expected = Tree('x', [
-            Tree('parent', [
-                Tree('sibling')
-            ])
-        ])
-        self.assertTreeEquals(tree.from_pov('x'), expected)
+This lets us more simply describe the paths between two nodes. So for example
+the path from 6-9 (which in the first graph goes up to the root and then down to
+a different leaf node) can be seen to follow the path 6-2-0-3-9
 
-    def test_can_reroot_tree_with_parent_and_many_siblings(self):
-        tree = Tree('parent', [
-            Tree('a'),
-            Tree('x'),
-            Tree('b'),
-            Tree('c')
-        ])
-        expected = Tree('x', [
-            Tree('parent', [
-                Tree('a'),
-                Tree('b'),
-                Tree('c')
-            ])
-        ])
-        self.assertTreeEquals(tree.from_pov('x'), expected)
+This exercise involves taking an input graph and re-orientating it from the point
+of view of one of the nodes.
 
-    def test_can_reroot_a_tree_with_new_root_deeply_nested(self):
-        tree = Tree('level-0', [
-            Tree('level-1', [
-                Tree('level-2', [
-                    Tree('level-3', [
-                        Tree('x')
-                    ])
-                ])
-            ])
-        ])
-        expected = Tree('x', [
-            Tree('level-3', [
-                Tree('level-2', [
-                    Tree('level-1', [
-                        Tree('level-0')
-                    ])
-                ])
-            ])
-        ])
-        self.assertTreeEquals(tree.from_pov('x'), expected)
+## Exception messages
 
-    def test_moves_children_of_new_root_to_same_level_as_former_parent(self):
-        tree = Tree('parent', [
-            Tree('x', [
-                Tree('kid-0'),
-                Tree('kid-1')
-            ])
-        ])
-        expected = Tree('x', [
-            Tree('parent'),
-            Tree('kid-0'),
-            Tree('kid-1')
-        ])
-        self.assertTreeEquals(tree.from_pov('x'), expected)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_can_reroot_complex_tree_with_cousins(self):
-        tree = Tree('grandparent', [
-            Tree('parent', [
-                Tree('x', [
-                    Tree('kid-0'),
-                    Tree('kid-1')
-                ]),
-                Tree('sibling-0'),
-                Tree('sibling-1')
-            ]),
-            Tree('uncle', [
-                Tree('cousin-0'),
-                Tree('cousin-1')
-            ])
-        ])
-        expected = Tree('x', [
-            Tree('kid-0'),
-            Tree('kid-1'),
-            Tree('parent', [
-                Tree('sibling-0'),
-                Tree('sibling-1'),
-                Tree('grandparent', [
-                    Tree('uncle', [
-                        Tree('cousin-0'),
-                        Tree('cousin-1')
-                    ])
-                ])
-            ])
-        ])
-        self.assertTreeEquals(tree.from_pov('x'), expected)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_errors_if_target_does_not_exist_in_singleton_tree(self):
-        tree = Tree('x')
-        with self.assertRaisesWithMessage(ValueError):
-            tree.from_pov('nonexistent')
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_errors_if_target_does_not_exist_in_large_tree(self):
-        tree = Tree('parent', [
-            Tree('x', [
-                Tree('kid-0'),
-                Tree('kid-1')
-            ]),
-            Tree('sibling-0'),
-            Tree('sibling-1')
-        ])
-        with self.assertRaisesWithMessage(ValueError):
-            tree.from_pov('nonexistent')
+## Running the tests
 
-    def test_find_path_between_two_nodes(self):
-        tree = Tree('parent', [
-            Tree('x'),
-            Tree('sibling')
-        ])
-        expected = ['x', 'parent']
-        self.assertEqual(tree.path_to('x', 'parent'), expected)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_can_find_path_to_sibling(self):
-        tree = Tree('parent', [
-            Tree('a'),
-            Tree('x'),
-            Tree('b'),
-            Tree('c')
-        ])
-        expected = ['x', 'parent', 'b']
-        self.assertEqual(tree.path_to('x', 'b'), expected)
+- Python 2.7: `py.test pov_test.py`
+- Python 3.4+: `pytest pov_test.py`
 
-    def test_can_find_path_to_cousin(self):
-        tree = Tree('grandparent', [
-            Tree('parent', [
-                Tree('x', [
-                    Tree('kid-0'),
-                    Tree('kid-1')
-                ]),
-                Tree('sibling-0'),
-                Tree('sibling-1')
-            ]),
-            Tree('uncle', [
-                Tree('cousin-0'),
-                Tree('cousin-1')
-            ])
-        ])
-        expected = ['x', 'parent', 'grandparent', 'uncle', 'cousin-1']
-        self.assertEqual(tree.path_to('x', 'cousin-1'), expected)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest pov_test.py`
 
-    def test_can_find_path_not_involving_root(self):
-        tree = Tree('grandparent', [
-            Tree('parent', [
-                Tree('x'),
-                Tree('sibling-0'),
-                Tree('sibling-1')
-            ])
-        ])
-        expected = ['x', 'parent', 'sibling-1']
-        self.assertEqual(tree.path_to('x', 'sibling-1'), expected)
+### Common `pytest` options
 
-    def test_can_find_path_from_nodes_other_than_x(self):
-        tree = Tree('parent', [
-            Tree('a'),
-            Tree('x'),
-            Tree('b'),
-            Tree('c')
-        ])
-        expected = ['a', 'parent', 'c']
-        self.assertEqual(tree.path_to('a', 'c'), expected)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_errors_if_destination_does_not_exist(self):
-        tree = Tree('parent', [
-            Tree('x', [
-                Tree('kid-0'),
-                Tree('kid-1')
-            ]),
-            Tree('sibling-0'),
-            Tree('sibling-1')
-        ])
-        with self.assertRaisesWithMessage(ValueError):
-            tree.path_to('x', 'nonexistent')
+For other options, see `python -m pytest -h`
 
-    def test_errors_if_source_does_not_exist(self):
-        tree = Tree('parent', [
-            Tree('x', [
-                Tree('kid-0'),
-                Tree('kid-1')
-            ]),
-            Tree('sibling-0'),
-            Tree('sibling-1')
-        ])
-        with self.assertRaisesWithMessage(ValueError):
-            tree.path_to('nonexistent', 'x')
+## Submitting Exercises
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/pov` directory.
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def assertTreeEquals(self, result, expected):
-        self.assertEqual(result, expected,
-                         '{} != {}'.format(result, expected))
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
+## Source
 
-if __name__ == '__main__':
-    unittest.main()
+Adaptation of exercise from 4clojure [https://www.4clojure.com/](https://www.4clojure.com/)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

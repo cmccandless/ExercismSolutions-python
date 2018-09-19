@@ -1,114 +1,60 @@
-import unittest
+# Dominoes
 
-from dominoes import chain
+Make a chain of dominoes.
 
+Compute a way to order a given set of dominoes in such a way that they form a
+correct domino chain (the dots on one half of a stone match the dots on the
+neighbouring half of an adjacent stone) and that dots on the halfs of the stones
+which don't have a neighbour (the first and last stone) match each other.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.1.0
+For example given the stones `[2|1]`, `[2|3]` and `[1|3]` you should compute something
+like `[1|2] [2|3] [3|1]` or `[3|2] [2|1] [1|3]` or `[1|3] [3|2] [2|1]` etc, where the first and last numbers are the same.
 
-class DominoesTest(unittest.TestCase):
-    def test_empty_input_empty_output(self):
-        input_dominoes = []
-        output_chain = chain(input_dominoes)
-        self.assert_correct_chain(input_dominoes, output_chain)
+For stones `[1|2]`, `[4|1]` and `[2|3]` the resulting chain is not valid: `[4|1] [1|2] [2|3]`'s first and last numbers are not the same. 4 != 3
 
-    def test_singleton_input_singleton_output(self):
-        input_dominoes = [(1, 1)]
-        output_chain = chain(input_dominoes)
-        self.assert_correct_chain(input_dominoes, output_chain)
+Some test cases may use duplicate stones in a chain solution, assume that multiple Domino sets are being used.
 
-    def test_singleton_cant_be_chained(self):
-        input_dominoes = [(1, 2)]
-        output_chain = chain(input_dominoes)
-        self.refute_correct_chain(input_dominoes, output_chain)
+## Exception messages
 
-    def test_three_elements(self):
-        input_dominoes = [(1, 2), (3, 1), (2, 3)]
-        output_chain = chain(input_dominoes)
-        self.assert_correct_chain(input_dominoes, output_chain)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_can_reverse_dominoes(self):
-        input_dominoes = [(1, 2), (1, 3), (2, 3)]
-        output_chain = chain(input_dominoes)
-        self.assert_correct_chain(input_dominoes, output_chain)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_cant_be_chained(self):
-        input_dominoes = [(1, 2), (4, 1), (2, 3)]
-        output_chain = chain(input_dominoes)
-        self.refute_correct_chain(input_dominoes, output_chain)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_disconnected_simple(self):
-        input_dominoes = [(1, 1), (2, 2)]
-        output_chain = chain(input_dominoes)
-        self.refute_correct_chain(input_dominoes, output_chain)
+## Running the tests
 
-    def test_disconnected_double_loop(self):
-        input_dominoes = [(1, 2), (2, 1), (3, 4), (4, 3)]
-        output_chain = chain(input_dominoes)
-        self.refute_correct_chain(input_dominoes, output_chain)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_disconnected_single_isolated(self):
-        input_dominoes = [(1, 2), (2, 3), (3, 1), (4, 4)]
-        output_chain = chain(input_dominoes)
-        self.refute_correct_chain(input_dominoes, output_chain)
+- Python 2.7: `py.test dominoes_test.py`
+- Python 3.4+: `pytest dominoes_test.py`
 
-    def test_need_backtrack(self):
-        input_dominoes = [(1, 2), (2, 3), (3, 1), (2, 4), (2, 4)]
-        output_chain = chain(input_dominoes)
-        self.assert_correct_chain(input_dominoes, output_chain)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest dominoes_test.py`
 
-    def test_separate_loops(self):
-        input_dominoes = [(1, 2), (2, 3), (3, 1), (1, 1), (2, 2), (3, 3)]
-        output_chain = chain(input_dominoes)
-        self.assert_correct_chain(input_dominoes, output_chain)
+### Common `pytest` options
 
-    def test_nine_elements(self):
-        input_dominoes = [(1, 2), (5, 3), (3, 1), (1, 2), (2, 4), (1, 6),
-                          (2, 3), (3, 4), (5, 6)]
-        output_chain = chain(input_dominoes)
-        self.assert_correct_chain(input_dominoes, output_chain)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    # Utility methods
+For other options, see `python -m pytest -h`
 
-    def normalize_dominoes(self, dominoes):
-        return list(sorted(tuple(sorted(domino)) for domino in dominoes))
+## Submitting Exercises
 
-    def assert_same_dominoes(self, input_dominoes, output_chain):
-        msg = ('Dominoes used in the output must be the same '
-               'as the ones given in the input')
-        input_normal = self.normalize_dominoes(input_dominoes)
-        output_normal = self.normalize_dominoes(output_chain)
-        self.assertEqual(input_normal, output_normal, msg)
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/dominoes` directory.
 
-    def assert_consecutive_dominoes_match(self, output_chain):
-        for i in range(len(output_chain) - 1):
-            msg = ("In chain {}, right end of domino {} ({}) "
-                   "and left end of domino {} ({}) must match")
-            msg = msg.format(output_chain,
-                             i,
-                             output_chain[i],
-                             i + 1,
-                             output_chain[i + 1])
-            self.assertEqual(output_chain[i][1], output_chain[i + 1][0], msg)
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def assert_dominoes_at_ends_match(self, output_chain):
-        msg = ("In chain {}, left end of first domino ({}) and "
-               "right end of last domino ({}) must match")
-        msg = msg.format(output_chain, output_chain[0], output_chain[-1])
-        self.assertEqual(output_chain[0][0], output_chain[-1][1], msg)
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    def assert_correct_chain(self, input_dominoes, output_chain):
-        msg = 'There should be a chain for {}'.format(input_dominoes)
-        self.assertIsNotNone(output_chain, msg)
-        self.assert_same_dominoes(input_dominoes, output_chain)
-        if not any(output_chain):
-            return
-        self.assert_consecutive_dominoes_match(output_chain)
-        self.assert_dominoes_at_ends_match(output_chain)
+## Submitting Incomplete Solutions
 
-    def refute_correct_chain(self, input_dominoes, output_chain):
-        msg = 'There should be no valid chain for {}'.format(input_dominoes)
-        self.assertIsNone(output_chain, msg)
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.
