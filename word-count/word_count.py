@@ -4,7 +4,7 @@ import re
 def word_count(phrase):
     results = {}
     clean = phrase.lower().replace('_', ' ')
-    for match in re.findall("(\w+(?:'\w)?)", clean):
+    for match in re.findall(r"(\w+(?:'\w)?)", clean):
         try:
             results[match] += 1
         except KeyError:

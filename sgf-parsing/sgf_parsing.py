@@ -69,6 +69,8 @@ def parse(input_string):
         return ' ' if ch in ['\t'] else ch
 
     def peek():
+        if not stack:
+            raise ValueError('empty stack')
         return stack[0]
 
     def pop_until(ch):
