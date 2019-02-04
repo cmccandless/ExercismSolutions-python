@@ -32,5 +32,8 @@ def verse(n, start=True):
     #     return ''
     n = int(n)
     verb, noun = words[n]
-    return '{} the {}{}'.format('This is' if start else ' that {}'.format(verb),
-                                noun, '' if n == 0 else verse(n - 1, False))
+    return '{} the {}{}'.format(
+        'This is' if start else ' that {}'.format(verb),
+        noun,
+        '' if n == 0 else verse(n - 1, False)
+    )
