@@ -1,12 +1,18 @@
 from __future__ import division
-import fractions
+try:
+    from math import gcd
+except ImportError:
+    from fractions import gcd
 
 
 class Rational(object):
     def __init__(self, numer, denom):
-        gcd = fractions.gcd(numer, denom)
-        self.numer = numer // gcd
-        self.denom = denom // gcd
+        _gcd = gcd(numer, denom)
+        self.numer = numer // _gcd
+        self.denom = denom // _gcd
+        if self.denom < 0:
+            self.denom *= -1
+            self.numer *= -1
 
     def __eq__(self, other):
         return self.numer == other.numer and self.denom == other.denom

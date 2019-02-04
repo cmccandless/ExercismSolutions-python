@@ -16,10 +16,8 @@ words = [
 
 def recite(start, stop):
     def num_gen(start, stop):
-        # stop -= 0.5
         while start < stop:
             yield start
-            # start += 0.5
             start += 1
     start -= 1
     return [
@@ -34,5 +32,5 @@ def verse(n, start=True):
     #     return ''
     n = int(n)
     verb, noun = words[n]
-    return '{} the {}{}'.format('This is' if start else 'that {}'.format(verb),
+    return '{} the {}{}'.format('This is' if start else ' that {}'.format(verb),
                                 noun, '' if n == 0 else verse(n - 1, False))

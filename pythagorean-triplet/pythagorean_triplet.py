@@ -11,7 +11,7 @@ def triplets_in_range(min, max):
             if a >= min:
                 result.add((a, b, c))
             a, b, c = (a + x, b + y, c + z)
-    return set([(a, b, c) for a, b, c in result if a >= min and c <= max])
+    return set([(x, y, z) for x, y, z in result if x >= min and z <= max])
 
 
 def maxMin(a, b):

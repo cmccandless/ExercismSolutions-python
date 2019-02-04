@@ -26,4 +26,4 @@ before_script:
   - flake8
 
 script:
-  - make -j8 test
+  - make -j8 OPTS='-v' test

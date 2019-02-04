@@ -1,5 +1,5 @@
 from random import randint, seed
-from time import clock
+from time import perf_counter
 
 
 def rndChr():
@@ -8,10 +8,10 @@ def rndChr():
 
 class Robot:
     def __init__(self):
-        seed(clock())
+        seed(perf_counter())
         self.name = None
         self.reset()
 
     def reset(self):
-        seed(clock())
+        seed(perf_counter())
         self.name = '{}{}{:03}'.format(rndChr(), rndChr(), randint(0, 999))

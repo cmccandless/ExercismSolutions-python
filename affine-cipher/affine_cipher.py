@@ -1,6 +1,9 @@
 from functools import partial
 from itertools import chain, cycle
-from math import gcd
+try:
+    from math import gcd
+except ImportError:
+    from fractions import gcd
 
 ALPHA_START = ord('a')
 ALPHA_LENGTH = ord('z') - ALPHA_START + 1

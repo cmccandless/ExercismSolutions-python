@@ -3,7 +3,7 @@ PYTHON=python
 .PHONY: init lint test
 
 init:
-	@python -m pip install flake8
+	@python -m pip install flake8 pytest
 
 
 lint: FILES := .

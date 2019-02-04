@@ -1,19 +1,19 @@
 class School:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
         self.grades = {}
 
-    def add(self, name, grade):
+    def add_student(self, name, grade):
         try:
             self.grades[grade].append(name)
         except KeyError:
             self.grades[grade] = [name]
 
     def grade(self, gradeNo):
-        try:
-            return tuple(sorted(self.grades[gradeNo]))
-        except KeyError:
-            return tuple()
+        return sorted(self.grades.get(gradeNo, []))
 
-    def sort(self):
-        return sorted([(k, self.grade(k)) for k in self.grades.keys()])
+    def roster(self):
+        return [
+            student
+            for k in sorted(self.grades.keys())
+            for student in sorted(self.grades[k])
+        ]
