@@ -18,8 +18,8 @@ def largest_palindrome(max_factor, min_factor=0):
     validate_factors(min_factor, max_factor)
     best_factors = (min_factor, min_factor)
     best = (min_factor ** 2, {best_factors})
-    for m in reversed(range(min_factor, max_factor + 1)):
-        for n in reversed(range(min_factor, m + 1)):
+    for m in range(max_factor, min_factor - 1, -1):
+        for n in range(m, min_factor - 1, -1):
             p = m * n
             s = str(p)
             if s == s[::-1]:
