@@ -1,38 +1,62 @@
-import unittest
+# Difference Of Squares
 
-from difference_of_squares import difference, square_of_sum, sum_of_squares
+Find the difference between the square of the sum and the sum of the squares of the first N natural numbers.
 
+The square of the sum of the first ten natural numbers is
+(1 + 2 + ... + 10)² = 55² = 3025.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+The sum of the squares of the first ten natural numbers is
+1² + 2² + ... + 10² = 385.
 
-class DifferenceOfSquaresTest(unittest.TestCase):
-    def test_square_of_sum_1(self):
-        self.assertEqual(square_of_sum(1), 1)
+Hence the difference between the square of the sum of the first
+ten natural numbers and the sum of the squares of the first ten
+natural numbers is 3025 - 385 = 2640.
 
-    def test_square_of_sum_5(self):
-        self.assertEqual(square_of_sum(5), 225)
+## Exception messages
 
-    def test_square_of_sum_100(self):
-        self.assertEqual(square_of_sum(100), 25502500)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_sum_of_squares_1(self):
-        self.assertEqual(sum_of_squares(1), 1)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_sum_of_squares_5(self):
-        self.assertEqual(sum_of_squares(5), 55)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_sum_of_squares_100(self):
-        self.assertEqual(sum_of_squares(100), 338350)
+## Running the tests
 
-    def test_difference_of_squares_1(self):
-        self.assertEqual(difference(1), 0)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_difference_of_squares_5(self):
-        self.assertEqual(difference(5), 170)
+- Python 2.7: `py.test difference_of_squares_test.py`
+- Python 3.4+: `pytest difference_of_squares_test.py`
 
-    def test_difference_of_squares_100(self):
-        self.assertEqual(difference(100), 25164150)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest difference_of_squares_test.py`
 
+### Common `pytest` options
 
-if __name__ == '__main__':
-    unittest.main()
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/difference-of-squares` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Problem 6 at Project Euler [http://projecteuler.net/problem=6](http://projecteuler.net/problem=6)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

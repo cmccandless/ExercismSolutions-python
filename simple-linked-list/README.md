@@ -1,122 +1,83 @@
-import unittest
+# Simple Linked List
 
-from simple_linked_list import LinkedList, EmptyListException
+Write a simple linked list implementation that uses Elements and a List.
 
+The linked list is a fundamental data structure in computer science,
+often used in the implementation of other data structures. They're
+pervasive in functional programming languages, such as Clojure, Erlang,
+or Haskell, but far less common in imperative languages such as Ruby or
+Python.
 
-# No canonical data available for this exercise
+The simplest kind of linked list is a singly linked list. Each element in the
+list contains data and a "next" field pointing to the next element in the list
+of elements.
 
-class SimpleLinkedListTest(unittest.TestCase):
-    def test_empty_list_has_len_zero(self):
-        sut = LinkedList()
-        self.assertEqual(len(sut), 0)
+This variant of linked lists is often used to represent sequences or
+push-down stacks (also called a LIFO stack; Last In, First Out).
 
-    def test_singleton_list_has_len_one(self):
-        sut = LinkedList([1])
-        self.assertEqual(len(sut), 1)
+As a first take, lets create a singly linked list to contain the range (1..10),
+and provide functions to reverse a linked list and convert to and from arrays.
 
-    def test_non_empty_list_has_correct_len(self):
-        sut = LinkedList([1, 2, 3])
-        self.assertEqual(len(sut), 3)
+When implementing this in a language with built-in linked lists,
+implement your own abstract data type.
 
-    def test_error_on_empty_list_head(self):
-        sut = LinkedList()
-        with self.assertRaisesWithMessage(EmptyListException):
-            sut.head()
+## Hints
 
-    def test_singleton_list_has_head(self):
-        sut = LinkedList([1])
-        self.assertEqual(sut.head().value(), 1)
+To support `list()`, see [implementing an iterator for a class.](https://docs.python.org/3/tutorial/classes.html#iterators)
 
-    def test_non_empty_list_has_correct_head(self):
-        sut = LinkedList([1, 2])
-        self.assertEqual(sut.head().value(), 2)
+Additionally, note that Python2's `next()` has been replaced by `__next__()` in Python3. For dual compatibility, `next()` can be implemented as:
 
-    def test_can_push_to_non_empty_list(self):
-        sut = LinkedList([1, 2, 3])
-        sut.push(4)
-        self.assertEqual(len(sut), 4)
-
-    def test_pushing_to_empty_list_changes_head(self):
-        sut = LinkedList()
-        sut.push(5)
-        self.assertEqual(len(sut), 1)
-        self.assertEqual(sut.head().value(), 5)
-
-    def test_can_from_non_empty_list(self):
-        sut = LinkedList([3, 4, 5])
-        self.assertEqual(sut.pop(), 5)
-        self.assertEqual(len(sut), 2)
-        self.assertEqual(sut.head().value(), 4)
-
-    def test_pop_from_singleton_list_removes_head(self):
-        sut = LinkedList([1])
-        self.assertEqual(sut.pop(), 1)
-        with self.assertRaisesWithMessage(EmptyListException):
-            sut.head()
-
-    def test_error_on_empty_list_pop(self):
-        sut = LinkedList()
-        with self.assertRaisesWithMessage(EmptyListException):
-            sut.pop()
-
-    def test_push_and_pop(self):
-        sut = LinkedList([1, 2])
-        sut.push(3)
-        self.assertEqual(len(sut), 3)
-        self.assertEqual(sut.pop(), 3)
-        self.assertEqual(sut.pop(), 2)
-        self.assertEqual(sut.pop(), 1)
-        self.assertEqual(len(sut), 0)
-        sut.push(4)
-        self.assertEqual(len(sut), 1)
-        self.assertEqual(sut.head().value(), 4)
-
-    def test_singleton_list_head_has_no_next(self):
-        sut = LinkedList([1])
-        self.assertIsNone(sut.head().next())
-
-    def test_non_empty_list_traverse(self):
-        sut = LinkedList(range(10))
-        current = sut.head()
-        for i in range(10):
-            self.assertEqual(current.value(), 9 - i)
-            current = current.next()
-        self.assertIsNone(current)
-
-    def test_empty_linked_list_to_list_is_empty(self):
-        sut = LinkedList()
-        self.assertEqual(list(sut), [])
-
-    def test_singleton_linked_list_to_list_list_with_singular_element(self):
-        sut = LinkedList([1])
-        self.assertEqual(list(sut), [1])
-
-    def test_non_empty_linked_list_to_list_is_list_with_all_elements(self):
-        sut = LinkedList([1, 2, 3])
-        self.assertEqual(list(sut), [3, 2, 1])
-
-    def test_reversed_empty_list_is_empty_list(self):
-        sut = LinkedList([])
-        self.assertEqual(list(sut.reversed()), [])
-
-    def test_reversed_singleton_list_is_same_list(self):
-        sut = LinkedList([1])
-        self.assertEqual(list(sut.reversed()), [1])
-
-    def test_reverse_non_empty_list(self):
-        sut = LinkedList([1, 2, 3])
-        self.assertEqual(list(sut.reversed()), [1, 2, 3])
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+```Python
+def next(self):
+    return self.__next__()
+```
 
 
-if __name__ == '__main__':
-    unittest.main()
+## Exception messages
+
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test simple_linked_list_test.py`
+- Python 3.4+: `pytest simple_linked_list_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest simple_linked_list_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/simple-linked-list` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Inspired by 'Data Structures and Algorithms with Object-Oriented Design Patterns in Ruby', singly linked-lists. [http://www.brpreiss.com/books/opus8/html/page96.html#SECTION004300000000000000000](http://www.brpreiss.com/books/opus8/html/page96.html#SECTION004300000000000000000)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

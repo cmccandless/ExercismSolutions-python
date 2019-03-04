@@ -1,176 +1,72 @@
-import unittest
+# Word Search
 
-from word_search import WordSearch, Point
+In word search puzzles you get a square of letters and have to find specific
+words in them.
 
+For example:
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.1
+```text
+jefblpepre
+camdcimgtc
+oivokprjsm
+pbwasqroua
+rixilelhrs
+wolcqlirpc
+screeaumgr
+alxhpburyi
+jalaycalmp
+clojurermt
+```
 
-class WordSearchTest(unittest.TestCase):
+There are several programming languages hidden in the above square.
 
-    def test_initial_game_grid(self):
-        puzzle = ['jefblpepre']
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertIsNone(searchAnswer)
+Words can be hidden in all kinds of directions: left-to-right, right-to-left,
+vertical and diagonal.
 
-    def test_left_to_right_word(self):
-        puzzle = ['clojurermt']
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertEqual(searchAnswer, (Point(0, 0), Point(6, 0)))
+Given a puzzle and a list of words return the location of the first and last
+letter of each word.
 
-    def test_left_to_right_word_different_position(self):
-        puzzle = ['mtclojurer']
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertEqual(searchAnswer, (Point(2, 0), Point(8, 0)))
+## Exception messages
 
-    def test_different_left_to_right_word(self):
-        puzzle = ['coffeelplx']
-        searchAnswer = WordSearch(puzzle).search('coffee')
-        self.assertEqual(searchAnswer, (Point(0, 0), Point(5, 0)))
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_different_left_to_right_word_different_position(self):
-        puzzle = ['xcoffeezlp']
-        searchAnswer = WordSearch(puzzle).search('coffee')
-        self.assertEqual(searchAnswer, (Point(1, 0), Point(6, 0)))
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_left_to_right_word_two_lines(self):
-        puzzle = ['jefblpepre',
-                  'tclojurerm']
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertEqual(searchAnswer, (Point(1, 1), Point(7, 1)))
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_left_to_right_word_three_lines(self):
-        puzzle = ['camdcimgtc',
-                  'jefblpepre',
-                  'clojurermt']
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertEqual(searchAnswer, (Point(0, 2), Point(6, 2)))
+## Running the tests
 
-    def test_left_to_right_word_ten_lines(self):
-        puzzle = ['jefblpepre',
-                  'camdcimgtc',
-                  'oivokprjsm',
-                  'pbwasqroua',
-                  'rixilelhrs',
-                  'wolcqlirpc',
-                  'screeaumgr',
-                  'alxhpburyi',
-                  'jalaycalmp',
-                  'clojurermt']
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertEqual(searchAnswer, (Point(0, 9), Point(6, 9)))
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_left_to_right_word_ten_lines_different_position(self):
-        puzzle = ['jefblpepre',
-                  'camdcimgtc',
-                  'oivokprjsm',
-                  'pbwasqroua',
-                  'rixilelhrs',
-                  'wolcqlirpc',
-                  'screeaumgr',
-                  'alxhpburyi',
-                  'clojurermt',
-                  'jalaycalmp']
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertEqual(searchAnswer, (Point(0, 8), Point(6, 8)))
+- Python 2.7: `py.test word_search_test.py`
+- Python 3.4+: `pytest word_search_test.py`
 
-    def test_different_left_to_right_word_ten_lines(self):
-        puzzle = ['jefblpepre',
-                  'camdcimgtc',
-                  'oivokprjsm',
-                  'pbwasqroua',
-                  'rixilelhrs',
-                  'wolcqlirpc',
-                  'fortranftw',
-                  'alxhpburyi',
-                  'clojurermt',
-                  'jalaycalmp']
-        searchAnswer = WordSearch(puzzle).search('fortran')
-        self.assertEqual(searchAnswer, (Point(0, 6), Point(6, 6)))
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest word_search_test.py`
 
-    def test_multiple_words(self):
-        puzzle = ['jefblpepre',
-                  'camdcimgtc',
-                  'oivokprjsm',
-                  'pbwasqroua',
-                  'rixilelhrs',
-                  'wolcqlirpc',
-                  'fortranftw',
-                  'alxhpburyi',
-                  'jalaycalmp',
-                  'clojurermt']
-        searchAnswer = WordSearch(puzzle).search('fortran')
-        self.assertEqual(searchAnswer, (Point(0, 6), Point(6, 6)))
-        searchAnswer = WordSearch(puzzle).search('clojure')
-        self.assertEqual(searchAnswer, (Point(0, 9), Point(6, 9)))
+### Common `pytest` options
 
-    def test_single_word_right_to_left(self):
-        puzzle = ['rixilelhrs']
-        searchAnswer = WordSearch(puzzle).search('elixir')
-        self.assertEqual(searchAnswer, (Point(5, 0), Point(0, 0)))
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    @classmethod
-    def setUpClass(cls):
-        puzzle = ['jefblpepre',
-                  'camdcimgtc',
-                  'oivokprjsm',
-                  'pbwasqroua',
-                  'rixilelhrs',
-                  'wolcqlirpc',
-                  'screeaumgr',
-                  'alxhpburyi',
-                  'jalaycalmp',
-                  'clojurermt']
-        cls.example = WordSearch(puzzle)
+For other options, see `python -m pytest -h`
 
-    def test_horizontal_words_different_directions(self):
-        self.assertEqual(
-            self.example.search('clojure'),
-            (Point(0, 9), Point(6, 9))
-        )
-        self.assertEqual(
-            self.example.search('elixir'),
-            (Point(5, 4), Point(0, 4))
-        )
+## Submitting Exercises
 
-    def test_vertical_words_top_to_bottom(self):
-        self.assertEqual(
-            self.example.search('ecmascript'),
-            (Point(9, 0), Point(9, 9))
-        )
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/word-search` directory.
 
-    def test_vertical_words_bottom_to_top(self):
-        self.assertEqual(
-            self.example.search('rust'),
-            (Point(8, 4), Point(8, 1))
-        )
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_diagonal_words_top_left_to_bottom_right(self):
-        self.assertEqual(
-            self.example.search('java'),
-            (Point(0, 0), Point(3, 3))
-        )
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    def test_diagonal_upper_bottom_right_to_top_left(self):
-        self.assertEqual(
-            self.example.search('lua'),
-            (Point(7, 8), Point(5, 6))
-        )
+## Submitting Incomplete Solutions
 
-    def test_diagonal_upper_bottom_left_to_top_right(self):
-        self.assertEqual(
-            self.example.search('lisp'),
-            (Point(2, 5), Point(5, 2))
-        )
-
-    def test_diagonal_upper_top_right_to_bottom_left(self):
-        self.assertEqual(
-            self.example.search('ruby'),
-            (Point(7, 5), Point(4, 8))
-        )
-
-    def test_words_that_are_not_in_the_puzzle(self):
-        self.assertIsNone(self.example.search('haskell'))
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

@@ -1,26 +1,56 @@
-import unittest
+# Reverse String
 
-from reverse_string import reverse
+Reverse a string
 
+For example:
+input: "cool"
+output: "looc"
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+## Exception messages
 
-class ReverseStringTest(unittest.TestCase):
-    def test_empty_string(self):
-            self.assertEqual(reverse(''), '')
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_a_word(self):
-            self.assertEqual(reverse('robot'), 'tobor')
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_a_capitalized_word(self):
-            self.assertEqual(reverse('Ramen'), 'nemaR')
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_a_sentence_with_punctuation(self):
-            self.assertEqual(reverse('I\'m hungry!'), '!yrgnuh m\'I')
+## Running the tests
 
-    def test_a_palindrome(self):
-            self.assertEqual(reverse('racecar'), 'racecar')
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
+- Python 2.7: `py.test reverse_string_test.py`
+- Python 3.4+: `pytest reverse_string_test.py`
 
-if __name__ == '__main__':
-    unittest.main()
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest reverse_string_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/reverse-string` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Introductory challenge to reverse an input string [https://medium.freecodecamp.org/how-to-reverse-a-string-in-javascript-in-3-different-ways-75e4763c68cb](https://medium.freecodecamp.org/how-to-reverse-a-string-in-javascript-in-3-different-ways-75e4763c68cb)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

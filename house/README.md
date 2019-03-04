@@ -1,157 +1,155 @@
-# Rhyme found in http://www.pitt.edu/~dash/type2035.html
+# House
 
-import unittest
+Recite the nursery rhyme 'This is the House that Jack Built'.
 
-from house import recite
+> [The] process of placing a phrase of clause within another phrase of
+> clause is called embedding. It is through the processes of recursion
+> and embedding that we are able to take a finite number of forms (words
+> and phrases) and construct an infinite number of expressions.
+> Furthermore, embedding also allows us to construct an infinitely long
+> structure, in theory anyway.
 
+- [papyr.com](http://papyr.com/hypertextbooks/grammar/ph_noun.htm)
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.2.0
+The nursery rhyme reads as follows:
 
-class HouseTest(unittest.TestCase):
-    def test_verse_one(self):
-        expected = ["This is the house that Jack built."]
-        self.assertEqual(recite(1, 1), expected)
+```text
+This is the house that Jack built.
 
-    def test_verse_two(self):
-        expected = [
-            "This is the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(2, 2), expected)
+This is the malt
+that lay in the house that Jack built.
 
-    def test_verse_three(self):
-        expected = [
-            "This is the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(3, 3), expected)
+This is the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_four(self):
-        expected = [
-            "This is the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(4, 4), expected)
+This is the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_five(self):
-        expected = [
-            "This is the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(5, 5), expected)
+This is the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_six(self):
-        expected = [
-            "This is the cow with the crumpled horn "
-            "that tossed the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(6, 6), expected)
+This is the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_seven(self):
-        expected = [
-            "This is the maiden all forlorn "
-            "that milked the cow with the crumpled horn "
-            "that tossed the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(7, 7), expected)
+This is the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_eight(self):
-        expected = [
-            "This is the man all tattered and torn "
-            "that kissed the maiden all forlorn "
-            "that milked the cow with the crumpled horn "
-            "that tossed the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(8, 8), expected)
+This is the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_nine(self):
-        expected = [
-            "This is the priest all shaven and shorn "
-            "that married the man all tattered and torn "
-            "that kissed the maiden all forlorn "
-            "that milked the cow with the crumpled horn "
-            "that tossed the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(9, 9), expected)
+This is the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_10(self):
-        expected = [
-            "This is the rooster that crowed in the morn "
-            "that woke the priest all shaven and shorn "
-            "that married the man all tattered and torn "
-            "that kissed the maiden all forlorn "
-            "that milked the cow with the crumpled horn "
-            "that tossed the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(10, 10), expected)
+This is the rooster that crowed in the morn
+that woke the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_11(self):
-        expected = [
-            "This is the farmer sowing his corn "
-            "that kept the rooster that crowed in the morn "
-            "that woke the priest all shaven and shorn "
-            "that married the man all tattered and torn "
-            "that kissed the maiden all forlorn "
-            "that milked the cow with the crumpled horn "
-            "that tossed the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(11, 11), expected)
+This is the farmer sowing his corn
+that kept the rooster that crowed in the morn
+that woke the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
 
-    def test_verse_12(self):
-        expected = [
-            "This is the horse and the hound and the horn "
-            "that belonged to the farmer sowing his corn "
-            "that kept the rooster that crowed in the morn "
-            "that woke the priest all shaven and shorn "
-            "that married the man all tattered and torn "
-            "that kissed the maiden all forlorn "
-            "that milked the cow with the crumpled horn "
-            "that tossed the dog "
-            "that worried the cat "
-            "that killed the rat "
-            "that ate the malt "
-            "that lay in the house that Jack built."
-        ]
-        self.assertEqual(recite(12, 12), expected)
+This is the horse and the hound and the horn
+that belonged to the farmer sowing his corn
+that kept the rooster that crowed in the morn
+that woke the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+```
 
-    def test_multiple_verses(self):
-        expected = [recite(i, i)[0] for i in range(4, 9)]
-        self.assertEqual(recite(4, 8), expected)
+## Exception messages
 
-    def test_full_rhyme(self):
-        expected = [recite(i, i)[0] for i in range(1, 13)]
-        self.assertEqual(recite(1, 12), expected)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-if __name__ == '__main__':
-    unittest.main()
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test house_test.py`
+- Python 3.4+: `pytest house_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest house_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/house` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+British nursery rhyme [http://en.wikipedia.org/wiki/This_Is_The_House_That_Jack_Built](http://en.wikipedia.org/wiki/This_Is_The_House_That_Jack_Built)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

@@ -1,61 +1,84 @@
-import unittest
+# Grade School
 
-from grade_school import School
+Given students' names along with the grade that they are in, create a roster
+for the school.
 
+In the end, you should be able to:
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
+- Add a student's name to the roster for a grade
+  - "Add Jim to grade 2."
+  - "OK."
+- Get a list of all students enrolled in a grade
+  - "Which students are in grade 2?"
+  - "We've only got Jim just now."
+- Get a sorted list of all students in all grades.  Grades should sort
+  as 1, 2, 3, etc., and students within a grade should be sorted
+  alphabetically by name.
+  - "Who all is enrolled in school right now?"
+  - "Grade 1: Anna, Barb, and Charlie. Grade 2: Alex, Peter, and Zoe.
+    Grade 3…"
 
-class GradeSchoolTest(unittest.TestCase):
-    def test_adding_student_adds_them_to_sorted_roster(self):
-        school = School()
-        school.add_student(name='Aimee', grade=2)
-        expected = ['Aimee']
-        self.assertEqual(school.roster(), expected)
+Note that all our students only have one name.  (It's a small town, what
+do you want?)
 
-    def test_adding_more_students_adds_them_to_sorted_roster(self):
-        school = School()
-        school.add_student(name='Blair', grade=2)
-        school.add_student(name='James', grade=2)
-        school.add_student(name='Paul', grade=2)
-        expected = ['Blair', 'James', 'Paul']
-        self.assertEqual(school.roster(), expected)
+## For bonus points
 
-    def test_students_in_different_grades_in_same_roster(self):
-        school = School()
-        school.add_student(name='Chelsea', grade=3)
-        school.add_student(name='Logan', grade=7)
-        expected = ['Chelsea', 'Logan']
-        self.assertEqual(school.roster(), expected)
+Did you get the tests passing and the code clean? If you want to, these
+are some additional things you could try:
 
-    def test_roster_returns_empty_list_if_no_students_are_enrolled(self):
-        self.assertEqual(School().roster(), [])
+- If you're working in a language with mutable data structures and your
+  implementation allows outside code to mutate the school's internal DB
+  directly, see if you can prevent this. Feel free to introduce additional
+  tests.
 
-    def test_roster_is_sorted_by_grade_then_name(self):
-        school = School()
-        for name, grade in [
-            ('Peter', 2),
-            ('Anna', 1),
-            ('Barb', 1),
-            ('Zoe', 2),
-            ('Alex', 2),
-            ('Jim', 3),
-            ('Charlie', 1),
-        ]:
-            school.add_student(name, grade)
-        expected = ['Anna', 'Barb', 'Charlie', 'Alex', 'Peter', 'Zoe', 'Jim']
-        self.assertEqual(school.roster(), expected)
+Then please share your thoughts in a comment on the submission. Did this
+experiment make the code better? Worse? Did you learn anything from it?
 
-    def test_grade_returns_students_in_that_grade_in_alphabetical_order(self):
-        school = School()
-        school.add_student(name='Franklin', grade=5)
-        school.add_student(name='Bradley', grade=5)
-        school.add_student(name='Jeff', grade=1)
-        expected = ['Bradley', 'Franklin']
-        self.assertEqual(school.grade(5), expected)
+## Exception messages
 
-    def test_grade_returns_empty_list_if_no_students_are_in_that_grade(self):
-        self.assertEqual(School().grade(1), [])
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-if __name__ == '__main__':
-    unittest.main()
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test grade_school_test.py`
+- Python 3.4+: `pytest grade_school_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest grade_school_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/grade-school` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+A pairing session with Phil Battos at gSchool [http://gschool.it](http://gschool.it)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

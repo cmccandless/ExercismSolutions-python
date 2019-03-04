@@ -1,41 +1,67 @@
-import unittest
+# Space Age
 
-from space_age import SpaceAge
+Given an age in seconds, calculate how old someone would be on:
 
+   - Earth: orbital period 365.25 Earth days, or 31557600 seconds
+   - Mercury: orbital period 0.2408467 Earth years
+   - Venus: orbital period 0.61519726 Earth years
+   - Mars: orbital period 1.8808158 Earth years
+   - Jupiter: orbital period 11.862615 Earth years
+   - Saturn: orbital period 29.447498 Earth years
+   - Uranus: orbital period 84.016846 Earth years
+   - Neptune: orbital period 164.79132 Earth years
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+So if you were told someone were 1,000,000,000 seconds old, you should
+be able to say that they're 31.69 Earth-years old.
 
-class SpaceAgeTest(unittest.TestCase):
+If you're wondering why Pluto didn't make the cut, go watch [this
+youtube video](http://www.youtube.com/watch?v=Z_2gbGXzFbs).
 
-    def test_age_on_mercury(self):
-        self.assertEqual(SpaceAge(2134835688).on_mercury(), 280.88)
+## Exception messages
 
-    def test_age_on_venus(self):
-        self.assertEqual(SpaceAge(189839836).on_venus(), 9.78)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_age_on_earth(self):
-        self.assertEqual(SpaceAge(1000000000).on_earth(), 31.69)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_age_on_mars(self):
-        self.assertEqual(SpaceAge(2329871239).on_mars(), 39.25)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_age_on_jupiter(self):
-        self.assertEqual(SpaceAge(901876382).on_jupiter(), 2.41)
+## Running the tests
 
-    def test_age_on_saturn(self):
-        self.assertEqual(SpaceAge(3000000000).on_saturn(), 3.23)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_age_on_uranus(self):
-        self.assertEqual(SpaceAge(3210123456).on_uranus(), 1.21)
+- Python 2.7: `py.test space_age_test.py`
+- Python 3.4+: `pytest space_age_test.py`
 
-    def test_age_on_neptune(self):
-        self.assertEqual(SpaceAge(8210123456).on_neptune(), 1.58)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest space_age_test.py`
 
-    # Additional tests for this track
+### Common `pytest` options
 
-    def test_age_in_seconds(self):
-        self.assertEqual(SpaceAge(1e6).seconds, 1e6)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
+For other options, see `python -m pytest -h`
 
-if __name__ == '__main__':
-    unittest.main()
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/space-age` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Partially inspired by Chapter 1 in Chris Pine's online Learn to Program tutorial. [http://pine.fm/LearnToProgram/?Chapter=01](http://pine.fm/LearnToProgram/?Chapter=01)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

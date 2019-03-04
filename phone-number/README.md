@@ -1,90 +1,78 @@
-import unittest
+# Phone Number
 
-from phone_number import Phone
+Clean up user-entered phone numbers so that they can be sent SMS messages.
 
+The **North American Numbering Plan (NANP)** is a telephone numbering system used by many countries in North America like the United States, Canada or Bermuda. All NANP-countries share the same international country code: `1`.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.4.0
+NANP numbers are ten-digit numbers consisting of a three-digit Numbering Plan Area code, commonly known as *area code*, followed by a seven-digit local number. The first three digits of the local number represent the *exchange code*, followed by the unique four-digit number which is the *subscriber number*.
 
-class PhoneNumberTest(unittest.TestCase):
-    def test_cleans_number(self):
-        number = Phone("(223) 456-7890").number
-        self.assertEqual(number, "2234567890")
+The format is usually represented as
 
-    def test_cleans_number_with_dots(self):
-        number = Phone("223.456.7890").number
-        self.assertEqual(number, "2234567890")
+```text
+(NXX)-NXX-XXXX
+```
 
-    def test_cleans_number_with_multiple_spaces(self):
-        number = Phone("223 456   7890   ").number
-        self.assertEqual(number, "2234567890")
+where `N` is any digit from 2 through 9 and `X` is any digit from 0 through 9.
 
-    def test_invalid_when_9_digits(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("123456789")
+Your task is to clean up differently formatted telephone numbers by removing punctuation and the country code (1) if present.
 
-    def test_invalid_when_11_digits_and_first_not_1(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("22234567890")
+For example, the inputs
+- `+1 (613)-995-0253`
+- `613-995-0253`
+- `1 613 995 0253`
+- `613.995.0253`
 
-    def test_valid_when_11_digits_and_first_is_1(self):
-        number = Phone("12234567890").number
-        self.assertEqual(number, "2234567890")
+should all produce the output
 
-    def test_valid_when_11_digits_and_first_is_1_with_punctuation(self):
-        number = Phone("+1 (223) 456-7890").number
-        self.assertEqual(number, "2234567890")
+`6139950253`
 
-    def test_invalid_when_more_than_11_digits(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("321234567890")
+**Note:** As this exercise only deals with telephone numbers used in NANP-countries, only 1 is considered a valid country code.
 
-    def test_invalid_with_letters(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("123-abc-7890")
+## Exception messages
 
-    def test_invalid_with_punctuation(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("123-@:!-7890")
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_invalid_if_area_code_starts_with_0(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("(023) 456-7890")
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_invalid_if_area_code_starts_with_1(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("(123) 456-7890")
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_invalid_if_exchange_code_starts_with_0(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("(223) 056-7890")
+## Running the tests
 
-    def test_invalid_if_exchange_code_starts_with_1(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Phone("(223) 156-7890")
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    # Track specific tests
-    def test_area_code(self):
-        number = Phone("2234567890")
-        self.assertEqual(number.area_code, "223")
+- Python 2.7: `py.test phone_number_test.py`
+- Python 3.4+: `pytest phone_number_test.py`
 
-    def test_pretty_print(self):
-        number = Phone("2234567890")
-        self.assertEqual(number.pretty(), "(223) 456-7890")
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest phone_number_test.py`
 
-    def test_pretty_print_with_full_us_phone_number(self):
-        number = Phone("12234567890")
-        self.assertEqual(number.pretty(), "(223) 456-7890")
+### Common `pytest` options
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+For other options, see `python -m pytest -h`
 
+## Submitting Exercises
 
-if __name__ == '__main__':
-    unittest.main()
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/phone-number` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Event Manager by JumpstartLab [http://tutorials.jumpstartlab.com/projects/eventmanager.html](http://tutorials.jumpstartlab.com/projects/eventmanager.html)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

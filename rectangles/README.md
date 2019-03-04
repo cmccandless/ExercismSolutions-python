@@ -1,93 +1,109 @@
-import unittest
+# Rectangles
 
-from rectangles import count
+Count the rectangles in an ASCII diagram like the one below.
 
+```text
+   +--+
+  ++  |
++-++--+
+|  |  |
++--+--+
+```
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+The above diagram contains 6 rectangles:
 
-class RectanglesTest(unittest.TestCase):
-    def test_no_rows(self):
-        self.assertEqual(count([]), 0)
-
-    def test_no_columns(self):
-        self.assertEqual(count(['']), 0)
-
-    def test_no_rectangles(self):
-        self.assertEqual(count([' ']), 0)
-
-    def test_one_rectangle(self):
-        lines = ['+-+',
-                 '| |',
-                 '+-+']
-        self.assertEqual(count(lines), 1)
-
-    def test_two_rectangles_without_shared_parts(self):
-        lines = ['  +-+',
-                 '  | |',
-                 '+-+-+',
-                 '| |  ',
-                 '+-+  ']
-        self.assertEqual(count(lines), 2)
-
-    def test_five_rectangles_with_shared_parts(self):
-        lines = ['  +-+',
-                 '  | |',
-                 '+-+-+',
-                 '| | |',
-                 '+-+-+']
-        self.assertEqual(count(lines), 5)
-
-    def test_rectangle_of_height_1_is_counted(self):
-        lines = ['+--+',
-                 '+--+']
-        self.assertEqual(count(lines), 1)
-
-    def test_rectangle_of_width_1_is_counted(self):
-        lines = ['++',
-                 '||',
-                 '++']
-        self.assertEqual(count(lines), 1)
-
-    def test_1x1_square_is_counted(self):
-        lines = ['++',
-                 '++']
-        self.assertEqual(count(lines), 1)
-
-    def test_only_complete_rectangles_are_counted(self):
-        lines = ['  +-+',
-                 '    |',
-                 '+-+-+',
-                 '| | -',
-                 '+-+-+']
-        self.assertEqual(count(lines), 1)
-
-    def test_rectangles_can_be_of_different_sizes(self):
-        lines = ['+------+----+',
-                 '|      |    |',
-                 '+---+--+    |',
-                 '|   |       |',
-                 '+---+-------+']
-        self.assertEqual(count(lines), 3)
-
-    def test_corner_is_required_for_a_rectangle_to_be_complete(self):
-        lines = ['+------+----+',
-                 '|      |    |',
-                 '+------+    |',
-                 '|   |       |',
-                 '+---+-------+']
-        self.assertEqual(count(lines), 2)
-
-    def test_large_input_with_many_rectangles(self):
-        lines = ['+---+--+----+',
-                 '|   +--+----+',
-                 '+---+--+    |',
-                 '|   +--+----+',
-                 '+---+--+--+-+',
-                 '+---+--+--+-+',
-                 '+------+  | |',
-                 '          +-+']
-        self.assertEqual(count(lines), 60)
+```text
 
 
-if __name__ == '__main__':
-    unittest.main()
++-----+
+|     |
++-----+
+```
+
+```text
+   +--+
+   |  |
+   |  |
+   |  |
+   +--+
+```
+
+```text
+   +--+
+   |  |
+   +--+
+
+
+```
+
+```text
+
+
+   +--+
+   |  |
+   +--+
+```
+
+```text
+
+
++--+
+|  |
++--+
+```
+
+```text
+
+  ++
+  ++
+
+
+```
+
+You may assume that the input is always a proper rectangle (i.e. the length of
+every line equals the length of the first line).
+
+## Exception messages
+
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test rectangles_test.py`
+- Python 3.4+: `pytest rectangles_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest rectangles_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/rectangles` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

@@ -1,66 +1,76 @@
-import unittest
+# Grains
 
-from grains import (
-    on_square,
-    total_after,
-)
+Calculate the number of grains of wheat on a chessboard given that the number
+on each square doubles.
 
+There once was a wise servant who saved the life of a prince. The king
+promised to pay whatever the servant could dream up. Knowing that the
+king loved chess, the servant told the king he would like to have grains
+of wheat. One grain on the first square of a chess board. Two grains on
+the next. Four on the third, and so on.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+There are 64 squares on a chessboard.
 
-class GrainsTest(unittest.TestCase):
-    def test_square_1(self):
-        self.assertEqual(on_square(1), 1)
+Write code that shows:
+- how many grains were on each square, and
+- the total number of grains
 
-    def test_square_2(self):
-        self.assertEqual(on_square(2), 2)
+## For bonus points
 
-    def test_square_3(self):
-        self.assertEqual(on_square(3), 4)
+Did you get the tests passing and the code clean? If you want to, these
+are some additional things you could try:
 
-    def test_square_4(self):
-        self.assertEqual(on_square(4), 8)
+- Optimize for speed.
+- Optimize for readability.
 
-    def test_square_16(self):
-        self.assertEqual(on_square(16), 32768)
+Then please share your thoughts in a comment on the submission. Did this
+experiment make the code better? Worse? Did you learn anything from it?
 
-    def test_square_32(self):
-        self.assertEqual(on_square(32), 2147483648)
+## Exception messages
 
-    def test_square_64(self):
-        self.assertEqual(on_square(64), 9223372036854775808)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_square_0_raises_exception(self):
-        with self.assertRaisesWithMessage(ValueError):
-            on_square(0)
-        with self.assertRaisesWithMessage(ValueError):
-            total_after(0)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_square_negative_raises_exception(self):
-        with self.assertRaisesWithMessage(ValueError):
-            on_square(-1)
-        with self.assertRaisesWithMessage(ValueError):
-            total_after(-1)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_square_gt_64_raises_exception(self):
-        with self.assertRaisesWithMessage(ValueError):
-            on_square(65)
-        with self.assertRaisesWithMessage(ValueError):
-            total_after(65)
+## Running the tests
 
-    def test_total(self):
-        self.assertEqual(total_after(64), 18446744073709551615)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+- Python 2.7: `py.test grains_test.py`
+- Python 3.4+: `pytest grains_test.py`
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest grains_test.py`
 
+### Common `pytest` options
 
-if __name__ == '__main__':
-    unittest.main()
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/grains` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+JavaRanch Cattle Drive, exercise 6 [http://www.javaranch.com/grains.jsp](http://www.javaranch.com/grains.jsp)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

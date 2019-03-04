@@ -1,384 +1,71 @@
-import unittest
-
-from forth import evaluate, StackUnderflowError
-
-
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.6.0
-
-class ForthParsingTest(unittest.TestCase):
-    def test_numbers_just_get_pushed_to_stack(self):
-        input_data = ["1 2 3 4 5"]
-        expected = [1, 2, 3, 4, 5]
-        self.assertEqual(evaluate(input_data), expected)
-
-
-class ForthAdditionTest(unittest.TestCase):
-    def test_can_add_two_numbers(self):
-        input_data = ["1 2 +"]
-        expected = [3]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["+"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    def test_errors_if_there_is_only_one_value_on_the_stack(self):
-        input_data = ["1 +"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthSubtractionTest(unittest.TestCase):
-    def test_can_subtract_two_numbers(self):
-        input_data = ["3 4 -"]
-        expected = [-1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["-"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    def test_errors_if_there_is_only_one_value_on_the_stack(self):
-        input_data = ["1 -"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthMultiplicationTest(unittest.TestCase):
-    def test_can_multiply_two_numbers(self):
-        input_data = ["2 4 *"]
-        expected = [8]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["*"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    def test_errors_if_there_is_only_one_value_on_the_stack(self):
-        input_data = ["1 *"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthDivisionTest(unittest.TestCase):
-    def test_can_divide_two_numbers(self):
-        input_data = ["12 3 /"]
-        expected = [4]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_performs_integer_division(self):
-        input_data = ["8 3 /"]
-        expected = [2]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_dividing_by_zero(self):
-        input_data = ["4 0 /"]
-        with self.assertRaisesWithMessage(ZeroDivisionError):
-            evaluate(input_data)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["/"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    def test_errors_if_there_is_only_one_value_on_the_stack(self):
-        input_data = ["1 /"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthCombinedArithmeticTest(unittest.TestCase):
-    def test_addition_and_subtraction(self):
-        input_data = ["1 2 + 4 -"]
-        expected = [-1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_multiplication_and_division(self):
-        input_data = ["2 4 * 3 /"]
-        expected = [2]
-        self.assertEqual(evaluate(input_data), expected)
-
-
-class ForthDupTest(unittest.TestCase):
-    def test_copies_a_value_on_the_stack(self):
-        input_data = ["1 dup"]
-        expected = [1, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_copies_the_top_value_on_the_stack(self):
-        input_data = ["1 2 dup"]
-        expected = [1, 2, 2]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["dup"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthDropTest(unittest.TestCase):
-    def test_removes_the_top_value_on_the_stack_if_it_is_the_only_one(self):
-        input_data = ["1 DROP"]
-        expected = []
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_removes_the_top_value_on_the_stack_if_it_not_the_only_one(self):
-        input_data = ["3 4 DROP"]
-        expected = [3]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["drop"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthSwapTest(unittest.TestCase):
-    def test_swaps_only_two_values_on_stack(self):
-        input_data = ["1 2 SWAP"]
-        expected = [2, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_swaps_two_two_values_on_stack(self):
-        input_data = ["1 2 3 SWAP"]
-        expected = [1, 3, 2]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["swap"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    def test_errors_if_there_is_only_one_value_on_the_stack(self):
-        input_data = ["1 swap"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthOverTest(unittest.TestCase):
-    def test_copies_the_second_element_if_there_are_only_two(self):
-        input_data = ["1 2 OVER"]
-        expected = [1, 2, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_copies_the_second_element_if_there_are_more_than_two(self):
-        input_data = ["1 2 3 OVER"]
-        expected = [1, 2, 3, 2]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_errors_if_there_is_nothing_on_the_stack(self):
-        input_data = ["over"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    def test_errors_if_there_is_only_one_value_on_the_stack(self):
-        input_data = ["1 over"]
-        with self.assertRaisesWithMessage(StackUnderflowError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthUserDefinedWordsTest(unittest.TestCase):
-    def test_can_consist_of_built_in_words(self):
-        input_data = [
-            ": dup-twice dup dup ;",
-            "1 dup-twice"
-        ]
-        expected = [1, 1, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_execute_in_the_right_order(self):
-        input_data = [
-            ": countup 1 2 3 ;",
-            "countup"
-        ]
-        expected = [1, 2, 3]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_can_override_other_user_defined_words(self):
-        input_data = [
-            ": foo dup ;",
-            ": foo dup dup ;",
-            "1 foo"
-        ]
-        expected = [1, 1, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_can_override_built_in_words(self):
-        input_data = [
-            ": swap dup ;",
-            "1 swap"
-        ]
-        expected = [1, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_can_override_built_in_operators(self):
-        input_data = [
-            ": + * ;",
-            "3 4 +"
-        ]
-        expected = [12]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_can_use_different_words_with_same_name(self):
-        input_data = [
-            ": foo 5 ;",
-            ": bar foo ;",
-            ": foo 6 ;",
-            "bar foo"
-        ]
-        expected = [5, 6]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_can_define_word_that_uses_word_with_same_name(self):
-        input_data = [
-            ": foo 10 ;",
-            ": foo foo 1 + ;",
-            "foo"
-        ]
-        expected = [11]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_cannot_redefine_numbers(self):
-        input_data = [": 1 2 ;"]
-        with self.assertRaisesWithMessage(ValueError):
-            evaluate(input_data)
-
-    def test_errors_if_executing_a_non_existent_word(self):
-        input_data = ["foo"]
-        with self.assertRaisesWithMessage(ValueError):
-            evaluate(input_data)
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-class ForthCaseInsensitivityTest(unittest.TestCase):
-    def test_dup_is_case_insensitive(self):
-        input_data = ["1 DUP Dup dup"]
-        expected = [1, 1, 1, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_drop_is_case_insensitive(self):
-        input_data = ["1 2 3 4 DROP Drop drop"]
-        expected = [1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_swap_is_case_insensitive(self):
-        input_data = ["1 2 SWAP 3 Swap 4 swap"]
-        expected = [2, 3, 4, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_over_is_case_insensitive(self):
-        input_data = ["1 2 OVER Over over"]
-        expected = [1, 2, 1, 2, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_user_defined_words_are_case_insensitive(self):
-        input_data = [
-            ": foo dup ;",
-            "1 FOO Foo foo"
-        ]
-        expected = [1, 1, 1, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-    def test_definitions_are_case_insensitive(self):
-        input_data = [
-            ": SWAP DUP Dup dup ;",
-            "1 swap"
-        ]
-        expected = [1, 1, 1, 1]
-        self.assertEqual(evaluate(input_data), expected)
-
-
-if __name__ == '__main__':
-    unittest.main()
+# Forth
+
+Implement an evaluator for a very simple subset of Forth.
+
+[Forth](https://en.wikipedia.org/wiki/Forth_%28programming_language%29)
+is a stack-based programming language. Implement a very basic evaluator
+for a small subset of Forth.
+
+Your evaluator has to support the following words:
+
+- `+`, `-`, `*`, `/` (integer arithmetic)
+- `DUP`, `DROP`, `SWAP`, `OVER` (stack manipulation)
+
+Your evaluator also has to support defining new words using the
+customary syntax: `: word-name definition ;`.
+
+To keep things simple the only data type you need to support is signed
+integers of at least 16 bits size.
+
+You should use the following rules for the syntax: a number is a
+sequence of one or more (ASCII) digits, a word is a sequence of one or
+more letters, digits, symbols or punctuation that is not a number.
+(Forth probably uses slightly different rules, but this is close
+enough.)
+
+Words are case-insensitive.
+
+## Exception messages
+
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test forth_test.py`
+- Python 3.4+: `pytest forth_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest forth_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/forth` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

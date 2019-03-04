@@ -1,53 +1,57 @@
-# To avoid trivial solutions, try to solve this problem without the
-# function int(s, base=16)
+# Hexadecimal
 
-import unittest
+Convert a hexadecimal number, represented as a string (e.g. "10af8c"), to its decimal equivalent using first principles (i.e. no, you may not use built-in or external libraries to accomplish the conversion).
 
-from hexadecimal import hexa
+On the web we use hexadecimal to represent colors, e.g. green: 008000,
+teal: 008080, navy: 000080).
 
+The program should handle invalid hexadecimal strings.
 
-class HexadecimalTest(unittest.TestCase):
-    def test_valid_hexa1(self):
-        self.assertEqual(hexa('1'), 1)
+## Exception messages
 
-    def test_valid_hexa2(self):
-        self.assertEqual(hexa('c'), 12)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_valid_hexa3(self):
-        self.assertEqual(hexa('10'), 16)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_valid_hexa4(self):
-        self.assertEqual(hexa('af'), 175)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_valid_hexa5(self):
-        self.assertEqual(hexa('100'), 256)
+## Running the tests
 
-    def test_valid_hexa6(self):
-        self.assertEqual(hexa('19ACE'), 105166)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_valid_hexa7(self):
-        self.assertEqual(hexa('000000'), 0)
+- Python 2.7: `py.test hexadecimal_test.py`
+- Python 3.4+: `pytest hexadecimal_test.py`
 
-    def test_valid_hexa8(self):
-        self.assertEqual(hexa('ffff00'), 16776960)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest hexadecimal_test.py`
 
-    def test_valid_hexa9(self):
-        self.assertEqual(hexa('00fff0'), 65520)
+### Common `pytest` options
 
-    def test_invalid_hexa(self):
-        with self.assertRaisesWithMessage(ValueError):
-            hexa('carrot')
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+For other options, see `python -m pytest -h`
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+## Submitting Exercises
 
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/hexadecimal` directory.
 
-if __name__ == '__main__':
-    unittest.main()
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+All of Computer Science [http://www.wolframalpha.com/examples/NumberBases.html](http://www.wolframalpha.com/examples/NumberBases.html)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

@@ -1,98 +1,67 @@
-#
-# =============================================================================
-# The test cases below assume two functions are defined:
-#
-#   - triplets_in_range(min, max)
-#       Compute all pythagorean triplets (a,b,c) with min <= a,b,c <= max
-#
-#   - primitive_triplets(b)
-#       Find all primitive pythagorean triplets having b as one of their
-#       components
-#
-#       Args:
-#          b - an integer divisible by 4 (see explanantion below)
-#
-# Note that in the latter function the components other than the argument can
-# be quite large.
-#
-# A primitive pythagorean triplet has its 3 componentes coprime. So, (3,4,5) is
-# a primitive pythagorean triplet since 3,4 and 5 don't have a common factor.
-# On the other hand, (6,8,10), although a pythagorean triplet, is not primitive
-# since 2 divides all three components.
-#
-# A method for finding all primitive pythagorean triplet is given in wikipedia
-# (http://en.wikipedia.org/wiki/Pythagorean_triple#Generating_a_triple). The
-# triplet a=(m^2-n^2), b=2*m*n and c=(m^2+n^2), where m and n are coprime and
-# m-n>0 is odd, generate a primitive triplet. Note that this implies that b has
-# to be divisible by 4 and a and c are odd. Also note that we may have either
-# a>b or b>a.
-#
-# The function primitive_triplets should then use the formula above with b set
-# to its argument and find all possible pairs (m,n) such that m>n, m-n is odd,
-# b=2*m*n and m and n are coprime.
-#
-# =============================================================================
+# Pythagorean Triplet
 
-import unittest
+A Pythagorean triplet is a set of three natural numbers, {a, b, c}, for
+which,
 
-from pythagorean_triplet import (
-    primitive_triplets,
-    triplets_in_range,
-    is_triplet
-)
+```text
+a**2 + b**2 = c**2
+```
 
+For example,
 
-class PythagoreanTripletTest(unittest.TestCase):
-    def test_triplet1(self):
-        ans = set([(3, 4, 5)])
-        self.assertEqual(primitive_triplets(4), ans)
+```text
+3**2 + 4**2 = 9 + 16 = 25 = 5**2.
+```
 
-    def test_triplet2(self):
-        ans = set([(13, 84, 85), (84, 187, 205), (84, 437, 445),
-                   (84, 1763, 1765)])
-        self.assertEqual(primitive_triplets(84), ans)
+There exists exactly one Pythagorean triplet for which a + b + c = 1000.
 
-    def test_triplet3(self):
-        ans = set([(29, 420, 421), (341, 420, 541), (420, 851, 949),
-                   (420, 1189, 1261), (420, 1739, 1789), (420, 4891, 4909),
-                   (420, 11021, 11029), (420, 44099, 44101)])
-        self.assertEqual(primitive_triplets(420), ans)
+Find the product a * b * c.
 
-    def test_triplet4(self):
-        ans = set([(175, 288, 337), (288, 20735, 20737)])
-        self.assertEqual(primitive_triplets(288), ans)
+## Exception messages
 
-    def test_range1(self):
-        ans = set([(3, 4, 5), (6, 8, 10)])
-        self.assertEqual(triplets_in_range(1, 10), ans)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_range2(self):
-        ans = set([(57, 76, 95), (60, 63, 87)])
-        self.assertEqual(triplets_in_range(56, 95), ans)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_is_triplet1(self):
-        self.assertIs(is_triplet((29, 20, 21)), True)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_is_triplet2(self):
-        self.assertIs(is_triplet((25, 25, 1225)), False)
+## Running the tests
 
-    def test_is_triplet3(self):
-        self.assertIs(is_triplet((924, 43, 925)), True)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_odd_number(self):
-        with self.assertRaisesWithMessage(ValueError):
-            primitive_triplets(5)
+- Python 2.7: `py.test pythagorean_triplet_test.py`
+- Python 3.4+: `pytest pythagorean_triplet_test.py`
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest pythagorean_triplet_test.py`
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+### Common `pytest` options
 
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-if __name__ == '__main__':
-    unittest.main()
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/pythagorean-triplet` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Problem 9 at Project Euler [http://projecteuler.net/problem=9](http://projecteuler.net/problem=9)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

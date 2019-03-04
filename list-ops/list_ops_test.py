@@ -95,13 +95,6 @@ class ListOpsTest(unittest.TestCase):
         self.assertEqual(
             list_ops.reverse(["xyz", 4.0, "cat", 1]), [1, "cat", 4.0, "xyz"])
 
-    # additional test for reverse
-    def test_reverse_nested_list(self):
-        self.assertEqual(
-            list_ops.reverse([0, [1], [2, 3], [4, [5, 6]]]),
-            [[4, [5, 6]], [2, 3], [1], 0]
-        )
-
 
 if __name__ == '__main__':
     unittest.main()

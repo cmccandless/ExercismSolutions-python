@@ -1,75 +1,77 @@
-import unittest
+# Robot Simulator
 
-from robot_simulator import Robot, NORTH, EAST, SOUTH, WEST
+Write a robot simulator.
 
+A robot factory's test facility needs a program to verify robot movements.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.2.0
+The robots have three possible movements:
 
-class RobotSimulatorTest(unittest.TestCase):
-    def test_init(self):
-        robot = Robot()
-        self.assertEqual(robot.coordinates, (0, 0))
-        self.assertEqual(robot.bearing, NORTH)
+- turn right
+- turn left
+- advance
 
-    def test_setup(self):
-        robot = Robot(SOUTH, -1, 1)
-        self.assertEqual(robot.coordinates, (-1, 1))
-        self.assertEqual(robot.bearing, SOUTH)
+Robots are placed on a hypothetical infinite grid, facing a particular
+direction (north, east, south, or west) at a set of {x,y} coordinates,
+e.g., {3,8}, with coordinates increasing to the north and east.
 
-    def test_turn_right(self):
-        robot = Robot()
-        for direction in [EAST, SOUTH, WEST, NORTH]:
-            robot.turn_right()
-            self.assertEqual(robot.bearing, direction)
+The robot then receives a number of instructions, at which point the
+testing facility verifies the robot's new position, and in which
+direction it is pointing.
 
-    def test_turn_left(self):
-        robot = Robot()
-        for direction in [WEST, SOUTH, EAST, NORTH]:
-            robot.turn_left()
-            self.assertEqual(robot.bearing, direction)
+- The letter-string "RAALAL" means:
+  - Turn right
+  - Advance twice
+  - Turn left
+  - Advance once
+  - Turn left yet again
+- Say a robot starts at {7, 3} facing north. Then running this stream
+  of instructions should leave it at {9, 4} facing west.
 
-    def test_advance_positive_north(self):
-        robot = Robot(NORTH, 0, 0)
-        robot.advance()
-        self.assertEqual(robot.coordinates, (0, 1))
-        self.assertEqual(robot.bearing, NORTH)
+## Exception messages
 
-    def test_advance_negative_south(self):
-        robot = Robot(SOUTH, 0, 0)
-        robot.advance()
-        self.assertEqual(robot.coordinates, (0, -1))
-        self.assertEqual(robot.bearing, SOUTH)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_advance_positive_east(self):
-        robot = Robot(EAST, 0, 0)
-        robot.advance()
-        self.assertEqual(robot.coordinates, (1, 0))
-        self.assertEqual(robot.bearing, EAST)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_advance_negative_west(self):
-        robot = Robot(WEST, 0, 0)
-        robot.advance()
-        self.assertEqual(robot.coordinates, (-1, 0))
-        self.assertEqual(robot.bearing, WEST)
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_simulate_prog1(self):
-        robot = Robot(NORTH, 0, 0)
-        robot.simulate("LAAARALA")
-        self.assertEqual(robot.coordinates, (-4, 1))
-        self.assertEqual(robot.bearing, WEST)
+## Running the tests
 
-    def test_simulate_prog2(self):
-        robot = Robot(EAST, 2, -7)
-        robot.simulate("RRAAAAALA")
-        self.assertEqual(robot.coordinates, (-3, -8))
-        self.assertEqual(robot.bearing, SOUTH)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_simulate_prog3(self):
-        robot = Robot(SOUTH, 8, 4)
-        robot.simulate("LAAARRRALLLL")
-        self.assertEqual(robot.coordinates, (11, 5))
-        self.assertEqual(robot.bearing, NORTH)
+- Python 2.7: `py.test robot_simulator_test.py`
+- Python 3.4+: `pytest robot_simulator_test.py`
 
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest robot_simulator_test.py`
 
-if __name__ == '__main__':
-    unittest.main()
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/robot-simulator` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Inspired by an interview question at a famous company.
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

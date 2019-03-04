@@ -1,77 +1,76 @@
-"""Tests for the saddle-points exercise
+# Saddle Points
 
-Implementation note:
-The saddle_points function must validate the input matrix and raise a
-ValueError with a meaningful error message if the matrix turns out to be
-irregular.
-"""
-import unittest
+Detect saddle points in a matrix.
 
-from saddle_points import saddle_points
+So say you have a matrix like so:
 
+```text
+    0  1  2
+  |---------
+0 | 9  8  7
+1 | 5  3  2     <--- saddle point at (1,0)
+2 | 6  6  7
+```
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.3.0
+It has a saddle point at (1, 0).
 
-class SaddlePointsTest(unittest.TestCase):
-    def test_identify_single_saddle_point(self):
-        matrix = [[9, 8, 7], [5, 3, 2], [6, 6, 7]]
-        self.assertEqual(saddle_points(matrix), set([(1, 0)]))
+It's called a "saddle point" because it is greater than or equal to
+every element in its row and less than or equal to every element in
+its column.
 
-    def test_empty_matrix_has_no_saddle_points(self):
-        self.assertEqual(saddle_points([]), set())
+A matrix may have zero or more saddle points.
 
-    def test_matrix_with_one_elem_has_single_saddle_point(self):
-        matrix = [[1]]
-        self.assertEqual(saddle_points(matrix), set([(0, 0)]))
+Your code should be able to provide the (possibly empty) list of all the
+saddle points for any given matrix.
 
-    def test_identify_lack_of_saddle_points_when_there_are_none(self):
-        matrix = [[1, 2, 3], [3, 1, 2], [2, 3, 1]]
-        self.assertEqual(saddle_points(matrix), set())
+Note that you may find other definitions of matrix saddle points online,
+but the tests for this exercise follow the above unambiguous definition.
 
-    def test_identify_multiple_saddle_points_in_column(self):
-        matrix = [[4, 5, 4], [3, 5, 5], [1, 5, 4]]
-        expected = set([(0, 1), (1, 1), (2, 1)])
-        self.assertEqual(saddle_points(matrix), expected)
+## Exception messages
 
-    def test_identify_multiple_saddle_points_in_row(self):
-        matrix = [[6, 7, 8], [5, 5, 5], [7, 5, 6]]
-        expected = set([(1, 0), (1, 1), (1, 2)])
-        self.assertEqual(saddle_points(matrix), expected)
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_identify_saddle_point_in_bottom_right_corner(self):
-        matrix = [[8, 7, 9], [6, 7, 6], [3, 2, 5]]
-        expected = set([(2, 2)])
-        self.assertEqual(saddle_points(matrix), expected)
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_non_square_matrix_with_2_saddle_points(self):
-        matrix = [[3, 1, 3], [3, 2, 4]]
-        self.assertEqual(saddle_points(matrix), set([(0, 2), (0, 0)]))
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_single_column_matrix_has_saddle_point_min_value(self):
-        matrix = [[2], [1], [4], [1]]
-        self.assertEqual(saddle_points(matrix), set([(1, 0), (3, 0)]))
+## Running the tests
 
-    def test_single_row_matrix_has_saddle_point_in_max_value(self):
-        matrix = [[2, 5, 3, 5]]
-        self.assertEqual(saddle_points(matrix), set([(0, 1), (0, 3)]))
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    # Additional tests for this track
+- Python 2.7: `py.test saddle_points_test.py`
+- Python 3.4+: `pytest saddle_points_test.py`
 
-    def test_irregular_matrix(self):
-        matrix = [[3, 2, 1], [0, 1], [2, 1, 0]]
-        with self.assertRaisesWithMessage(ValueError):
-            saddle_points(matrix)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest saddle_points_test.py`
 
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+### Common `pytest` options
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
+For other options, see `python -m pytest -h`
 
-if __name__ == '__main__':
-    unittest.main()
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/saddle-points` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+J Dalbey's Programming Practice problems [http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html](http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

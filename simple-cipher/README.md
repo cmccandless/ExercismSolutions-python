@@ -1,88 +1,149 @@
-import unittest
-import re
+# Simple Cipher
 
-from simple_cipher import Cipher
+Implement a simple shift cipher like Caesar and a more secure substitution cipher.
+
+## Step 1
+
+"If he had anything confidential to say, he wrote it in cipher, that is,
+by so changing the order of the letters of the alphabet, that not a word
+could be made out. If anyone wishes to decipher these, and get at their
+meaning, he must substitute the fourth letter of the alphabet, namely D,
+for A, and so with the others."
+—Suetonius, Life of Julius Caesar
+
+Ciphers are very straight-forward algorithms that allow us to render
+text less readable while still allowing easy deciphering. They are
+vulnerable to many forms of cryptoanalysis, but we are lucky that
+generally our little sisters are not cryptoanalysts.
+
+The Caesar Cipher was used for some messages from Julius Caesar that
+were sent afield. Now Caesar knew that the cipher wasn't very good, but
+he had one ally in that respect: almost nobody could read well. So even
+being a couple letters off was sufficient so that people couldn't
+recognize the few words that they did know.
+
+Your task is to create a simple shift cipher like the Caesar Cipher.
+This image is a great example of the Caesar Cipher:
+
+![Caesar Cipher][1]
+
+For example:
+
+Giving "iamapandabear" as input to the encode function returns the cipher "ldpdsdqgdehdu". Obscure enough to keep our message secret in transit.
+
+When "ldpdsdqgdehdu" is put into the decode function it would return
+the original "iamapandabear" letting your friend read your original
+message.
+
+## Step 2
+
+Shift ciphers are no fun though when your kid sister figures it out. Try
+amending the code to allow us to specify a key and use that for the
+shift distance. This is called a substitution cipher.
+
+Here's an example:
+
+Given the key "aaaaaaaaaaaaaaaaaa", encoding the string "iamapandabear"
+would return the original "iamapandabear".
+
+Given the key "ddddddddddddddddd", encoding our string "iamapandabear"
+would return the obscured "ldpdsdqgdehdu"
+
+In the example above, we've set a = 0 for the key value. So when the
+plaintext is added to the key, we end up with the same message coming
+out. So "aaaa" is not an ideal key. But if we set the key to "dddd", we
+would get the same thing as the Caesar Cipher.
+
+## Step 3
+
+The weakest link in any cipher is the human being. Let's make your
+substitution cipher a little more fault tolerant by providing a source
+of randomness and ensuring that the key contains only lowercase letters.
+
+If someone doesn't submit a key at all, generate a truly random key of
+at least 100 characters in length.
+
+If the key submitted is not composed only of lowercase letters, your
+solution should handle the error in a language-appropriate way.
+
+## Extensions
+
+Shift ciphers work by making the text slightly odd, but are vulnerable
+to frequency analysis. Substitution ciphers help that, but are still
+very vulnerable when the key is short or if spaces are preserved. Later
+on you'll see one solution to this problem in the exercise
+"crypto-square".
+
+If you want to go farther in this field, the questions begin to be about
+how we can exchange keys in a secure way. Take a look at [Diffie-Hellman
+on Wikipedia][dh] for one of the first implementations of this scheme.
+
+[1]: https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Caesar_cipher_left_shift_of_3.svg/320px-Caesar_cipher_left_shift_of_3.svg.png
+[dh]: http://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange
+
+## Should I use random or secrets?
+
+Python, as of version 3.6, includes two different random modules.
+
+The module called `random` is pseudo-random, meaning it does not generate
+true randomness, but follows an algorithm that simulates randomness.
+Since random numbers are generated through a known algorithm, they are not truly random.
+
+The `random` module is not correctly suited for cryptography and should not be used,
+precisely because it is pseudo-random.
+
+For this reason, in version 3.6, Python introduced the `secrets` module, which generates
+cryptographically strong random numbers that provide the greater security required for cryptography.
+
+Since this is only an exercise, `random` is fine to use, but note that **it would be
+very insecure if actually used for cryptography.**
 
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+## Exception messages
 
-class SimpleCipherTest(unittest.TestCase):
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-class RandomKeyCipherTest(SimpleCipherTest):
-    def test_can_encode(self):
-        cipher = Cipher()
-        plaintext = 'aaaaaaaaaa'
-        self.assertEqual(cipher.encode(plaintext), cipher.key[:len(plaintext)])
+## Running the tests
 
-    def test_can_decode(self):
-        cipher = Cipher()
-        plaintext = 'aaaaaaaaaa'
-        self.assertEqual(cipher.decode(cipher.key[:len(plaintext)]), plaintext)
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_is_reversible(self):
-        cipher = Cipher()
-        plaintext = 'abcdefghij'
-        self.assertEqual(cipher.decode(cipher.encode(plaintext)), plaintext)
+- Python 2.7: `py.test simple_cipher_test.py`
+- Python 3.4+: `pytest simple_cipher_test.py`
 
-    def test_key_is_only_made_of_lowercase_letters(self):
-        self.assertIsNotNone(re.match('^[a-z]+$', Cipher().key))
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest simple_cipher_test.py`
 
+### Common `pytest` options
 
-class SubstitutionCipherTest(SimpleCipherTest):
-    def test_can_encode(self):
-        cipher = Cipher('abcdefghij')
-        self.assertEqual(cipher.encode('aaaaaaaaaa'), cipher.key)
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_can_decode(self):
-        cipher = Cipher('abcdefghij')
-        self.assertEqual(cipher.decode(cipher.key), 'aaaaaaaaaa')
+For other options, see `python -m pytest -h`
 
-    def test_is_reversible(self):
-        cipher = Cipher('abcdefghij')
-        plaintext = 'abcdefghij'
-        self.assertEqual(cipher.decode(cipher.encode(plaintext)), plaintext)
+## Submitting Exercises
 
-    def test_can_double_shift_encode(self):
-        plaintext = 'iamapandabear'
-        cipher = Cipher(plaintext)
-        self.assertEqual(cipher.encode(plaintext), 'qayaeaagaciai')
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/simple-cipher` directory.
 
-    def test_can_wrap_on_encode(self):
-        cipher = Cipher('abcdefghij')
-        self.assertEqual(cipher.encode('zzzzzzzzzz'), 'zabcdefghi')
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_can_wrap_on_decode(self):
-        cipher = Cipher('abcdefghij')
-        self.assertEqual(cipher.decode('zabcdefghi'), 'zzzzzzzzzz')
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    def test_can_handle_messages_longer_than_key(self):
-        cipher = Cipher('abc')
-        self.assertEqual(cipher.encode('iamapandabear'), 'iboaqcnecbfcr')
+## Source
 
+Substitution Cipher at Wikipedia [http://en.wikipedia.org/wiki/Substitution_cipher](http://en.wikipedia.org/wiki/Substitution_cipher)
 
-class IncorrectKeyCipher(SimpleCipherTest):
-    def test_throws_an_error_with_all_uppercase_key(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Cipher('ABCDEF')
+## Submitting Incomplete Solutions
 
-    def test_throws_an_error_with_a_numeric_key(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Cipher('12345')
-
-    def test_throws_an_error_with_empty_key(self):
-        with self.assertRaisesWithMessage(ValueError):
-            Cipher('')
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

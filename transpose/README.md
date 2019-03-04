@@ -1,227 +1,108 @@
-import unittest
-from transpose import transpose
+# Transpose
 
+Given an input text output it transposed.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+Roughly explained, the transpose of a matrix:
 
-class TransposeTest(unittest.TestCase):
-    def test_empty_string(self):
-        input_line = ""
-        expected = ""
-        self.assertEqual(
-            transpose(input_line),
-            expected
-        )
+```text
+ABC
+DEF
+```
 
-    def test_two_characters_in_a_row(self):
-        input_line = "A1"
-        expected = [
-            "A",
-            "1"
-        ]
-        self.assertEqual(
-            transpose(input_line),
-            "\n".join(expected)
-        )
+is given by:
 
-    def test_two_characters_in_a_column(self):
-        input_line = [
-            "A",
-            "1"
-        ]
-        expected = "A1"
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            expected
-        )
+```text
+AD
+BE
+CF
+```
 
-    def test_simple(self):
-        input_line = [
-            "ABC",
-            "123"
-        ]
-        expected = [
-            "A1",
-            "B2",
-            "C3"
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+Rows become columns and columns become rows. See <https://en.wikipedia.org/wiki/Transpose>.
 
-    def test_single_line(self):
-        input_line = ["Single line."]
-        expected = [
-            "S",
-            "i",
-            "n",
-            "g",
-            "l",
-            "e",
-            " ",
-            "l",
-            "i",
-            "n",
-            "e",
-            "."
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+If the input has rows of different lengths, this is to be solved as follows:
 
-    def test_first_line_longer_than_second_line(self):
-        input_line = [
-            "The fourth line.",
-            "The fifth line."
-        ]
-        expected = [
-            "TT",
-            "hh",
-            "ee",
-            "  ",
-            "ff",
-            "oi",
-            "uf",
-            "rt",
-            "th",
-            "h ",
-            " l",
-            "li",
-            "in",
-            "ne",
-            "e.",
-            "."
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+- Pad to the left with spaces.
+- Don't pad to the right.
 
-    def test_second_line_longer_than_first_line(self):
-        input_line = [
-            "The first line.",
-            "The second line."
-        ]
-        expected = [
-            "TT",
-            "hh",
-            "ee",
-            "  ",
-            "fs",
-            "ie",
-            "rc",
-            "so",
-            "tn",
-            " d",
-            "l ",
-            "il",
-            "ni",
-            "en",
-            ".e",
-            " ."
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+Therefore, transposing this matrix:
 
-    def test_square(self):
-        input_line = [
-            "HEART",
-            "EMBER",
-            "ABUSE",
-            "RESIN",
-            "TREND"
-        ]
-        expected = [
-            "HEART",
-            "EMBER",
-            "ABUSE",
-            "RESIN",
-            "TREND"
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+```text
+ABC
+DE
+```
 
-    def test_rectangle(self):
-        input_line = [
-            "FRACTURE",
-            "OUTLINED",
-            "BLOOMING",
-            "SEPTETTE"
-        ]
-        expected = [
-            "FOBS",
-            "RULE",
-            "ATOP",
-            "CLOT",
-            "TIME",
-            "UNIT",
-            "RENT",
-            "EDGE"
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+results in:
 
-    def test_triangle(self):
-        input_line = [
-            "T",
-            "EE",
-            "AAA",
-            "SSSS",
-            "EEEEE",
-            "RRRRRR"
-        ]
-        expected = [
-            "TEASER",
-            " EASER",
-            "  ASER",
-            "   SER",
-            "    ER",
-            "     R"
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+```text
+AD
+BE
+C
+```
 
-    def test_mixed_line_length(self):
-        input_line = [
-            "The longest line.",
-            "A long line.",
-            "A longer line.",
-            "A line."
-        ]
-        expected = [
-            "TAAA",
-            "h   ",
-            "elll",
-            " ooi",
-            "lnnn",
-            "ogge",
-            "n e.",
-            "glr",
-            "ei ",
-            "snl",
-            "tei",
-            " .n",
-            "l e",
-            "i .",
-            "n",
-            "e",
-            "."
-        ]
-        self.assertEqual(
-            transpose("\n".join(input_line)),
-            "\n".join(expected)
-        )
+And transposing:
 
+```text
+AB
+DEF
+```
 
-if __name__ == '__main__':
-    unittest.main()
+results in:
+
+```text
+AD
+BE
+ F
+```
+
+In general, all characters from the input should also be present in the transposed output.
+That means that if a column in the input text contains only spaces on its bottom-most row(s),
+the corresponding output row should contain the spaces in its right-most column(s).
+
+## Exception messages
+
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test transpose_test.py`
+- Python 3.4+: `pytest transpose_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest transpose_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/transpose` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Reddit r/dailyprogrammer challenge #270 [Easy]. [https://www.reddit.com/r/dailyprogrammer/comments/4msu2x/challenge_270_easy_transpose_the_input_text](https://www.reddit.com/r/dailyprogrammer/comments/4msu2x/challenge_270_easy_transpose_the_input_text)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

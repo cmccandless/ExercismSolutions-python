@@ -1,117 +1,110 @@
-import unittest
+# Tournament
 
-from tournament import tally
+Tally the results of a small football competition.
 
+Based on an input file containing which team played against which and what the
+outcome was, create a file with a table like this:
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.4.0
+```text
+Team                           | MP |  W |  D |  L |  P
+Devastating Donkeys            |  3 |  2 |  1 |  0 |  7
+Allegoric Alaskans             |  3 |  2 |  0 |  1 |  6
+Blithering Badgers             |  3 |  1 |  0 |  2 |  3
+Courageous Californians        |  3 |  0 |  1 |  2 |  1
+```
 
-class TournamentTest(unittest.TestCase):
-    def test_just_the_header_if_no_input(self):
-        self.assertEqual(
-            tally(''),
-            'Team                           | MP |  W |  D |  L |  P'
-        )
+What do those abbreviations mean?
 
-    def test_a_win_is_three_points_and_a_loss_is_zero_points(self):
-        results = 'Allegoric Alaskans;Blithering Badgers;win'
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  1 |  1 |  0 |  0 |  3\n'
-                 'Blithering Badgers             |  1 |  0 |  0 |  1 |  0')
-        self.assertEqual(tally(results), table)
+- MP: Matches Played
+- W: Matches Won
+- D: Matches Drawn (Tied)
+- L: Matches Lost
+- P: Points
 
-    def test_a_win_can_also_be_expressed_as_a_loss(self):
-        results = 'Blithering Badgers;Allegoric Alaskans;loss'
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  1 |  1 |  0 |  0 |  3\n'
-                 'Blithering Badgers             |  1 |  0 |  0 |  1 |  0')
-        self.assertEqual(tally(results), table)
+A win earns a team 3 points. A draw earns 1. A loss earns 0.
 
-    def test_a_different_team_can_win(self):
-        results = 'Blithering Badgers;Allegoric Alaskans;win'
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Blithering Badgers             |  1 |  1 |  0 |  0 |  3\n'
-                 'Allegoric Alaskans             |  1 |  0 |  0 |  1 |  0')
-        self.assertEqual(tally(results), table)
+The outcome should be ordered by points, descending. In case of a tie, teams are ordered alphabetically.
 
-    def test_a_draw_is_one_point_each(self):
-        results = 'Allegoric Alaskans;Blithering Badgers;draw'
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  1 |  0 |  1 |  0 |  1\n'
-                 'Blithering Badgers             |  1 |  0 |  1 |  0 |  1')
-        self.assertEqual(tally(results), table)
+###
 
-    def test_there_can_be_more_than_one_match(self):
-        results = ('Allegoric Alaskans;Blithering Badgers;win\n'
-                   'Allegoric Alaskans;Blithering Badgers;win')
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  2 |  2 |  0 |  0 |  6\n'
-                 'Blithering Badgers             |  2 |  0 |  0 |  2 |  0')
-        self.assertEqual(tally(results), table)
+Input
 
-    def test_there_can_be_more_than_one_winner(self):
-        results = ('Allegoric Alaskans;Blithering Badgers;loss\n'
-                   'Allegoric Alaskans;Blithering Badgers;win')
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  2 |  1 |  0 |  1 |  3\n'
-                 'Blithering Badgers             |  2 |  1 |  0 |  1 |  3')
-        self.assertEqual(tally(results), table)
+Your tallying program will receive input that looks like:
 
-    def test_there_can_be_more_than_two_teams(self):
-        results = ('Allegoric Alaskans;Blithering Badgers;win\n'
-                   'Blithering Badgers;Courageous Californians;win\n'
-                   'Courageous Californians;Allegoric Alaskans;loss')
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  2 |  2 |  0 |  0 |  6\n'
-                 'Blithering Badgers             |  2 |  1 |  0 |  1 |  3\n'
-                 'Courageous Californians        |  2 |  0 |  0 |  2 |  0')
-        self.assertEqual(tally(results), table)
+```text
+Allegoric Alaskans;Blithering Badgers;win
+Devastating Donkeys;Courageous Californians;draw
+Devastating Donkeys;Allegoric Alaskans;win
+Courageous Californians;Blithering Badgers;loss
+Blithering Badgers;Devastating Donkeys;loss
+Allegoric Alaskans;Courageous Californians;win
+```
 
-    def test_typical_input(self):
-        results = ('Allegoric Alaskans;Blithering Badgers;win\n'
-                   'Devastating Donkeys;Courageous Californians;draw\n'
-                   'Devastating Donkeys;Allegoric Alaskans;win\n'
-                   'Courageous Californians;Blithering Badgers;loss\n'
-                   'Blithering Badgers;Devastating Donkeys;loss\n'
-                   'Allegoric Alaskans;Courageous Californians;win')
+The result of the match refers to the first team listed. So this line
 
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Devastating Donkeys            |  3 |  2 |  1 |  0 |  7\n'
-                 'Allegoric Alaskans             |  3 |  2 |  0 |  1 |  6\n'
-                 'Blithering Badgers             |  3 |  1 |  0 |  2 |  3\n'
-                 'Courageous Californians        |  3 |  0 |  1 |  2 |  1')
+```text
+Allegoric Alaskans;Blithering Badgers;win
+```
 
-        self.assertEqual(tally(results), table)
+Means that the Allegoric Alaskans beat the Blithering Badgers.
 
-    def test_incomplete_competitionnot_not_all_pairs_have_played(self):
-        results = ('Allegoric Alaskans;Blithering Badgers;loss\n'
-                   'Devastating Donkeys;Allegoric Alaskans;loss\n'
-                   'Courageous Californians;Blithering Badgers;draw\n'
-                   'Allegoric Alaskans;Courageous Californians;win')
+This line:
 
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  3 |  2 |  0 |  1 |  6\n'
-                 'Blithering Badgers             |  2 |  1 |  1 |  0 |  4\n'
-                 'Courageous Californians        |  2 |  0 |  1 |  1 |  1\n'
-                 'Devastating Donkeys            |  1 |  0 |  0 |  1 |  0')
+```text
+Courageous Californians;Blithering Badgers;loss
+```
 
-        self.assertEqual(tally(results), table)
+Means that the Blithering Badgers beat the Courageous Californians.
 
-    def test_ties_broken_alphabetically(self):
-        results = ('Courageous Californians;Devastating Donkeys;win\n'
-                   'Allegoric Alaskans;Blithering Badgers;win\n'
-                   'Devastating Donkeys;Allegoric Alaskans;loss\n'
-                   'Courageous Californians;Blithering Badgers;win\n'
-                   'Blithering Badgers;Devastating Donkeys;draw\n'
-                   'Allegoric Alaskans;Courageous Californians;draw')
+And this line:
 
-        table = ('Team                           | MP |  W |  D |  L |  P\n'
-                 'Allegoric Alaskans             |  3 |  2 |  1 |  0 |  7\n'
-                 'Courageous Californians        |  3 |  2 |  1 |  0 |  7\n'
-                 'Blithering Badgers             |  3 |  0 |  1 |  2 |  1\n'
-                 'Devastating Donkeys            |  3 |  0 |  1 |  2 |  1')
+```text
+Devastating Donkeys;Courageous Californians;draw
+```
 
-        self.assertEqual(tally(results), table)
+Means that the Devastating Donkeys and Courageous Californians tied.
 
+## Exception messages
 
-if __name__ == '__main__':
-    unittest.main()
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
+
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
+
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
+
+## Running the tests
+
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
+
+- Python 2.7: `py.test tournament_test.py`
+- Python 3.4+: `pytest tournament_test.py`
+
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest tournament_test.py`
+
+### Common `pytest` options
+
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/tournament` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

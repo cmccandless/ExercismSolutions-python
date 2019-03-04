@@ -1,110 +1,81 @@
-import unittest
+# Variable Length Quantity
 
-from variable_length_quantity import encode, decode
+Implement variable length quantity encoding and decoding.
 
+The goal of this exercise is to implement [VLQ](https://en.wikipedia.org/wiki/Variable-length_quantity) encoding/decoding.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+In short, the goal of this encoding is to encode integer values in a way that would save bytes.
+Only the first 7 bits of each byte is significant (right-justified; sort of like an ASCII byte).
+So, if you have a 32-bit value, you have to unpack it into a series of 7-bit bytes.
+Of course, you will have a variable number of bytes depending upon your integer.
+To indicate which is the last byte of the series, you leave bit #7 clear.
+In all of the preceding bytes, you set bit #7.
 
-class VariableLengthQuantityTest(unittest.TestCase):
-    def test_zero(self):
-        self.assertEqual(encode([0x0]), [0x0])
+So, if an integer is between `0-127`, it can be represented as one byte.
+Although VLQ can deal with numbers of arbitrary sizes, for this exercise we will restrict ourselves to only numbers that fit in a 32-bit unsigned integer.
+Here are examples of integers as 32-bit values, and the variable length quantities that they translate to:
 
-    def test_arbitrary_single_byte(self):
-        self.assertEqual(encode([0x40]), [0x40])
+```text
+ NUMBER        VARIABLE QUANTITY
+00000000              00
+00000040              40
+0000007F              7F
+00000080             81 00
+00002000             C0 00
+00003FFF             FF 7F
+00004000           81 80 00
+00100000           C0 80 00
+001FFFFF           FF FF 7F
+00200000          81 80 80 00
+08000000          C0 80 80 00
+0FFFFFFF          FF FF FF 7F
+```
 
-    def test_largest_single_byte(self):
-        self.assertEqual(encode([0x7f]), [0x7f])
+## Exception messages
 
-    def test_smallest_double_byte(self):
-        self.assertEqual(encode([0x80]), [0x81, 0x0])
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_arbitrary_double_byte(self):
-        self.assertEqual(encode([0x2000]), [0xc0, 0x0])
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_largest_double_byte(self):
-        self.assertEqual(encode([0x3fff]), [0xff, 0x7f])
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_smallest_triple_byte(self):
-        self.assertEqual(encode([0x4000]), [0x81, 0x80, 0x0])
+## Running the tests
 
-    def test_arbitrary_triple_byte(self):
-        self.assertEqual(encode([0x100000]), [0xc0, 0x80, 0x0])
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_largest_triple_byte(self):
-        self.assertEqual(encode([0x1fffff]), [0xff, 0xff, 0x7f])
+- Python 2.7: `py.test variable_length_quantity_test.py`
+- Python 3.4+: `pytest variable_length_quantity_test.py`
 
-    def test_smallest_quadruple_byte(self):
-        self.assertEqual(encode([0x200000]), [0x81, 0x80, 0x80, 0x0])
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest variable_length_quantity_test.py`
 
-    def test_arbitrary_quadruple_byte(self):
-        self.assertEqual(encode([0x8000000]), [0xc0, 0x80, 0x80, 0x0])
+### Common `pytest` options
 
-    def test_largest_quadruple_byte(self):
-        self.assertEqual(encode([0xfffffff]), [0xff, 0xff, 0xff, 0x7f])
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
 
-    def test_smallest_quintuple_byte(self):
-        self.assertEqual(encode([0x10000000]), [0x81, 0x80, 0x80, 0x80, 0x0])
+For other options, see `python -m pytest -h`
 
-    def test_arbitrary_quintuple_byte(self):
-        self.assertEqual(encode([0xff000000]), [0x8f, 0xf8, 0x80, 0x80, 0x0])
+## Submitting Exercises
 
-    def test_maximum_32_bit_integer_input(self):
-        self.assertEqual(encode([0xffffffff]), [0x8f, 0xff, 0xff, 0xff, 0x7f])
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/variable-length-quantity` directory.
 
-    def test_two_single_byte_values(self):
-        self.assertEqual(encode([0x40, 0x7f]), [0x40, 0x7f])
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
 
-    def test_two_multi_byte_values(self):
-        self.assertEqual(
-            encode([0x4000, 0x123456]), [0x81, 0x80, 0x0, 0xc8, 0xe8, 0x56])
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
 
-    def test_many_multi_byte_values(self):
-        self.assertEqual(
-            encode([0x2000, 0x123456, 0xfffffff, 0x0, 0x3fff, 0x4000]),
-            [0xc0, 0x0, 0xc8, 0xe8, 0x56, 0xff, 0xff, 0xff, 0x7f, 0x0, 0xff,
-             0x7f, 0x81, 0x80, 0x0]
-        )
+## Source
 
-    def test_one_byte(self):
-        self.assertEqual(decode([0x7f]), [0x7f])
+A poor Splice developer having to implement MIDI encoding/decoding. [https://splice.com](https://splice.com)
 
-    def test_two_bytes(self):
-        self.assertEqual(decode([0xc0, 0x0]), [0x2000])
+## Submitting Incomplete Solutions
 
-    def test_three_bytes(self):
-        self.assertEqual(decode([0xff, 0xff, 0x7f]), [0x1fffff])
-
-    def test_four_bytes(self):
-        self.assertEqual(decode([0x81, 0x80, 0x80, 0x0]), [0x200000])
-
-    def test_maximum_32_bit_integer(self):
-        self.assertEqual(decode([0x8f, 0xff, 0xff, 0xff, 0x7f]), [0xffffffff])
-
-    def test_incomplete_sequence_causes_error(self):
-        with self.assertRaisesWithMessage(ValueError):
-            decode([0xff])
-
-    def test_incomplete_sequence_causes_error_even_if_value_is_zero(self):
-        with self.assertRaisesWithMessage(ValueError):
-            decode([0x80])
-
-    def test_multiple_values(self):
-        self.assertEqual(
-            decode([0xc0, 0x0, 0xc8, 0xe8, 0x56, 0xff, 0xff, 0xff, 0x7f,
-                    0x0, 0xff, 0x7f, 0x81, 0x80, 0x0]),
-            [0x2000, 0x123456, 0xfffffff, 0x0, 0x3fff, 0x4000]
-        )
-
-    # Utility functions
-    def setUp(self):
-        try:
-            self.assertRaisesRegex
-        except AttributeError:
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
-    def assertRaisesWithMessage(self, exception):
-        return self.assertRaisesRegex(exception, r".+")
-
-
-if __name__ == '__main__':
-    unittest.main()
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.

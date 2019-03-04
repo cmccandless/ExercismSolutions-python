@@ -1,44 +1,54 @@
-import unittest
-from datetime import datetime
+# Gigasecond
 
-from gigasecond import add_gigasecond
+Calculate the moment when someone has lived for 10^9 seconds.
 
+A gigasecond is 10^9 (1,000,000,000) seconds.
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.0
+## Exception messages
 
-class GigasecondTest(unittest.TestCase):
-    def test_date_only_specification_of_time(self):
-        self.assertEqual(
-            add_gigasecond(datetime(2011, 4, 25)),
-            datetime(2043, 1, 1, 1, 46, 40))
+Sometimes it is necessary to raise an exception. When you do this, you should include a meaningful error message to
+indicate what the source of the error is. This makes your code more readable and helps significantly with debugging. Not
+every exercise will require you to raise an exception, but for those that do, the tests will only pass if you include
+a message.
 
-    def test_another_date_only_specification_of_time(self):
-        self.assertEqual(
-            add_gigasecond(datetime(1977, 6, 13)),
-            datetime(2009, 2, 19, 1, 46, 40))
+To raise a message with an exception, just write it as an argument to the exception type. For example, instead of
+`raise Exception`, you should write:
 
-    def test_one_more_date_only_specification_of_time(self):
-        self.assertEqual(
-            add_gigasecond(datetime(1959, 7, 19)),
-            datetime(1991, 3, 27, 1, 46, 40))
+```python
+raise Exception("Meaningful message indicating the source of the error")
+```
 
-    def test_full_time_specified(self):
-        self.assertEqual(
-            add_gigasecond(datetime(2015, 1, 24, 22, 0, 0)),
-            datetime(2046, 10, 2, 23, 46, 40))
+## Running the tests
 
-    def test_full_time_with_day_roll_over(self):
-        self.assertEqual(
-            add_gigasecond(datetime(2015, 1, 24, 23, 59, 59)),
-            datetime(2046, 10, 3, 1, 46, 39))
+To run the tests, run the appropriate command below ([why they are different](https://github.com/pytest-dev/pytest/issues/1629#issue-161422224)):
 
-    def test_yourself(self):
-        # customize this to test your birthday and find your gigasecond date:
-        your_birthday = datetime(1970, 1, 1)
-        your_gigasecond = datetime(2001, 9, 9, 1, 46, 40)
+- Python 2.7: `py.test gigasecond_test.py`
+- Python 3.4+: `pytest gigasecond_test.py`
 
-        self.assertEqual(add_gigasecond(your_birthday), your_gigasecond)
+Alternatively, you can tell Python to run the pytest module (allowing the same command to be used regardless of Python version):
+`python -m pytest gigasecond_test.py`
 
+### Common `pytest` options
 
-if __name__ == '__main__':
-    unittest.main()
+- `-v` : enable verbose output
+- `-x` : stop running tests on first failure
+- `--ff` : run failures from previous test before running other test cases
+
+For other options, see `python -m pytest -h`
+
+## Submitting Exercises
+
+Note that, when trying to submit an exercise, make sure the solution is in the `$EXERCISM_WORKSPACE/python/gigasecond` directory.
+
+You can find your Exercism workspace by running `exercism debug` and looking for the line that starts with `Workspace`.
+
+For more detailed information about running tests, code style and linting,
+please see [Running the Tests](http://exercism.io/tracks/python/tests).
+
+## Source
+
+Chapter 9 in Chris Pine's online Learn to Program tutorial. [http://pine.fm/LearnToProgram/?Chapter=09](http://pine.fm/LearnToProgram/?Chapter=09)
+
+## Submitting Incomplete Solutions
+
+It's possible to submit an incomplete solution so you can see how others have completed the exercise.
