@@ -45,3 +45,15 @@ class LinkedList(object):
             n.next.prev = None
         self.head = n.next
         return n.value
+
+    def __iter__(self):
+        current = self.head
+        while current is not None:
+            yield current.value
+            current = current.next
+
+    def __len__(self):
+        length = 0
+        for node in iter(self):
+            length += 1
+        return length

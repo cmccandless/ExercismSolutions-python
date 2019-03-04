@@ -8,7 +8,7 @@ OBJECTS=$(addprefix $(OUT_DIR)/,$(EXERCISES))
 LINT_OBJECTS := $(addprefix $(OUT_DIR)/,$(LINT_TARGETS))
 MIGRATE_OBJECTS := $(addsuffix /.exercism/metadata.json, $(EXERCISES))
 
-.PHONY: init clean lint test-all no-skip check-migrate 
+.PHONY: init clean lint test no-skip check-migrate 
 all: lint test
 pre-push pre-commit: no-skip check-migrate lint test
 init:
@@ -31,15 +31,6 @@ $(OUT_DIR):
 	@ mkdir -p $@
 
 .SECONDEXPANSION:
-
-lint: FILES := .
-lint:
-	@$(PYTHON) -m flake8 $(FILES) --exclude '*venv*'
-
-test:
-	@$(PYTHON) -m pytest $(OPTS) $(FILES)
-
-
 
 GET_DEP = $(filter $(patsubst $(OUT_DIR)/%,%,$@)%,$(SOURCE_FILES))
 $(OBJECTS): $$(GET_DEP) | $(OUT_DIR)
