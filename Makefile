@@ -1,4 +1,6 @@
-PYTHON=python3.7
+ifeq ($(PYTHON),)
+PYTHON:=python
+endif
 EXTENSION:=py
 SOURCE_FILES := $(shell find * -type f -name '*.$(EXTENSION)')
 EXERCISES := $(shell find * -type f -name '*.$(EXTENSION)' | cut -d/ -f1 | uniq)
