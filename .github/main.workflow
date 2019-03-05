@@ -5,5 +5,5 @@ workflow "Lint and Test on push" {
 
 action "Python 3.7" {
   uses = "cmccandless/github-action-python/3.7-alpine@master"
-  runs = ".ci.sh"
+  args = "bash .ci.sh"
 }
