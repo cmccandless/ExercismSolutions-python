@@ -16,7 +16,7 @@ METADATA_FILE:=.exercism/metadata.json
 all: lint test
 pre-push pre-commit: no-skip migrate lint test
 init:
-	@python -m pip install flake8 pytest
+	@python -m pip install -r requirements.txt
 lint: $(LINT_TARGETS)
 test: $(EXERCISES)
 clean:
