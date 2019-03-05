@@ -8,4 +8,4 @@ apk add --update make
 #     make init
 # fi
 
-make -j8 OPTS='-v' lint test
+make -j8 TEST_OPTS='-v' lint test

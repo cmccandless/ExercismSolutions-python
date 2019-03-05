@@ -41,12 +41,12 @@ GET_DEP = $(filter $(patsubst $(OUT_DIR)/%,%,$@)%,$(SOURCE_FILES))
 $(OBJECTS): $$(GET_DEP) | $(OUT_DIR)
 	$(eval EXERCISE := $(patsubst $(OUT_DIR)/%,%,$@))
 	@ echo "Testing $(EXERCISE)..."
-	@ cd $(EXERCISE) && $(PYTHON) -m pytest $(OPTS)
+	@ cd $(EXERCISE) && $(PYTHON) -m pytest $(TEST_OPTS)
 	@ touch $@
 
 GET_DEP_LINT = $(filter $(patsubst $(OUT_DIR)/lint-%,%,$@)%,$(SOURCE_FILES))
 $(LINT_OBJECTS): $$(GET_DEP_LINT) | $(OUT_DIR)
 	$(eval EXERCISE := $(patsubst $(OUT_DIR)/lint-%,%,$@))
 	@ echo "linting $(EXERCISE)..."
-	@ $(PYTHON) -m flake8 $(OPTS) $(EXERCISE)
+	@ $(PYTHON) -m flake8 $(LINT_OPTS) $(EXERCISE)
 	@ touch $@
